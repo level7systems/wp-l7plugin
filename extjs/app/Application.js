@@ -4,15 +4,22 @@
  * details.
  */
 Ext.define('Level7.Application', {
-    extend: 'Ext.app.Application',
-    
-    name: 'Level7',
+  extend: 'Ext.app.Application',
+  
+  name: 'Level7',
 
-    stores: [
-        // TODO: add global / shared stores here
-    ],
-    
-    launch: function () {
-        // TODO - Launch the application
-    }
+  /*
+  requires: [
+    'Ext.*'
+  ],
+  */
+         
+  stores: [
+    //'Customer',
+    'RingGroup'
+  ],
+  
+  launch: function () {
+      // TODO - Launch the application
+  }
 });
