@@ -7,22 +7,20 @@
  * file that was distributed with this source code.
  */
 
-/*
-Ext.define('Ext.data.proxy.Rest',{
+Ext.define('Ext.overrides.data.proxy.Rest',{
   override: 'Ext.data.proxy.Rest',
   
-  baseUrl: 'http://api.l7dev.co.cc',
+  urlPrefix: '/wp-content/plugins/level7/api/proxy.php',
   buildUrl: function(request) {
     
     var me = this,
       url = me.getUrl(request);
   
-    if (this.baseUrl) {
-      url = this.baseUrl + url;
+    if (this.urlPrefix) {
+      url = this.urlPrefix + url;
       request.setUrl(url);
     }
 
     return me.callParent([request]);
   }
 });
-*/
