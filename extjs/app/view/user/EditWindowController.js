@@ -7,14 +7,8 @@
  * file that was distributed with this source code.
  */
 
-Ext.define('Level7.view.main.MainModel', {
-    extend: 'Ext.app.ViewModel',
-
-    alias: 'viewmodel.main',
-
-    data: {
-        name: 'Level7'
-    }
-
-    //TODO - add data, formulas and/or methods to support your view
+Ext.define('Level7.view.user.EditWindowController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.user-editwindow'
+    
 });

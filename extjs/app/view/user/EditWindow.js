@@ -7,8 +7,11 @@
  * file that was distributed with this source code.
  */
 
-Ext.define('Level7.store.Customer', {
-  extend: 'Ext.data.Store',
-  model: 'Level7.model.Customer',
-  autoLoad: true
+Ext.define("Level7.view.user.EditWindow",{
+    extend: "Ext.panel.Panel",
+    controller: "user-editwindow",
+    viewModel: {
+        type: "user-editwindow"
+    }
+    
 });

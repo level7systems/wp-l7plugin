@@ -301,6 +301,18 @@
         "modelNamespace": "Level7.model",
         "name": "Customer"
       }
+    },
+    "app/model/User.js": {
+      "source": "{modelFileName}.js.tpl.merge",
+      "version": "31d5356142a167c72422f7902f19df3c583f3249",
+      "parameters": {
+        "appName": "Level7",
+        "baseClass": "Ext.data.Model",
+        "fields": "locationId:int:null,vmAnnouncementId:int:null,puckupGroupId:int:null,email:auto:null,username:auto:null,firstName:auto:null,lastName:auto:null,mobile:auto:null,mobileCode:auto:null,ext:auto:null,cli:auto:null,escCli:auto:null,cc:int:null,areaCode:auto:null,ringTime:int:null,finalDstType:auto:null,finalDstId:int:null,vm:int:null,vmPin:auto:null,vmToEmail:int:null,vmToSms:int:null,cw:int:null,dnd:int:null,recAllowed:int:null,fm:int:null,fmOnlyDirect:int:null,fmInitRingTime:int:null,fmAnnouncement:int:null,fmAnnouncementId:int:null,fmAllowed:int:null,fmTargets:auto:null,fmRingTime:auto:null,fmStrategy:auto:null,fmFinalDestType:auto:null,fmFinalDstId:int:null,nun:auto:null,nunOnlyDirect:int:null,nunRingTime:int:null,monitor:auto:null,language:auto:null,password:auto:null,apiKey:auto:null,roles:auto:null,active:int:null,visitedApps:auto:null,isSubscribed:boolean:null,isRoom:boolean:null,indications:auto:null,audioUpdatedAt:auto:null,createdAt:auto:null",
+        "modelFileName": "User",
+        "modelNamespace": "Level7.model",
+        "name": "User"
+      }
     }
   }
 }

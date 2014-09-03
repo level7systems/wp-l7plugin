@@ -7,14 +7,11 @@
  * file that was distributed with this source code.
  */
 
-Ext.define('Level7.view.main.MainModel', {
+Ext.define('Level7.view.user.GridModel', {
     extend: 'Ext.app.ViewModel',
-
-    alias: 'viewmodel.main',
-
+    alias: 'viewmodel.user-grid',
     data: {
         name: 'Level7'
     }
 
-    //TODO - add data, formulas and/or methods to support your view
 });

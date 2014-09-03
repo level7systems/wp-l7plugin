@@ -1,10 +1,12 @@
-/**
- * This class is the main view for the application. It is specified in app.js as the
- * "autoCreateViewport" property. That setting automatically applies the "viewport"
- * plugin to promote that instance of this class to the body element.
+/*
+ * This file is part of the Level 7 Systems Ltd. platform.
  *
- * TODO - Replace this content of this view to suite the needs of your application.
+ * (c) Kamil Adryjanek <kamil@level7systems.co.uk>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 Ext.define('Level7.view.main.Main', {
   extend: 'Ext.container.Container',
 
@@ -47,11 +49,8 @@ Ext.define('Level7.view.main.Main', {
     ]
   }, {
     region: 'center',
-    xtype: 'tabpanel',
-    items:[{
-      title: 'Dashboard',
-      html: '<h2>Content appropriate for the current navigation.</h2>'
-    }]
+    title: 'Users',
+    xtype: 'user-grid'
   }, {
     xtype: 'panel',
     bind: {
@@ -64,9 +63,10 @@ Ext.define('Level7.view.main.Main', {
     xtype: 'panel',
     region: 'east',
     layout: 'accordion',
-    width: 180,
+    width: 250,
     split: true,
     items: [{
+      title: 'Ring Groups',
       xtype: 'ringgroup-grid'
     }]
   }, {

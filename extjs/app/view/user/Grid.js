@@ -7,30 +7,44 @@
  * file that was distributed with this source code.
  */
 
-Ext.define("Level7.view.ringgroup.Grid",{
+Ext.define("Level7.view.user.Grid",{
   extend: "Ext.grid.Panel",
-  alias: "widget.ringgroup-grid",
+  alias: "widget.user-grid",
   
-  controller: "ringgroup-grid",
+  controller: "user-grid",
   viewModel: {
-    type: "ringgroup-grid"
+      "type": "user-grid"
   },
   
-  store: 'RingGroups',
+  store: 'Users',
   columns: [
     {
       xtype: 'actioncolumn',
       width: 20,
-      handler: 'onRingGroupEditClick',
+      handler: 'onEditClick',
       stopSelection: false,
       items: [{
-        tooltip: 'Edit ring group',
+        tooltip: 'Edit user',
         iconCls: 'edit'
       }]
     }, {
-      text: 'Name', 
-      dataIndex: 'name',
-      flex: 1
+      text: 'First Name', 
+      dataIndex: 'firstName'
+    }, {
+      text: 'Last Name', 
+      dataIndex: 'lastName'
+    }, {
+      text: 'E-mail', 
+      dataIndex: 'email'
+    }, {
+      text: 'Ext.', 
+      dataIndex: 'ext'
+    }, {
+      text: 'DDI number', 
+      dataIndex: 'email'
+    }, {
+      text: 'CLI', 
+      dataIndex: 'cli'
     }
   ],
   tbar: [
@@ -40,5 +54,5 @@ Ext.define("Level7.view.ringgroup.Grid",{
       handler: 'onAddClick'
     }
   ]
-  
+    
 });

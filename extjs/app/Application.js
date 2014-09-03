@@ -8,15 +8,10 @@ Ext.define('Level7.Application', {
   
   name: 'Level7',
 
-  /*
-  requires: [
-    'Ext.*'
-  ],
-  */
-         
   stores: [
-    //'Customer',
-    'RingGroup'
+    'Customers',
+    'Users',
+    'RingGroups'
   ],
   
   launch: function () {

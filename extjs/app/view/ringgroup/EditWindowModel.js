@@ -7,8 +7,11 @@
  * file that was distributed with this source code.
  */
 
-Ext.define('Level7.store.RingGroup', {
-  extend: 'Ext.data.Store',
-  model: 'Level7.model.RingGroup',
-  autoLoad: true
+Ext.define('Level7.view.ringgroup.EditWindowModel', {
+  extend: 'Ext.app.ViewModel',
+  alias: 'viewmodel.sringgroup-editwindow',
+  data: {
+      name: 'Level7'
+  }
+
 });

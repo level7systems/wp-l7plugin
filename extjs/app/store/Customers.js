@@ -7,14 +7,11 @@
  * file that was distributed with this source code.
  */
 
-Ext.define('Level7.view.main.MainModel', {
-    extend: 'Ext.app.ViewModel',
-
-    alias: 'viewmodel.main',
-
-    data: {
-        name: 'Level7'
-    }
-
-    //TODO - add data, formulas and/or methods to support your view
+Ext.define('Level7.store.Customers', {
+  extend: 'Ext.data.Store',
+  requires: [
+    'Level7.model.Customer'
+  ],
+  model: 'Level7.model.Customer',
+  autoLoad: true
 });
