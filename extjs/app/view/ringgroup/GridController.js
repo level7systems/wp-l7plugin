@@ -25,7 +25,12 @@ Ext.define('Level7.view.ringgroup.GridController', {
   
   onAddClick: function (view, rowIdx, colIdx, item, e, rec) {
     
-    var record = new Level7.model.RingGroup();
+    var rec = new Level7.model.RingGroup();
+    this.editRingGroup(rec);
+  },
+  
+  onEditClick: function (view, rowIdx, colIdx, item, e, rec) {
+  
     this.editRingGroup(record);
   }
     

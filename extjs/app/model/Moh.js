@@ -8,17 +8,26 @@
  */
 
 Ext.define('Level7.model.Moh', {
-    extend: 'Ext.data.Model',
-    
-    fields: [
-        { name: 'realName', type: 'auto' },
-        { name: 'name', type: 'auto' },
-        { name: 'directory', type: 'auto' },
-        { name: 'application', type: 'auto' },
-        { name: 'mode', type: 'auto' },
-        { name: 'digit', type: 'auto' },
-        { name: 'sort', type: 'auto' },
-        { name: 'format', type: 'auto' },
-        { name: 'locked', type: 'int' }
-    ]
+  extend: 'Ext.data.Model',
+  
+  fields: [
+    { name: 'realName', type: 'auto' },
+    { name: 'name', type: 'auto' },
+    { name: 'directory', type: 'auto' },
+    { name: 'application', type: 'auto' },
+    { name: 'mode', type: 'auto' },
+    { name: 'digit', type: 'auto' },
+    { name: 'sort', type: 'auto' },
+    { name: 'format', type: 'auto' },
+    { name: 'locked', type: 'int' }
+  ],
+  
+  proxy: {
+    type: 'rest',
+    url: '/mohs.json',
+    reader: {
+      type: 'json',
+      rootProperty: 'mohs'
+    }
+  }
 });

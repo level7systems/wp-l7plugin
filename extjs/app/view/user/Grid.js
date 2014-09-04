@@ -13,9 +13,10 @@ Ext.define("Level7.view.user.Grid",{
   
   controller: "user-grid",
   viewModel: {
-      "type": "user-grid"
+    "type": "user-grid"
   },
   
+  forceFit: true,
   store: 'Users',
   columns: [
     {
@@ -25,7 +26,7 @@ Ext.define("Level7.view.user.Grid",{
       stopSelection: false,
       items: [{
         tooltip: 'Edit user',
-        iconCls: 'edit'
+        iconCls: 'user-edit'
       }]
     }, {
       text: 'First Name', 
@@ -51,7 +52,15 @@ Ext.define("Level7.view.user.Grid",{
     '->',
     {
       text: 'Add',
-      handler: 'onAddClick'
+      handler: 'onAddClick',
+      iconCls: 'add'
+    }
+  ],
+  bbar: [
+    {
+      xtype: 'pagingtoolbar',
+      store: 'Users',
+      displayInfo: true
     }
   ]
     

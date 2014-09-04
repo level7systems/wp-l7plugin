@@ -24,6 +24,10 @@ Ext.define('Level7.model.RingGroup', {
   
   proxy: {
     type: 'rest',
-    url: '/ringgroups.json'
+    url: '/ringgroups.json',
+    reader: {
+      type: 'json',
+      rootProperty: 'ring_groups'
+    }
   }
 });

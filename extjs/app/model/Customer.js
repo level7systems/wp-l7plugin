@@ -50,6 +50,10 @@ Ext.define('Level7.model.Customer', {
   
   proxy: {
     type: 'rest',
-    url: '/customers.json'
+    url: '/customers.json',
+    reader: {
+      type: 'json',
+      rootProperty: 'customers'
+    }
   }
 });

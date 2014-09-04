@@ -10,15 +10,23 @@
 Ext.define("Level7.view.ringgroup.EditWindow",{
   extend: "Ext.window.Window",
   
+  requires: [
+     'Ext.form.Panel',
+     'Ext.form.FieldSet',
+     'Ext.form.field.Text',
+     'Ext.form.field.Date',
+     'Ext.form.field.Time',
+     'Ext.form.field.Checkbox',
+     'Ext.form.field.Hidden'
+   ],
+         
   controller: "ringgroup-editwindow",
 
   width: 300,
-  minHeight: 250,
-  height: 450,
-  bodyPadding: 10,
+  autoHeight: true,
   layout: {
-      type: 'vbox',
-      align: 'stretch'
+    type: 'vbox',
+    align: 'stretch'
   },
   
   initComponent: function() {
@@ -29,50 +37,60 @@ Ext.define("Level7.view.ringgroup.EditWindow",{
       reference: 'form',
       bodyPadding: 10,
       border: false,
-      frame: true,
+      fieldDefauls: {
+        labelWidth: 90
+      },
       items: [
         {
           xtype: 'textfield',
           name: 'name',
-          fieldLabel: 'Name',
-          labelWidth: 90,
-          anchor: '100%'
+          fieldLabel: 'Name'
         }, {
           xtype: 'checkbox',
-          name: 'cli',
-          boxLabel: 'CLI Prefix',
-          margin: '0 5 0 0'
+          name: 'cliPrefix',
+          fieldLabel: 'CLI Prefix',
+          height: 40,
+          boxLabel: '<span style="font-size: 11px;">Prefix Caller ID with Ring Group name</span>'
         }, {
-          xtype: 'box',
-          autoEl: {
-            cls: 'divider'
-          }
-        }, {
-          xtype: 'checkbox',
-          name: 'has_reminder',
+          xtype: 'grid',
           boxLabel: 'Reminder',
-          margin: '0 5 0 0'
+          fieldLabel: 'Users',
+          width: 180
         }, {
-          xtype: 'datefield',
-          name: 'reminder_date',
-          margin: '0 5 0 0',
-          disabled: true,
-          editable: false
+          xtype: 'combobox',
+          name: 'startegy',
+          fieldLabel: 'Ring strategy',
+          store: {
+            fields: ['id','name'],
+            data: [
+              ["A","Ring All"],
+              ["H","Hunt"],
+              ["M","Memory Hunt"]
+            ]
+          },
+          displayField: 'name',
+          valueField: 'id'
         }, {
-          xtype: 'timefield',
-          name: 'reminder_time',
-          disabled: true,
-          editable: false
+          xtype: 'numberfield',
+          name: 'ringTime',
+          fieldLabel: 'Ring time',
+          minValue: 5,
+          maxValue: 60,
+          step: 5,
+          value: 15
         }, {
-          xtype: 'htmleditor',
-          name: 'note',
-          anchor: '100% -90'
-        }, {
-          xtype: 'hiddenfield',
-          name: 'reminder'
-        }, {
-          xtype: 'hiddenfield',
-          name: 'done'
+          xtype: 'combobox',
+          fieldLabel: 'Music on Hold',
+          allowBlank: false,
+          forceSelection: true,
+          queryMode: 'local',
+          valueField: 'id',
+          displayField: 'name',
+          publishes: ['value'],
+          store: Ext.create('Level7.store.Mohs'),
+          bind: {
+              value: '{ringgroup.mohId}'
+          }
         }
       ],
       buttons: [

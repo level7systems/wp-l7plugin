@@ -11,7 +11,8 @@ Ext.define('Level7.Application', {
   stores: [
     'Customers',
     'Users',
-    'RingGroups'
+    'RingGroups',
+    'Mohs'
   ],
   
   launch: function () {

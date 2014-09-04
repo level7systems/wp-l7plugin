@@ -16,6 +16,8 @@ Ext.define("Level7.view.ringgroup.Grid",{
     type: "ringgroup-grid"
   },
   
+  forceFit: true,
+  emptyText: "No items found.",
   store: 'RingGroups',
   columns: [
     {
@@ -25,7 +27,7 @@ Ext.define("Level7.view.ringgroup.Grid",{
       stopSelection: false,
       items: [{
         tooltip: 'Edit ring group',
-        iconCls: 'edit'
+        iconCls: 'group-edit'
       }]
     }, {
       text: 'Name', 
@@ -37,7 +39,8 @@ Ext.define("Level7.view.ringgroup.Grid",{
     '->',
     {
       text: 'Add',
-      handler: 'onAddClick'
+      handler: 'onAddClick',
+      iconCls: 'add'
     }
   ]
   

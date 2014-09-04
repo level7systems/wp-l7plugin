@@ -37,7 +37,6 @@ Ext.define('Level7.view.main.Main', {
       },{
         xtype: 'component',
         cls: 'app-header-text',
-        // bind: '{currentOrg.name}',
         flex: 1
       },{
         xtype: 'component',
@@ -58,6 +57,7 @@ Ext.define('Level7.view.main.Main', {
     },
     region: 'west',
     width: 180,
+    margins:  '0 5 0 5',
     split: true
   }, {
     xtype: 'panel',
