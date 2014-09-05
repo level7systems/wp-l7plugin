@@ -20,17 +20,20 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
       rec;
      
     if (form.isValid()) {
-      rec = this.getViewModel().getData().theTicket;
-
+      rec = this.getViewModel().getData().ringgroup;
+      
       Ext.Msg.wait('Saving', 'Saving ticket...');
+      
       rec.save({
         scope: this,
-        callback: this.onComplete
+        success: this.onSuccess,
+        failure: this.onFailure
       });
     }
   },
 
-  onComplete: function() {
+  onSuccess: function(rec, operation) {
+    
     Ext.Msg.hide();
     Ext.toast({
       title: 'Save',
@@ -38,6 +41,29 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
       align: 't',
       bodyPadding: 10
     });
+  },
+  
+  onFailure: function(rec, operation) {
+    var response,
+      errors;
+    
+    response = Ext.JSON.decode(operation.error.response.responseText);
+    
+    for (error in response.errors.children) {
+      if (typeof(response.errors[error]) == 'object') {
+        errors+= response.errors[error] + '<br/>';
+      }
+    }
+    
+    Ext.Msg.hide();
+    Ext.Msg.show({
+      title: 'Error',
+      msg: errors,
+      buttons: Ext.Msg.OK,
+      icon: Ext.MessageBox.WARNING,
+      minWidth: 400
+    });
+    
   },
   
   onCloseClick: function() {

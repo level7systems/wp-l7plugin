@@ -15,7 +15,7 @@ Ext.define('Level7.view.ringgroup.GridController', {
     var win = new Ext.create('Level7.view.ringgroup.EditWindow', {
       viewModel: {
         data: {
-          user: record
+          ringgroup: record
         }
       }
     });
@@ -25,13 +25,13 @@ Ext.define('Level7.view.ringgroup.GridController', {
   
   onAddClick: function (view, rowIdx, colIdx, item, e, rec) {
     
-    var rec = new Level7.model.RingGroup();
+    var rec = Ext.create('Level7.model.RingGroup');
     this.editRingGroup(rec);
   },
   
   onEditClick: function (view, rowIdx, colIdx, item, e, rec) {
   
-    this.editRingGroup(record);
+    this.editRingGroup(rec);
   }
     
 });

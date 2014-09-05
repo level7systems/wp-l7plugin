@@ -7,20 +7,33 @@
  * file that was distributed with this source code.
  */
 
+var writer = Ext.create('Level7.ux.data.writer.Json', {
+  writeAllFields: false,
+  excludeFields: ['id', 'customer'],
+  rootProperty: 'ringgroup'
+});
+
 Ext.define('Level7.model.RingGroup', {
   extend: 'Ext.data.Model',
+  
+  idProperty: 'id',
   fields: [
-    { name: 'customerId', reference: 'Customer' },
-    { name: 'mohId', reference: 'Moh' },
+    { name: 'customer', type: 'int' },
+    { name: 'moh', type: 'int' },
     { name: 'name', type: 'string'},
     { name: 'users', type: 'int'},
     { name: 'strategy', type: 'string'},
-    { name: 'finalDestTzpe', type: 'string'},
-    { name: 'finalDestId', type: 'int'},
-    { name: 'ringTime', type: 'int'},
-    { name: 'cliPrefix', type: 'int'},
+    { name: 'finalDstType', type: 'string', defaultValue: 'X'},
+    { name: 'finalDstId', type: 'int', defaultValue: 0},
+    { name: 'ringTime', type: 'int', defaultValue: 15},
+    { name: 'cliPrefix', type: 'int', defaultValue: 0},
     { name: 'number', type: 'string'}
   ],
+  
+  validators: {
+    name: 'required',
+    strategy: 'required'
+  },
   
   proxy: {
     type: 'rest',
@@ -28,6 +41,7 @@ Ext.define('Level7.model.RingGroup', {
     reader: {
       type: 'json',
       rootProperty: 'ring_groups'
-    }
+    },
+    writer: writer
   }
 });

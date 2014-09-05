@@ -23,7 +23,7 @@ Ext.define("Level7.view.ringgroup.Grid",{
     {
       xtype: 'actioncolumn',
       width: 20,
-      handler: 'onRingGroupEditClick',
+      handler: 'onEditClick',
       stopSelection: false,
       items: [{
         tooltip: 'Edit ring group',

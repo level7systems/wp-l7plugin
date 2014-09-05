@@ -6,6 +6,10 @@
 Ext.define('Level7.Application', {
   extend: 'Ext.app.Application',
   
+  requires: [
+    'Level7.ux.*'
+  ],
+           
   name: 'Level7',
 
   stores: [

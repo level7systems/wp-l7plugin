@@ -40,22 +40,25 @@ Ext.define("Level7.view.ringgroup.EditWindow",{
       fieldDefauls: {
         labelWidth: 90
       },
+      modelValidation: true,
       items: [
         {
           xtype: 'textfield',
           name: 'name',
-          fieldLabel: 'Name'
+          fieldLabel: 'Name',
+          bind: '{ringgroup.name}'
         }, {
           xtype: 'checkbox',
           name: 'cliPrefix',
           fieldLabel: 'CLI Prefix',
-          height: 40,
-          boxLabel: '<span style="font-size: 11px;">Prefix Caller ID with Ring Group name</span>'
+          boxLabel: '<span style="font-size: 11px;">Prefix Caller ID with Ring Group name</span>',
+          inputValue: 1
+          //bind: '{ringgroup.cliPrefix}'
         }, {
-          xtype: 'grid',
-          boxLabel: 'Reminder',
+          xtype: 'textarea',
+          name: 'users',
           fieldLabel: 'Users',
-          width: 180
+          bind: '{ringgroup.users}'
         }, {
           xtype: 'combobox',
           name: 'startegy',
@@ -69,7 +72,8 @@ Ext.define("Level7.view.ringgroup.EditWindow",{
             ]
           },
           displayField: 'name',
-          valueField: 'id'
+          valueField: 'id',
+          bind: '{ringgroup.strategy}'
         }, {
           xtype: 'numberfield',
           name: 'ringTime',
@@ -77,9 +81,11 @@ Ext.define("Level7.view.ringgroup.EditWindow",{
           minValue: 5,
           maxValue: 60,
           step: 5,
-          value: 15
+          value: 15,
+          bind: '{ringgroup.ringTime}'
         }, {
           xtype: 'combobox',
+          name: 'moh',
           fieldLabel: 'Music on Hold',
           allowBlank: false,
           forceSelection: true,
@@ -89,8 +95,13 @@ Ext.define("Level7.view.ringgroup.EditWindow",{
           publishes: ['value'],
           store: Ext.create('Level7.store.Mohs'),
           bind: {
-              value: '{ringgroup.mohId}'
+              value: '{ringgroup.moh}'
           }
+        }, {
+          xtype: 'textarea',
+          name: 'number',
+          fieldLabel: 'Number',
+          bind: '{ringgroup.number}'
         }
       ],
       buttons: [

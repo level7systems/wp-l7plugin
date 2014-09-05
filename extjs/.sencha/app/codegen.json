@@ -313,6 +313,18 @@
         "modelNamespace": "Level7.model",
         "name": "User"
       }
+    },
+    "app/model/Contact.js": {
+      "source": "{modelFileName}.js.tpl.merge",
+      "version": "31d5356142a167c72422f7902f19df3c583f3249",
+      "parameters": {
+        "appName": "Level7",
+        "baseClass": "Ext.data.Model",
+        "fields": "id:int:null,groupName:auto:null,firstName:auto:null,lastName:auto:null,qqUuid:auto:null,createdAt:auto:null",
+        "modelFileName": "Contact",
+        "modelNamespace": "Level7.model",
+        "name": "Contact"
+      }
     }
   }
 }
