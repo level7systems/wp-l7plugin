@@ -19,7 +19,7 @@ use \Curl\Curl;
 // submitted data
 $submitted_data = file_get_contents('php://input');
 
-if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
+if (stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
   // data is send json encoded
   if ($submitted_data) {
     $submitted_data = json_decode($submitted_data, true);
@@ -54,6 +54,8 @@ switch($_SERVER['REQUEST_METHOD']) {
 }
 
 header('Content-type: ' . $curl->response_headers['Content-Type']);
+http_response_code($curl->http_status_code);
+
 $curl->close();
 
 // return response
