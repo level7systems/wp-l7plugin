@@ -10,7 +10,7 @@
 Ext.define('Ext.overrides.data.proxy.Rest',{
   override: 'Ext.data.proxy.Rest',
   
-  urlPrefix: '/wp-content/plugins/level7/api/proxy.php',
+  urlPrefix: 'http://api.l7dev.co.cc',
   buildUrl: function(request) {
     
     var me = this,

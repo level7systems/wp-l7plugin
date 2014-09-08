@@ -22,7 +22,7 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
     if (form.isValid()) {
       rec = this.getViewModel().getData().ringgroup;
       
-      Ext.Msg.wait('Saving', 'Saving ticket...');
+      Ext.Msg.wait('Saving', 'Saving user...');
       
       rec.save({
         scope: this,
@@ -49,11 +49,13 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
     
     response = Ext.JSON.decode(operation.error.response.responseText);
     
+    // FIXME
     for (error in response.errors.children) {
       if (typeof(response.errors[error]) == 'object') {
         errors+= response.errors[error] + '<br/>';
       }
     }
+    // FIXME load record from given location
     
     Ext.Msg.hide();
     Ext.Msg.show({

@@ -24,7 +24,8 @@ Ext.define('Level7.model.Moh', {
   
   proxy: {
     type: 'rest',
-    url: '/mohs.json',
+    url: '/mohs',
+    format: 'json',
     reader: {
       type: 'json',
       rootProperty: 'mohs'

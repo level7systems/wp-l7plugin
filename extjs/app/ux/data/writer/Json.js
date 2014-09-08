@@ -9,6 +9,7 @@
 Ext.define('Level7.ux.data.writer.Json', {
   extend: 'Ext.data.writer.Json',
   
+  writeAllFields: true,
   config: {
     excludeFields: [],
     rootProperty: false
@@ -19,9 +20,6 @@ Ext.define('Level7.ux.data.writer.Json', {
       excludeFields = me.config.excludeFields;
     
     var data = this.callParent([record]);
-    // unset property id
-    
-    console.log(excludeFields);
     
     Ext.each(excludeFields, function(property) {
       delete data[property];
@@ -33,11 +31,10 @@ Ext.define('Level7.ux.data.writer.Json', {
     var me = this,
       rootProperty = me.config.rootProperty;
     
-    console.log(rootProperty);
-    
     if (!rootProperty) {
       return data;
     }
+    
     return { rootProperty: data};
   }
 

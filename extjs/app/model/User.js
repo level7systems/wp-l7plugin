@@ -65,7 +65,8 @@ Ext.define('Level7.model.User', {
   
   proxy: {
     type: 'rest',
-    url: '/users.json',
+    url: '/users',
+    format: 'json',
     reader: {
       type: 'json',
       rootProperty: 'users'

@@ -21,5 +21,6 @@ Ext.define('Level7.Application', {
   
   launch: function () {
       // TODO - Launch the application
+    // Ext.data.Connection.prototype.useDefaultXhrHeader = false;
   }
 });

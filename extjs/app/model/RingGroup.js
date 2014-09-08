@@ -8,7 +8,6 @@
  */
 
 var writer = Ext.create('Level7.ux.data.writer.Json', {
-  writeAllFields: false,
   excludeFields: ['id', 'customer'],
   rootProperty: 'ringgroup'
 });
@@ -37,7 +36,8 @@ Ext.define('Level7.model.RingGroup', {
   
   proxy: {
     type: 'rest',
-    url: '/ringgroups.json',
+    url: '/ringgroups',
+    format: 'json',
     reader: {
       type: 'json',
       rootProperty: 'ring_groups'
