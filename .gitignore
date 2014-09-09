@@ -3,5 +3,5 @@
 .settings
 
 # build directory for Sencha (ExtJS) projects
-build/.sass-cache/
-build/temp/
+/extjs/build/.sass-cache/
+/extjs/build/temp/
