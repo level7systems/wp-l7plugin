@@ -4,16 +4,14 @@
  * Sencha Cmd when upgrading.
  */
 Ext.application({
+  extend: 'Level7.Application',  
+  
   name: 'Level7',
   
   requires: [
     //'Ext.app.*',
     'Level7.*'
-  ],
-
-  extend: 'Level7.Application',
-  
-  autoCreateViewport: 'Level7.view.main.Main'
+  ]
 
   //-------------------------------------------------------------------------
   // Most customizations should be made to Level7.Application. If you need to

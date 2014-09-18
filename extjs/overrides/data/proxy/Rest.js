@@ -22,5 +22,14 @@ Ext.define('Ext.overrides.data.proxy.Rest',{
     }
 
     return me.callParent([request]);
+  },
+  doRequest: function (operation) {
+    var me = this,
+      headers = me.getHeaders() || {};
+      
+      headers.Authorization = localStorage.apiKey;
+      me.setHeaders(headers);
+      
+    return me.callParent([operation]);
   }
 });

@@ -1,7 +1,10 @@
-/**
- * The main application class. An instance of this class is created by app.js when it calls
- * Ext.application(). This is the ideal place to handle application launch and initialization
- * details.
+/*
+ * This file is part of the Level 7 Systems Ltd. platform.
+ *
+ * (c) Kamil Adryjanek <kamil@level7systems.co.uk>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 Ext.define('Level7.Application', {
   extend: 'Ext.app.Application',
@@ -12,6 +15,9 @@ Ext.define('Level7.Application', {
            
   name: 'Level7',
 
+  controllers: [
+      'Root@Level7.controller'
+  ],
   stores: [
     'Customers',
     'Users',
@@ -19,8 +25,17 @@ Ext.define('Level7.Application', {
     'Mohs'
   ],
   
-  launch: function () {
-      // TODO - Launch the application
-    // Ext.data.Connection.prototype.useDefaultXhrHeader = false;
+  onBeforeLaunch: function () {
+    
+    console.log('on before launch');
+  
+    var apiKey = localStorage.getItem('apiKey');
+    
+    if (!apiKey) {
+      window.location.href = "/";
+    }
+  
+    this.callParent();
   }
+  
 });

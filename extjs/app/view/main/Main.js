@@ -8,7 +8,7 @@
  */
 
 Ext.define('Level7.view.main.Main', {
-  extend: 'Ext.container.Container',
+  extend: 'Ext.container.Viewport',
 
   xtype: 'app-main',
   
