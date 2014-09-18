@@ -1,0 +1,16 @@
+label, input {
+    display: block;
+}
+
+.ui-dialog fieldset {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;	
+}
+
+p.errors {
+	font-weight: bold;
+	color: red;
+	margin: 0px;
+	font-size: 12px; 
+}

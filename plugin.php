@@ -23,7 +23,21 @@ function level7_init_scripts() {
         
     } else {
         /// non-admin section
-        wp_enqueue_script('level7-login', plugins_url('/js/level7-login.js', __FILE__), array('jquery'));
+        wp_enqueue_script(
+            'level7-login', 
+            plugins_url('/js/level7-login.js', __FILE__),
+            array('jquery', 'jquery-ui-dialog')
+        );
+        
+        wp_enqueue_style(
+            'level7-login',
+            plugins_url('/css/level7-login.css', __FILE__)
+        );
+        
+        wp_enqueue_style(
+            'level7-jquery-ui-css',
+            plugins_url('/css/jquery-ui.css', __FILE__)
+        );
     }
 }
 
