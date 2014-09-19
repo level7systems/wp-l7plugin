@@ -42,6 +42,13 @@ Ext.define("Level7.view.ringgroup.Grid",{
       handler: 'onAddClick',
       iconCls: 'add'
     }
-  ]
+  ],
+  bbar: [
+     {
+       xtype: 'pagingtoolbar',
+       store: 'RingGroups',
+       displayInfo: true
+     }
+   ]
   
 });

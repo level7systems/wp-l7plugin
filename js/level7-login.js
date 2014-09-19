@@ -55,6 +55,7 @@ jQuery(document).ready(function() {
             success: function(response, status, xhr) {
               jQuery('p.errors').html("");
               localStorage.setItem('apiKey', response.apiKey);
+              localStorage.setItem('userId', response.userId);
               
               window.location.href = appUrl;
             },

@@ -17,10 +17,12 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
    
   onSaveClick: function() {
     var form = this.lookupReference('form'),
+      data = this.getViewModel().getData(),
       rec;
      
     if (form.isValid()) {
       rec = this.getViewModel().getData().ringgroup;
+      rec.set('customer', data.currentUser.get('customer').id);
       
       Ext.Msg.wait('Saving', 'Saving user...');
       
@@ -34,6 +36,8 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
 
   onSuccess: function(rec, operation) {
     
+    Ext.getStore('RingGroups').load();
+  
     Ext.Msg.hide();
     Ext.toast({
       title: 'Save',
@@ -41,6 +45,8 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
       align: 't',
       bodyPadding: 10
     });
+    
+    this.getView().close();
   },
   
   onFailure: function(rec, operation) {
@@ -49,14 +55,14 @@ Ext.define('Level7.view.ringgroup.EditWindowController', {
     
     response = Ext.JSON.decode(operation.error.response.responseText);
     
-    // FIXME
+    // FIXME:
     for (error in response.errors.children) {
       if (typeof(response.errors[error]) == 'object') {
         errors+= response.errors[error] + '<br/>';
       }
     }
-    // FIXME load record from given location
-    
+    errors = "There are some errors";
+
     Ext.Msg.hide();
     Ext.Msg.show({
       title: 'Error',

@@ -8,7 +8,7 @@
  */
 
 var writer = Ext.create('Level7.ux.data.writer.Json', {
-  excludeFields: ['id', 'customer'],
+  excludeFields: ['id'],
   rootProperty: 'ringgroup'
 });
 

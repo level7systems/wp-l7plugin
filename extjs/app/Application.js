@@ -27,10 +27,11 @@ Ext.define('Level7.Application', {
   
   onBeforeLaunch: function () {
     
-    console.log('on before launch');
-  
     var apiKey = localStorage.getItem('apiKey');
     
+    // TODO: get user data by apiKey
+    // verify user data
+    // log out
     if (!apiKey) {
       window.location.href = "/";
     }

@@ -13,5 +13,6 @@ Ext.define('Level7.store.RingGroups', {
     'Level7.model.RingGroup'
   ],
   model: 'Level7.model.RingGroup',
+  storeId: 'RingGroupsStore',
   autoLoad: true
 });

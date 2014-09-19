@@ -13,5 +13,14 @@ Ext.define('Level7.store.Users', {
     'Level7.model.User'
   ],
   model: 'Level7.model.User',
+  proxy: {
+    type: 'rest',
+    url: '/users',
+    format: 'json',
+    reader: {
+      type: 'json',
+      rootProperty: 'users'
+    }
+  },
   autoLoad: true
 });

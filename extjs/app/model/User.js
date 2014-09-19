@@ -7,6 +7,10 @@
  * file that was distributed with this source code.
  */
 
+var writer = Ext.create('Level7.ux.data.writer.Json', {
+  rootProperty: 'user'
+});
+
 Ext.define('Level7.model.User', {
   extend: 'Ext.data.Model',
   
@@ -69,7 +73,8 @@ Ext.define('Level7.model.User', {
     format: 'json',
     reader: {
       type: 'json',
-      rootProperty: 'users'
-    }
+      rootProperty: 'user'
+    },
+    writer: writer
   }
 });

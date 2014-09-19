@@ -2,29 +2,30 @@ Ext.define('Level7.controller.Root', {
     extend: 'Ext.app.Controller',
     
     requires: [
-        //'Level7.view.login.Login',
-        'Level7.view.main.Main'
+        //'Level7.view.main.Login',
+        'Level7.view.main.Main',
+        'Level7.model.User'
     ],
      
-    //loadingText: 'Loading...',
+    loadingText: 'Loading...',
      
     onLaunch: function () {
-         
+        var me = this;
+        
         if (Ext.isIE8) {
              Ext.Msg.alert('Not Supported', 'This app is not supported on Internet Explorer 8. Please use a different browser.');
              return;
         }
          
-        /*
-        this.session = new Ext.data.Session({
-            autoDestroy: false
+        var id = parseInt(localStorage.getItem('userId'));
+        Level7.model.User.load(id, {
+            success: function (user) {
+              me.showUI(user);
+            }
         });
-        */
         
-        this.showUI();
-         
         /*
-        this.login = new Level7.view.login.Login({
+        this.login = new Level7.view.main.Login({
             session: this.session,
             autoShow: true,
             listeners: {
@@ -35,7 +36,14 @@ Ext.define('Level7.controller.Root', {
         */
     },
            
-    showUI: function() {
-      this.viewport = new Level7.view.main.Main({});
-  },
+    showUI: function(user) {
+      
+      this.viewport = new Level7.view.main.Main({
+          viewModel: {
+              data: {
+                  currentUser: user
+              }
+          }
+      });
+  }
 });

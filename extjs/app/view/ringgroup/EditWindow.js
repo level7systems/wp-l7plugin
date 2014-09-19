@@ -91,7 +91,7 @@ Ext.define("Level7.view.ringgroup.EditWindow",{
           forceSelection: true,
           queryMode: 'local',
           valueField: 'id',
-          displayField: 'name',
+          displayField: 'realName',
           publishes: ['value'],
           store: Ext.create('Level7.store.Mohs'),
           bind: {
