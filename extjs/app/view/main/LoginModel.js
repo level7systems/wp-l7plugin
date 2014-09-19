@@ -7,15 +7,11 @@
  * file that was distributed with this source code.
  */
 
-Ext.define('Level7.view.main.MainController', {
-  extend: 'Ext.app.ViewController',
-
-  alias: 'controller.main',
-
-  onLogoutButton: function () {
-    // TODO  
-    localStorage.clear();
-    location.reload();
-  }
+Ext.define('Level7.view.main.LoginModel', {
+    extend: 'Ext.app.ViewModel',
+    alias: 'viewmodel.main-login',
+    data: {
+        name: 'Level7'
+    }
 
 });

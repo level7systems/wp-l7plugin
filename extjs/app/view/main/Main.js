@@ -42,7 +42,12 @@ Ext.define('Level7.view.main.Main', {
         xtype: 'component',
         id: 'app-header-username',
         cls: 'app-header-text',
-        // bind: '{currentUser.name}',
+        bind: 'Welcome back {currentUser.firstName}',
+        margin: '0 10 0 0'
+      }, {
+        xtype: 'button',
+        text: 'Logout',
+        handler: 'onLogoutButton',
         margin: '0 10 0 0'
       }
     ]
