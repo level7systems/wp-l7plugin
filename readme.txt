@@ -2,7 +2,7 @@
 Contributors: kamil, chris
 Tags: white label voip, business voip, hosted pbx
 Requires at least: 3.4
-Tested up to: 3.9
+Tested up to: 4.0
 License: GPLv2 or later
  
   
