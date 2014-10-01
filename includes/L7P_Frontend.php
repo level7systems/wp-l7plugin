@@ -10,17 +10,21 @@
 
 class L7P_Frontend 
 {
-    public function __construct() {
-		add_action( 'frontend_enqueue_scripts', array( $this, 'styles' ) );
-		add_action( 'frontend_enqueue_scripts', array( $this, 'scripts' ) );
+    public function __construct() 
+    {
+		add_action('frontend_enqueue_scripts', array($this, 'styles' ));
+		add_action('frontend_enqueue_scripts', array($this, 'scripts' ));
 	}
 
 	/**
 	 * Enqueue styles
 	 */
-	public function styles() {
+	public function styles()
+	{
 		global $wp_scripts;
 
+		
+		
 		wp_enqueue_style(
             'level7-login',
             plugins_url('/css/level7-login.css', __FILE__)
@@ -32,11 +36,16 @@ class L7P_Frontend
 		);
 	}
 
+	public function routes()
+	{
+	    
+	}
 
 	/**
 	 * Enqueue scripts
 	 */
-	public function scripts() {
+	public function scripts() 
+	{
 		global $wp_query, $post;
 
 		wp_enqueue_script(
