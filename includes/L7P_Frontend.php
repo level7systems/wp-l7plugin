@@ -12,28 +12,37 @@ class L7P_Frontend
 {
     public function __construct() 
     {
-		add_action('frontend_enqueue_scripts', array($this, 'styles' ));
-		add_action('frontend_enqueue_scripts', array($this, 'scripts' ));
-	}
+        add_action('wp_enqueue_scripts', array($this, 'styles'));
+        add_action('wp_enqueue_scripts', array($this, 'scripts'));
+    }
 
 	/**
 	 * Enqueue styles
 	 */
 	public function styles()
 	{
-		global $wp_scripts;
-
-		
-		
 		wp_enqueue_style(
             'level7-login',
-            plugins_url('/css/level7-login.css', __FILE__)
+            plugins_url('/assets/css/level7-login.css', L7P_PLUGIN_FILE)
 		);
 		
 		wp_enqueue_style(
             'level7-jquery-ui-css',
-            plugins_url('/css/jquery-ui.css', __FILE__)
+            plugins_url('/assets/css/jquery-ui.css', L7P_PLUGIN_FILE)
 		);
+	}
+	
+	/**
+	 * Enqueue scripts
+	 */
+	public function scripts()
+	{
+	    wp_enqueue_script(
+    	    'level7-login',
+    	    plugins_url('/assets/js/level7-login.js', L7P_PLUGIN_FILE),
+    	    array('jquery', 'jquery-ui-dialog')
+	    );
+	
 	}
 
 	public function routes()
@@ -41,20 +50,6 @@ class L7P_Frontend
 	    
 	}
 
-	/**
-	 * Enqueue scripts
-	 */
-	public function scripts() 
-	{
-		global $wp_query, $post;
-
-		wp_enqueue_script(
-            'level7-login',
-            plugins_url('/js/level7-login.js', __FILE__),
-            array('jquery', 'jquery-ui-dialog')
-		);
-		
-	}
 }
 
 return new L7P_Frontend();

@@ -29,7 +29,7 @@ class Level7Platform
         return self::$_instance;
     }
     
-    private function __construct() {
+    public function __construct() {
         // Auto-load classes on demand
         if (function_exists("__autoload") ) {
             spl_autoload_register("__autoload");
@@ -37,7 +37,10 @@ class Level7Platform
     
         spl_autoload_register(array($this, 'autoload'));
     
-        // Include required files
+        // constants
+        $this->define_constants();
+        
+        // include required files
         $this->includes();
         
         // WP hooks
@@ -48,7 +51,8 @@ class Level7Platform
         do_action( 'level7platform_loaded' );
     }
     
-public function autoload( $class ) {
+    public function autoload( $class )
+    {
 		$path  = null;
 		$file = $class . '.php';
 
@@ -78,18 +82,8 @@ public function autoload( $class ) {
 		define( 'L7P_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 		define( 'L7P_VERSION', $this->version );
 
-		if ( ! defined( 'L7P_ROUNDING_PRECISION' ) ) {
-			define( 'L7P_ROUNDING_PRECISION', 4 );
-		}
-		if ( ! defined( 'L7P_TAX_ROUNDING_MODE' ) ) {
-			// 1 = PHP_ROUND_HALF_UP, 2 = PHP_ROUND_HALF_DOWN
-			define( 'L7P_TAX_ROUNDING_MODE', get_option( 'woocommerce_prices_include_tax' ) === 'yes' ? 2 : 1 );
-		}
-		if ( ! defined( 'L7P_DELIMITER' ) ) {
-			define( 'L7P_DELIMITER', '|' );
-		}
-		if ( ! defined( 'L7P_LOG_DIR' ) ) {
-			define( 'L7P_LOG_DIR', ABSPATH . 'wc-logs/' );
+		if (!defined('L7P_LOG_DIR')) {
+			define( 'L7P_LOG_DIR', ABSPATH . 'l7p-logs/' );
 		}
 	}
 
@@ -99,7 +93,7 @@ public function autoload( $class ) {
 	private function includes()
 	{
 		
-		if ( is_admin() ) {
+		if (is_admin()) {
 			include_once( 'includes/admin/L7P_Admin.php' );
 		} else {
 		    include_once( 'includes/L7P_Frontend.php' );
@@ -118,11 +112,10 @@ public function autoload( $class ) {
 	}
 }
 
-function Level7() {
+function L7P() {
     return Level7Platform::instance();
 }
 
 // Global for backwards compatibility.
-$GLOBALS['Level7platform'] = Level7();
-
+$GLOBALS['level7platform'] = L7P();
 
