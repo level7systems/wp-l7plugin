@@ -44,8 +44,8 @@ class Level7Platform
         $this->includes();
         
         // WP hooks
-        add_action( 'init', array( $this, 'init' ), 0 );
-        add_action( 'init', array( 'Level7_Shortcodes', 'init' ) );
+        add_action('init', array($this, 'init'), 0 );
+        add_action('init', array('L7P_Shortcodes','init'));
     
         // Loaded action
         do_action( 'level7platform_loaded' );
@@ -92,11 +92,11 @@ class Level7Platform
 	 */
 	private function includes()
 	{
-		
 		if (is_admin()) {
-			include_once( 'includes/admin/L7P_Admin.php' );
-		} else {
-		    include_once( 'includes/L7P_Frontend.php' );
+			include_once('includes/admin/L7P_Admin.php');
+		} else { // Frontend
+		    include_once('includes/L7P_Frontend.php');
+		    include_once('includes/L7P_Shortcodes');
 		}
 
 	}

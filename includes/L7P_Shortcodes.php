@@ -16,7 +16,7 @@ class L7P_Shortcodes
         $shortcodes = array(
             'user_charge'          => __CLASS__ . '::user_charge',
             'user_unlimited'       => __CLASS__ . '::user_unlimited',
-            'user_unlimited?int'   => __CLASS__ . '::user_unlimited_int',
+            'user_unlimited_int'   => __CLASS__ . '::user_unlimited_int',
         );
         
         foreach ($shortcodes as $shortcode => $function ) {
@@ -28,7 +28,7 @@ class L7P_Shortcodes
     
     public static function user_charge($atts)
     {
-        if ( empty( $atts ) ) return '';
+        // if ( empty( $atts ) ) return '';
     
         // TODO
     
@@ -54,16 +54,20 @@ class L7P_Shortcodes
     
         $single_product = new WP_Query( $args );
     
-		return ;
+		return "To be implemented";
 	}
 	
 	public static function user_unlimited($atts)
 	{
 	    // TODO
+	    
+	    return "To be implemented";
 	}
 	
 	public static function user_unlimited_int($atts)
 	{
 	    // TODO
+	    
+	    return "To be implemented";
 	}
 }
