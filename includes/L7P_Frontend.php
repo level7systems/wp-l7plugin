@@ -47,8 +47,20 @@ class L7P_Frontend
 
 	public function routes()
 	{
+	    $routes = array(
+            'rate'              => get_option('level7platform_rate', 'rate'),
+	        'rates'             => get_option('level7platform_rates', 'rates'),
+	        'telephone_numbers' => get_option('level7platform_telephone_numbers', 'telephone-numbers'),
+	        'hardware'          => get_option('level7platform_rate', 'hardware'),
+	    );
 	    
+	    foreach ($routes as $route) {
+	        
+	        add_rewrite_endpoint($route, EP_ROOT | EP_PAGES);
+	    }
 	}
+	
+	
 
 }
 
