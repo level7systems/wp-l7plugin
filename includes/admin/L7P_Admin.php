@@ -17,16 +17,20 @@ class L7P_Admin
     
     public function menu()
     {
-        function level7_options() {
-            echo '<div class="wrap">';
-            echo '<p><strong>TO-DO: Add some config options...</p>';
-            echo '</div>';
-        }
+        // add_menu_page('My Custom Page', 'My Custom Page', 'manage_options', 'my-top-level-slug');
+        add_menu_page("Level7 Platform", "Level7 Platform", 'manage_options', 'l7-platform', null, null, 60);
         
-        add_menu_page("Level7", "Level7", 'manage_options', 'level7-menu', 'level7_options');
-    
+        add_submenu_page( 'l7-platform', 'Pages', 'Pages', 'manage_options', 'l7-pages');
+        add_submenu_page( 'l7-platform', 'Settings', 'Settings', 'manage_options', 'l7-settings');
+        
         // TODO
         
+    }
+    
+    public function level7_options() {
+        echo '<div class="wrap">';
+        echo '<p><strong>TO-DO: Add some config options...</p>';
+        echo '</div>';
     }
 }
 
