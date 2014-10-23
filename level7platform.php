@@ -96,9 +96,13 @@ class Level7Platform
 			include_once('includes/admin/L7P_Admin.php');
 		} else { // Frontend
 		    include_once('includes/L7P_Frontend.php');
-		    include_once('includes/L7P_Shortcodes');
+		    include_once('includes/L7P_Shortcodes.php');
 		}
 
+		// Post Types
+		include_once('includes/L7P_Post_Types.php');
+		// XmlRpc Api
+		include_once('includes/L7P_XmlRpc_Api.php');
 	}
 	
 	public function plugin_url()
