@@ -92,6 +92,9 @@ class Level7Platform
 	 */
 	private function includes()
 	{
+	    // installer
+	    include_once('includes/L7P_Install.php');
+	    
 		if (is_admin()) {
 			include_once('includes/admin/L7P_Admin.php');
 		} else { // Frontend
