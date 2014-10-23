@@ -38,30 +38,30 @@ class L7P_Post_Types
     
         // do_action( 'level7_register_level7_page_type' );
     
-        $permalinks        = get_option( 'woocommerce_permalinks' );
-        $product_permalink = empty( $permalinks['product_base'] ) ? _x( 'product', 'slug', 'woocommerce' ) : $permalinks['product_base'];
+        $permalinks        = get_option( 'level7platform_permalinks' );
+        $product_permalink = empty( $permalinks['product_base'] ) ? _x( 'product', 'slug', 'level7platform' ) : $permalinks['product_base'];
     
         register_post_type(
             'level7_page',
-            apply_filters( 'woocommerce_register_post_type_product',
+            apply_filters( 'level7platform_register_post_type_product',
                 array(
                     'labels'              => array(
-                        'name'               => __( 'Products', 'woocommerce' ),
-                        'singular_name'      => __( 'Product', 'woocommerce' ),
-                        'menu_name'          => _x( 'Products', 'Admin menu name', 'woocommerce' ),
-                        'add_new'            => __( 'Add Product', 'woocommerce' ),
-                        'add_new_item'       => __( 'Add New Product', 'woocommerce' ),
-                        'edit'               => __( 'Edit', 'woocommerce' ),
-                        'edit_item'          => __( 'Edit Product', 'woocommerce' ),
-                        'new_item'           => __( 'New Product', 'woocommerce' ),
-                        'view'               => __( 'View Product', 'woocommerce' ),
-                        'view_item'          => __( 'View Product', 'woocommerce' ),
-                        'search_items'       => __( 'Search Products', 'woocommerce' ),
-                        'not_found'          => __( 'No Products found', 'woocommerce' ),
-                        'not_found_in_trash' => __( 'No Products found in trash', 'woocommerce' ),
-                        'parent'             => __( 'Parent Product', 'woocommerce' )
+                        'name'               => __( 'Products', 'level7platform' ),
+                        'singular_name'      => __( 'Product', 'level7platform' ),
+                        'menu_name'          => _x( 'Products', 'Admin menu name', 'level7platform' ),
+                        'add_new'            => __( 'Add Product', 'level7platform' ),
+                        'add_new_item'       => __( 'Add New Product', 'level7platform' ),
+                        'edit'               => __( 'Edit', 'level7platform' ),
+                        'edit_item'          => __( 'Edit Product', 'level7platform' ),
+                        'new_item'           => __( 'New Product', 'level7platform' ),
+                        'view'               => __( 'View Product', 'level7platform' ),
+                        'view_item'          => __( 'View Product', 'level7platform' ),
+                        'search_items'       => __( 'Search Products', 'level7platform' ),
+                        'not_found'          => __( 'No Products found', 'level7platform' ),
+                        'not_found_in_trash' => __( 'No Products found in trash', 'level7platform' ),
+                        'parent'             => __( 'Parent Product', 'level7platform' )
                     ),
-                    'description'         => __( 'This is where you can add new products to your store.', 'woocommerce' ),
+                    'description'         => __( 'This is where you can add new products to your store.', 'level7platform' ),
                     'public'              => true,
                     'show_ui'             => true,
                     'capability_type'     => 'product',

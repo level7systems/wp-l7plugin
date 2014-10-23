@@ -35,7 +35,7 @@ class L7P_Admin
         if ( isset( $post_type ) ) {
             if ( in_array( $post_type, $to_highlight_types ) ) {
                 $submenu_file = 'edit.php?post_type=' . esc_attr( $post_type );
-                $parent_file  = 'woocommerce';
+                $parent_file  = 'level7platform';
             }
     
             if ( 'product' == $post_type ) {
@@ -48,21 +48,21 @@ class L7P_Admin
             }
         }
     
-        if ( isset( $submenu['woocommerce'] ) && isset( $submenu['woocommerce'][1] ) ) {
-            $submenu['woocommerce'][0] = $submenu['woocommerce'][1];
-            unset( $submenu['woocommerce'][1] );
+        if ( isset( $submenu['level7platform'] ) && isset( $submenu['level7platform'][1] ) ) {
+            $submenu['level7platform'][0] = $submenu['level7platform'][1];
+            unset( $submenu['level7platform'][1] );
         }
     
-        if ( isset( $submenu['woocommerce'] ) && current_user_can( 'manage_woocommerce' ) ) {
-            foreach ( $submenu['woocommerce'] as $key => $menu_item ) {
-                if ( 0 === strpos( $menu_item[0], _x( 'Orders', 'Admin menu name', 'woocommerce' ) ) ) {
+        if ( isset( $submenu['level7platform'] ) && current_user_can( 'manage_level7platform' ) ) {
+            foreach ( $submenu['level7platform'] as $key => $menu_item ) {
+                if ( 0 === strpos( $menu_item[0], _x( 'Orders', 'Admin menu name', 'level7platform' ) ) ) {
     
-                    $menu_name = _x( 'Orders', 'Admin menu name', 'woocommerce' );
+                    $menu_name = _x( 'Orders', 'Admin menu name', 'level7platform' );
                     if ( $order_count = wc_processing_order_count() ) {
                         $menu_name .= ' <span class="awaiting-mod update-plugins count-' . $order_count . '"><span class="processing-count">' . number_format_i18n( $order_count ) . '</span></span>';
                     }
     
-                    $submenu['woocommerce'][ $key ] [0] = $menu_name;
+                    $submenu['level7platform'][ $key ] [0] = $menu_name;
                     break;
                 }
             }
