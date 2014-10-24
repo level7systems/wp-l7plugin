@@ -21,6 +21,33 @@ class L7P_Install
         // enable XmlRpc
         update_option('enable_xmlrpc', '1');
         
+        // create pages
+        $this->create_pages();
+        
         // other settup
     }
+    
+    public function create_pages()
+    {
+        $pages = apply_filters( 'level7platform_create_pages', array(
+            'pricing' => array(
+                'name'    => _x('pricing', 'Page slug', 'level7platform' ),
+                'title'   => _x('Pricing', 'Page title', 'level7platform' ),
+                // TODO
+                'content' => ''
+            ),
+            'rates' => array(
+                'name'    => _x('rates', 'Page slug', 'level7platform' ),
+                'title'   => _x('Rates', 'Page title', 'level7platform' ),
+                // TODO:
+                'content' => ''
+            ),
+        ));
+    
+        foreach ( $pages as $key => $page ) {
+            l7_create_page(esc_sql($page['name']), 'level7platform_' . $key . '_page_id', $page['title'], $page['content']);
+        }
+    }
 }
+
+return new L7P_Install();
