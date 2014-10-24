@@ -11,8 +11,9 @@
 class L7P_XmlRpc_Api
 {
     protected $methods = array(
-        'l7.ping'       => 'ping',
-        // TODO
+        'l7.ping'           => 'ping',
+        'l7.setPricelists'  => 'setPricelists',
+        // TODO: other methods
     );
     
     public function __construct()
@@ -30,6 +31,19 @@ class L7P_XmlRpc_Api
     }
     
     // TODO: to be implemented
+    
+    public static function setPricelists(array $pricelists)
+    {
+        // TODO
+        
+        // returning errors to client
+        // return new IXR_Error(500, "Some error");
+        
+        // TODO: add additional checks
+        update_option('pricelists', $pricelists);
+        
+        return "OK";
+    }
     
     public static function ping()
     {
