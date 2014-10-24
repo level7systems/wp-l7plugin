@@ -19,66 +19,9 @@ class L7P_Admin
     
     public function menu()
     {
-        add_menu_page("Level7 Platform", "Pages", 'manage_options', 'l7-settings', null, null, 60);
+        add_menu_page("Level7 Platform", "Level7 Platform", 'manage_options', 'l7-settings', null, null, 60);
 
-        add_submenu_page( 'l7-settings', 'Settings', 'Settings', 'manage_options', 'l7-settings', array( $this, 'settings_page' ));
-        add_submenu_page( 'l7-settings', 'Pages', 'Pages', 'manage_options', 'edit.php?post_type=page', array( $this, 'pages_page' ));
-    }
-    
-    public function menu_head() {
-        global $menu, $submenu, $parent_file, $submenu_file, $self, $post_type, $taxonomy;
-    
-        $to_highlight_types = array( 'shop_order', 'level7_page' );
-    
-        echo $post_type;
-        
-        if ( isset( $post_type ) ) {
-            if ( in_array( $post_type, $to_highlight_types ) ) {
-                $submenu_file = 'edit.php?post_type=' . esc_attr( $post_type );
-                $parent_file  = 'level7platform';
-            }
-    
-            if ( 'product' == $post_type ) {
-                $screen = get_current_screen();
-    
-                if ( $screen->base == 'edit-tags' && taxonomy_is_product_attribute( $taxonomy ) ) {
-                    $submenu_file = 'product_attributes';
-                    $parent_file  = 'edit.php?post_type=' . esc_attr( $post_type );
-                }
-            }
-        }
-    
-        if ( isset( $submenu['level7platform'] ) && isset( $submenu['level7platform'][1] ) ) {
-            $submenu['level7platform'][0] = $submenu['level7platform'][1];
-            unset( $submenu['level7platform'][1] );
-        }
-    
-        if ( isset( $submenu['level7platform'] ) && current_user_can( 'manage_level7platform' ) ) {
-            foreach ( $submenu['level7platform'] as $key => $menu_item ) {
-                if ( 0 === strpos( $menu_item[0], _x( 'Orders', 'Admin menu name', 'level7platform' ) ) ) {
-    
-                    $menu_name = _x( 'Orders', 'Admin menu name', 'level7platform' );
-                    if ( $order_count = wc_processing_order_count() ) {
-                        $menu_name .= ' <span class="awaiting-mod update-plugins count-' . $order_count . '"><span class="processing-count">' . number_format_i18n( $order_count ) . '</span></span>';
-                    }
-    
-                    $submenu['level7platform'][ $key ] [0] = $menu_name;
-                    break;
-                }
-            }
-        }
-    }
-    
-    public function level7_options() {
-        echo '<div class="wrap">';
-        echo '<p><strong>TO-DO: Add some config options...</p>';
-        echo '</div>';
-    }
-    
-    public function pages_page() {
-        echo '<div class="wrap">';
-        echo '<p><strong>TO-DO: Add some config options...</p>';
-        echo '</div>';
+        add_submenu_page( 'l7-settings', 'Settings', 'Settings', 'manage_options', 'l7-settings', array($this, 'settings_page'));
     }
     
     public function settings_page() {
