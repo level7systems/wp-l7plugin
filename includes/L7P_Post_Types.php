@@ -54,6 +54,7 @@ class L7P_Post_Types
                 'supports'      => array( 'title', 'editor', 'excerpt', 'thumbnail', 'custom-fields', 'page-attributes' ),
                 'capabilities'  => array(
                     'create_posts' => false,
+                    'edit_post'    => true
                 )
             )
         );
