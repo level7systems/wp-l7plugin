@@ -21,7 +21,7 @@ class L7P_Content
         if (is_single()) {
             // parse for extra syntax
             
-            $content = $this->syntax_callbacks($content);
+            // $content = $this->syntax_callbacks($content);
         }
         
         return $content;

@@ -24,10 +24,16 @@ class L7P_Install
         // create pages
         $this->create_pages();
         
+        // rewrite endpoints
+        $this->rewrite_endpoints();
+        
         // other settup
+        
+        // flush rules after install
+        flush_rewrite_rules();
     }
     
-    public function create_pages()
+    private function create_pages()
     {
         $pages = apply_filters( 'level7platform_create_pages', array(
             'pricing' => array(
@@ -306,6 +312,20 @@ CONTENT
         foreach ( $pages as $key => $page ) {
             l7_create_page(esc_sql($page['name']), 'level7platform_' . $key . '_page_id', $page['title'], $page['content']);
         }
+    }
+    
+    private function revrite_endpoints()
+    {
+        $this->query_vars = array(
+            // pricing
+            'pricing'            => get_option('level7platform_pricing_endpoint', 'pricing'),
+            // rates action
+            'rates'              => get_option('level7platform_rates_endpoint', 'rates'),
+            // telephone numbers
+            'telephone-numbers'  => get_option('level7platform_telephone_numbers_endpoint', 'telephone-numbers'),
+            // hardware
+            'hardware'           => get_option('level7platform_hardware_endpoint', 'hardware'),
+        );
     }
 }
 
