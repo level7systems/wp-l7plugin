@@ -27,7 +27,13 @@ class L7P_Install
         // rewrite endpoints
         $this->rewrite_endpoints();
         
+        // admin
+        add_filter('plugin_action_links', array('settings'	=>	'<a href="' . admin_url( 'admin.php?page=wc-settings' ) . '" title="' . esc_attr( __( 'View WooCommerce Settings', 'woocommerce' ) ) . '">' . __( 'Settings', 'woocommerce' ) . '</a>'));
+        
+        die('aaa');
+        
         // other settup
+        
         
         // flush rules after install
         flush_rewrite_rules();

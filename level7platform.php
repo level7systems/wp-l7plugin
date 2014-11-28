@@ -98,6 +98,7 @@ class Level7Platform
 		if (is_admin()) {
 		    include_once('includes/admin/L7P_Admin_Functions.php');
 		    include_once('includes/admin/L7P_Admin.php');
+		    include_once('includes/L7P_Form.php');
 		} else { // Frontend
 		    include_once('includes/L7P_Frontend.php');
 		    include_once('includes/L7P_Shortcodes.php');
