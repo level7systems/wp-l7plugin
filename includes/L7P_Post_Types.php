@@ -36,26 +36,29 @@ class L7P_Post_Types
             return;
         }
     
-        // do_action( 'level7_register_level7_page_type' );
-    
-        // $permalinks        = get_option( 'level7platform_permalinks' );
-        // $product_permalink = empty( $permalinks['product_base'] ) ? _x( 'product', 'slug', 'level7platform' ) : $permalinks['product_base'];
-    
         register_post_type(
             'level7_page',
             array(
-                'label'         => __("Page templates"),
+                'label'         => __("Page templates", 'level7platform'),
+                'description'   => __( 'This is where you can manage Level7 platform page templates.', 'level7platform' ),
                 'labels'        => array(
             	
                 ),
                 'public'        => true,
                 'description'   => __( 'This is where you can manage Level7 platform page templates.', 'level7platform' ),
                 'show_in_menu'  => 'l7-settings',
+                'capability_type'     => 'page',
                 'supports'      => array( 'title', 'editor', 'excerpt', 'thumbnail', 'custom-fields', 'page-attributes' ),
                 'capabilities'  => array(
-                    'create_posts' => false,
-                    'edit_post'    => true
-                )
+                    'create_pages' => false,
+                    'edit_page'    => true
+                ),
+                
+                // 'rewrite'             => $product_permalink ? array( 'slug' => untrailingslashit( $product_permalink ), 'with_front' => false, 'feeds' => true ) : false,
+                'rewrite'               => array(
+                    'slug'       => 'level7_page',
+                    'with_front' => false
+                ),
             )
         );
         

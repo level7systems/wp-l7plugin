@@ -26,6 +26,7 @@ class Level7Platform
         if ( is_null( self::$_instance ) ) {
             self::$_instance = new self();
         }
+        
         return self::$_instance;
     }
     
@@ -109,6 +110,14 @@ class Level7Platform
 		include_once('includes/L7P_Post_Types.php');
 		// XmlRpc Api
 		include_once('includes/L7P_XmlRpc_Api.php');
+	}
+	
+	public function init()
+	{
+	    // TODO: only for develop purpose
+	    error_reporting(E_ALL);
+	    ini_set('display_errors', 1);
+	    
 	}
 	
 	public function plugin_url()
