@@ -32,12 +32,12 @@ class L7P_Post_Types
      */
     public static function register_post_types()
     {
-        if (post_type_exists('level7_page')) {
+        if (post_type_exists('level7platform_page')) {
             return;
         }
     
         register_post_type(
-            'level7_page',
+            'level7platform_page',
             array(
                 'label'         => __("Page templates", 'level7platform'),
                 'description'   => __( 'This is where you can manage Level7 platform page templates.', 'level7platform' ),
@@ -56,51 +56,12 @@ class L7P_Post_Types
                 
                 // 'rewrite'             => $product_permalink ? array( 'slug' => untrailingslashit( $product_permalink ), 'with_front' => false, 'feeds' => true ) : false,
                 'rewrite'               => array(
-                    'slug'       => 'level7_page',
+                    'slug'       => 'level7platform_page',
                     'with_front' => false
                 ),
             )
         );
         
-        /*
-        register_post_type(
-            'level7_page',
-            // apply_filters('level7platform_register_post_type_level7_page',
-            array(
-                'label'     => __('Page templates'),
-                'labels'              => array(
-                    'name'               => __( 'Page templates', 'level7platform' ),
-                    'singular_name'      => __( 'Page template', 'level7platform' ),
-                    'menu_name'          => _x( 'Page templates', 'Admin menu name', 'level7platform' ),
-                    'add_new'            => __( 'Add Product', 'level7platform' ),
-                    'add_new_item'       => __( 'Add New Product', 'level7platform' ),
-                    'edit'               => __( 'Edit', 'level7platform' ),
-                    'edit_item'          => __( 'Edit Page template', 'level7platform' ),
-                    'new_item'           => __( 'New Product template', 'level7platform' ),
-                    'view'               => __( 'View Page template', 'level7platform' ),
-                    'view_item'          => __( 'View Page template', 'level7platform' ),
-                    'search_items'       => __( 'Search Page templates', 'level7platform' ),
-                    'not_found'          => __( 'No Page templates found', 'level7platform' ),
-                    'not_found_in_trash' => __( 'No Page templates found in trash', 'level7platform' )
-                ),
-                'description'         => __( 'This is where you can manage Level7 platform page templates.', 'level7platform' ),
-                'public'              => true,
-                'show_ui'             => true,
-                // 'capability_type'     => 'level7_page',
-                'capability_type'     => 'manage_options',
-                'map_meta_cap'        => true,
-                'publicly_queryable'  => true,
-                'exclude_from_search' => false,
-                'hierarchical'        => false, // Hierarchical causes memory issues - WP loads all records!
-                //'rewrite'             => $product_permalink ? array( 'slug' => untrailingslashit( $product_permalink ), 'with_front' => false, 'feeds' => true ) : false,
-                'query_var'           => true,
-                'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'custom-fields', 'page-attributes' ),
-                // 'has_archive'         => ( $shop_page_id = wc_get_page_id( 'shop' ) ) && get_post( $shop_page_id ) ? get_page_uri( $shop_page_id ) : 'shop',
-                'show_in_nav_menus'   => true
-            )
-            //)
-        );
-        */
     }
 }
 

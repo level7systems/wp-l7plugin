@@ -33,7 +33,7 @@ function l7_create_page($slug, $page_title = '', $page_content = '', $post_paren
 
     $page_data = array(
         'post_status'       => 'publish',
-        'post_type'         => 'level7_page',
+        'post_type'         => 'level7platform_page',
         'post_author'       => 1,
         'post_name'         => $slug,
         'post_title'        => $page_title,

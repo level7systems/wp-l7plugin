@@ -18,21 +18,17 @@ class L7P_Admin
     
     private $messages = array(
     	'notice'   => array(),
-        'errors'   => array()
+        'error'   => array()
     );
     
     public function __construct()
     {
-        
         add_action('admin_menu', array( $this, 'menu' ), 5);
-        
-        // add_action('admin_head', array( $this, 'menu_head' ));
     }
     
     public function menu()
     {
-        add_menu_page("Level7 Platform", "Level7 Platform", 'manage_options', 'l7-settings', null, null, 70);
-
+        add_menu_page("Level7 Platform", "Level7 Platform", 'manage_options', 'l7-settings', null, null, 57);
         add_submenu_page( 'l7-settings', 'Settings', 'Settings', 'manage_options', 'l7-settings', array($this, 'settings_page'));
     }
     
@@ -47,7 +43,7 @@ class L7P_Admin
         
         // Add a section to the permalinks page
         add_settings_section('level7platform_permalinks_section', __( 'Permalinks', 'level7platform' ),
-          array($this, self::OPTION_PERMALINKS . '_callback'), 'level7platform');
+          array($this, 'permalinks_section_callback'), 'level7platform');
         
         $permalinks = get_option(self::OPTION_PERMALINKS);
         
@@ -123,7 +119,7 @@ class L7P_Admin
     	
 	public function permalinks_section_callback()
     {
-        echo wpautop( __( 'These settings control the permalinks used for pages. These settings only apply when <strong>not using "default" permalinks above</strong>.', 'level7platform' ) );
+        echo wpautop( __( 'These settings control the permalinks used for pages. These settings only apply when <strong>not using "default" permalinks below</strong>.', 'level7platform' ) );
     }
     
     private function save()
