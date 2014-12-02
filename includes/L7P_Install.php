@@ -36,6 +36,9 @@ class L7P_Install
     {
         // enable XmlRpc
         update_option('enable_xmlrpc', '1');
+
+        // create roles and capabilities
+        $this->create_roles();
         
         // create pages
         $this->create_pages();
@@ -55,6 +58,7 @@ class L7P_Install
         global $wpdb;
         
         // delete created pages or wp_trash_post
+        wp_delete_post(get_option('level7platform_pricing_page_id'));
         wp_delete_post(get_option('level7platform_rates_page_id'));
         wp_delete_post(get_option('level7platform_telephone_numbers_page_id'));
         wp_delete_post(get_option('level7platform_hardware_page_id'));
@@ -67,6 +71,14 @@ class L7P_Install
         $wpdb->query( "DELETE FROM {$wpdb->postmeta} meta LEFT JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE wp.ID IS NULL;" );
     }
     
+    // add roles and capabilities
+    private function create_roles()
+    {
+        global $wp_roles;
+        
+        // TODO: add capabilities: 
+    }
+    
     private function create_pages()
     {
         global $wpdb;
@@ -76,6 +88,12 @@ class L7P_Install
         // 3 standard pages
         // TODO: add more pages to installer
         $pages = array(
+            'pricing' => array(
+                'name'      => 'pricing',
+                'title'     => 'Plans',
+                'content'   => $pages_contents['rates'],
+                'post_type' => 'page',
+            ),
             'rates' => array(
                 'name'      => 'rates',
                 'title'     => 'Call rates',
@@ -183,7 +201,126 @@ class L7P_Install
     private function get_pages_contents()
     {
         return array(
-            'rates' => <<<CONTENT
+            'pricing' => <<<CONTENT
+<article class="main plans-page">
+  <div class="main-image pricing-image"></div>
+  <header class="page-header dark-bg">
+    <div class="inner">
+      <h1>`Choose a plan</h1>
+      <p class="byline"><span class="text-grey">that</span> 
+        <span class="text-orange">fits You</span> the most`</p>
+        <cms id="block" name="Currency form" />
+    </div>
+  </header>
+  <section class="tr-w plans-wrap">
+    <div class="grid-row plans">
+      <div class="plan">
+        <h2 class="h3">`Pay As You Go`</h2>
+        <div class="inner">
+          <ul>
+            <li><span class="price">%USER_CHARGE%</span><br>`per user monthly`</li>
+            <li>`Free setup`</li>
+            <li>`24/7 Technical Support`</li>
+            <li>`All <a href="/en/features">features</a> included`</li>
+            <li>`Free inbound calls`</li>
+            <li>`Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a>`</li>
+         </ul>
+          |if:auth|
+           <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">`Buy Plan Now`</a>
+          |else|
+           <a href="`/en/register#P`" class="button b-dborder b-freetrial">`Free Trial`</a>
+          |endif|
+        
+        </div>
+      </div>	
+      <div class="plan">
+        <h2 class="h3">`Unlimited Domestic`</h2>
+        <div class="inner">
+          <ul>
+            <li><span class="price">%USER_UNLIMITED%</span><br>`per user monthly`</li>
+            <li>`Free setup`</li>
+            <li>`24/7 Technical Support`</li>
+            <li>`All <a href="/en/features">features</a> included`</li>
+            <li>`Free inbound calls`</li>
+            <li>`Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a>`</li>
+            <li>`Inclusive <a href="/en/telephone-numbers">geographical number</a> for each user`</li>
+            <li>`Free outbound calls to fixed lines in one 
+              <a class="tooltip" title="Argentina,
+                                        Australia, Austria, Belgium, Brazil São Paulo, Canada, Chile, China, Croatia, Czech Republic, 
+                                        Denmark, FranceGermany, Greece, Guam, Hong Kong S.A.R., China, Hungary, Ireland, Israel, 
+                                        Italy, Luxembourg, Malaysia, Netherlands, New Zealand, Norway, Peru, Poland, Portugal, Puerto Rico, 
+                                        Russia, Singapore, South Korea, Spain, Sweden, Switzerland, Taiwan, Turkey, U.S. Virgin Islands, 
+                                        United Kingdom, United States, Vatican, Venezuela">chosen country`</a></li>
+          </ul>
+          |if:auth|
+          <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">`Buy Plan Now`</a>
+          |else|
+          <a href="`/en/register#S`" class="button b-dborder b-freetrial">`Free Trial`</a>
+          |endif|
+        </div>
+      </div>		
+      <div class="plan">
+        <h2 class="h3">`Unlimited International`</h2>
+        <div class="inner">
+          <ul>
+            <li><span class="price">%USER_UNLIMITED_INT%</span><br>`per user monthly`</li>
+            <li>`Free setup`</li>
+            <li>`24/7 Technical Support`</li>
+            <li>`All <a href="/en/features">features</a> included`</li>
+            <li>`Free inbound calls`</li>
+            <li>`Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a>`</li>
+            <li>`Inclusive <a href="/en/telephone-numbers">geographical number</a> for each user`</li>
+            <li>`Free outbound calls to fixed lines in all <a class="tooltip" title="Argentina,
+                                        Australia, Austria, Belgium, Brazil São Paulo, Canada, Chile, China, Croatia, Czech Republic, 
+                                        Denmark, FranceGermany, Greece, Guam, Hong Kong S.A.R., China, Hungary, Ireland, Israel, 
+                                        Italy, Luxembourg, Malaysia, Netherlands, New Zealand, Norway, Peru, Poland, Portugal, Puerto Rico, 
+                                        Russia, Singapore, South Korea, Spain, Sweden, Switzerland, Taiwan, Turkey, U.S. Virgin Islands, 
+                                        United Kingdom, United States, Vatican, Venezuela">listed countries </a>
+              and to mobile phones in <a class="tooltip" title="Canada, China, Hong Kong S.A.R., China, Puerto Rico, United States">these countries`</a></li>
+          </ul>
+          |if:auth|
+          <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">`Buy Plan Now`</a>
+          |else|
+          <a href="`/en/register#A`" class="button b-dborder b-freetrial">`Free Trial`</a>
+          |endif|
+        </div>
+      </div>	
+    </div>
+    <div class="tp_-_box" align="center" style="height:300px; margin-top:40px;" data-tp-settings="domainId:7923938,linkColor:00c0f2,fontSize:14,fontColor:2d4454,bgBarColor:2d4454,borderRadius:0,borderColor:2d4454,showRatingText:False,showUserImage:False,width:700,numOfReviews:1,useDarkLogo:False,fontBarColor:2d4454"> 
+    <a href="https://www.trustpilot.com/review/voipstudio.com" rel="nofollow" hidden>VoIPstudio Reviews</a>
+</div>
+<script type="text/javascript">
+    (function () { var a = "https:" == document.location.protocol ? "https://ssl.trustpilot.com" : "http://s.trustpilot.com", b = document.createElement("script"); b.type = "text/javascript"; b.async = true; b.src = a + "/tpelements/tp_elements_all.js"; var c = document.getElementsByTagName("script")[0]; c.parentNode.insertBefore(b, c) })();
+</script>
+  </section>
+  <section class="dark-bg text-center">
+    <div class="inner">
+      <h3 class="h2">`Start <span class="text-orange">30 days free trial`</span></h3>
+      <div class="grid-row icons">
+        <div class="col-1-3">
+          <div class="icon-how-trial"><span>`How does the 30-days free trial work?</span></div>
+          <p>Sign up for a trial account and enjoy 30 days of full access to all of our virtual PBX options and features without any obligations. If you 
+            decide that you don't want to continue using our virtual PBX service after the trial period you don't have to do anything. Your trial will end 
+            automatically and no monthly fees will be applied.</p>`
+        </div>
+        <div class="col-1-3">
+          <div class="icon-credit-card"><span>`Do I need a credit card?</span></div>
+          <p>A credit card is not required, you can start using your VoIPstudio IP phone System right away. Sign up now and we will top up your account with 100 free minutes or call credits* which you can use to make calls to any landline or mobile number.* If you need more minutes simply charge your account using a credit card.`<br>
+            <span class="super-small text-grey">`* - Not available in all countries. You may have to provide a valid telephone number to activate your trial`</span></p>
+        </div>
+        <div class="col-1-3">
+          <div class="icon-cancel-trial"><span>`Can i cancel trial at any time?</span></div>
+          <p>If for whatever reason you are not completely satisfied with your VoIPstudio hosted phone system you can cancel your subscription at any time. There 
+            is no contract or minimum notice period.`</p>
+        </div>
+      </div>
+      <a href="`/en/register`" class="button-b button-b-white">`Take a Free Trial`</a>
+    </div>
+  </section>
+</article>
+CONTENT
+
+            ,'rates' => <<<CONTENT
 <article class="main">
 		<div class="main-image pricing-image"></div>
 		<header class="page-header dark-bg tr-d">
