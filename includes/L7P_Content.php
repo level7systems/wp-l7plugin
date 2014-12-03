@@ -10,24 +10,32 @@
 
 class L7P_Content
 {
+    private $inline_tags = array();
+    
     public function __construct()
     {
+        // TODO
+        $user_webproduct_code = l7p_get_option('luser_webproduct', 'v');
+        $this->inline_tags = $this->get_inlines($user_webproduct_code);
+        
         add_filter('the_content', array($this, 'parse_content'), 20);
     }
     
     public function parse_content($content)
     {
         // TODO: 
-        if (is_single()) {
+        if (is_single() || is_page()) {
             // parse for extra syntax
             
-            // $content = $this->syntax_callbacks($content);
+            $content = $this->apply_callbacks($content);
         }
         
         return $content;
     }
     
-    private function syntax_callbacks($content)
+    
+    
+    private function apply_callbacks($content)
     {
         // static tags and blocks
         $regex = array(
@@ -54,13 +62,13 @@ class L7P_Content
     
         $content = preg_replace($regex, $replace, $content);
     
-        $content = preg_replace_callback('/\`(.*)\`/msU','MyCMSView::i18n',$content);
-        $content = preg_replace_callback('/href="(.*)"/mU','MyCMSView::mysyntax_url',$content);
-        $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU','MyCMSView::mysyntax_image',$content);
-        $content = preg_replace_callback('/\%([A-Z,_]+)\%/imU','MyCMSView::mysyntax_inline',$content);
-        $content = preg_replace_callback('/\|if\:(.*)\|/mU','MyCMSView::mysyntax_cond',$content);
-        $content = preg_replace_callback('/\|foreach\:(.*)\|/mU','MyCMSView::mysyntax_foreach',$content);
-        $content = preg_replace_callback('/<cms\s+id="(.*)"\s*\/>/mU','MyCMSView::mysyntax_partial',$content);
+        $content = preg_replace_callback('/\`(.*)\`/msU', array($this, 'i18n'), $content);
+        $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'mysyntax_url'), $content);
+        $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array($this, 'mysyntax_image'), $content);
+        $content = preg_replace_callback('/\%([A-Z,_]+)\%/imU', array($this, 'mysyntax_inline'), $content);
+        $content = preg_replace_callback('/\|if\:(.*)\|/mU', array($this, 'mysyntax_cond'), $content);
+        $content = preg_replace_callback('/\|foreach\:(.*)\|/mU', array($this, 'mysyntax_foreach'), $content);
+        $content = preg_replace_callback('/<cms\s+id="(.*)"\s*\/>/mU', array($this, 'mysyntax_partial'), $content);
     
         return $content;
     }
@@ -69,14 +77,13 @@ class L7P_Content
     /**
      * Renders %INLINE_TAGS%
      */
-    public static function mysyntax_inline($m)
+    public function mysyntax_inline($m)
     {
-        if (!isset(self::$inline_tags[$m[1]]))
-        {
+        if (!isset($this->inline_tags[$m[1]])) {
             return '<span MySyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Invalid inline tag:'.$m[1].'</div>';
         }
     
-        return '<?php echo '.self::$inline_tags[$m[1]]['function'].' ?>';
+        return '<?php echo '.$this->inline_tags[$m[1]]['function'].' ?>';
     }
     
     /**
@@ -547,6 +554,27 @@ class L7P_Content
         {
           return '<div MySyntaxError="true" style="color: balck; padding: 5px; height: 40px; width: 100%; border: 1px solid red; background: #FFA500; font-weight: bold;">Error: unable to process partial tag:<br/>'.$m[1].'</div>';
         }
+    }
+    
+    private function get_inlines($web_product_code)
+    {
+        $inlines = array(
+        	
+        );
+        
+        if (in_array($web_product_code, array('v', 'r' , 'h'))) {
+            $prod_code = 'v';
+        } else {
+            $prod_code = 'c';
+        }
+        
+        if (isset($inlines[$prod_code])) {
+            $available_inlines = array_merge($inlines['all'], $inlines[$prod_code]);
+        } else {
+            $available_inlines = $inlines['all'];
+        }
+        
+        return $available_inlines;
     }
 }
 

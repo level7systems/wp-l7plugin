@@ -19,7 +19,7 @@
  * @param int $post_parent (default: 0) Parent for the new page
  * @return int page ID
  */
-function l7_create_page($slug, $page_title = '', $page_content = '', $post_parent = 0) {
+function l7p_create_page($slug, $page_title = '', $page_content = '', $post_parent = 0) {
     global $wpdb;
 
     $page_found = null;

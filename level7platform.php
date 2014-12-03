@@ -30,7 +30,12 @@ class Level7Platform
         return self::$_instance;
     }
     
-    public function __construct() {
+    public function __construct()
+    {
+        // TODO: only for develop purpose
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        
         // Auto-load classes on demand
         if (function_exists("__autoload") ) {
             spl_autoload_register("__autoload");
@@ -79,12 +84,12 @@ class Level7Platform
 
 	private function define_constants()
 	{
-		define( 'L7P_PLUGIN_FILE', __FILE__ );
-		define( 'L7P_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-		define( 'L7P_VERSION', $this->version );
+		define('L7P_PLUGIN_FILE', __FILE__);
+		define('L7P_PLUGIN_BASENAME', plugin_basename(__FILE__));
+		define('L7P_VERSION', self::VERSION);
 
 		if (!defined('L7P_LOG_DIR')) {
-			define( 'L7P_LOG_DIR', ABSPATH . 'l7p-logs/' );
+			define('L7P_LOG_DIR', ABSPATH . 'l7p-logs/');
 		}
 	}
 
@@ -93,13 +98,16 @@ class Level7Platform
 	 */
 	private function includes()
 	{
+	    // common functions
+	    include_once('includes/L7P_Functions.php');
+	    
 	    // installer
 	    include_once('includes/L7P_Install.php');
 	    
 		if (is_admin()) {
 		    include_once('includes/admin/L7P_Admin_Functions.php');
-		    include_once('includes/admin/L7P_Admin.php');
 		    include_once('includes/L7P_Form.php');
+		    include_once('includes/admin/L7P_Admin.php');
 		} else { // Frontend
 		    include_once('includes/L7P_Frontend.php');
 		    include_once('includes/L7P_Shortcodes.php');
@@ -112,12 +120,10 @@ class Level7Platform
 		include_once('includes/L7P_XmlRpc_Api.php');
 	}
 	
+	// init
 	public function init()
 	{
-	    // TODO: only for develop purpose
-	    error_reporting(E_ALL);
-	    ini_set('display_errors', 1);
-	    
+	    // TODO
 	}
 	
 	public function plugin_url()

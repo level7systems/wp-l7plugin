@@ -11,9 +11,12 @@
 class L7P_XmlRpc_Api
 {
     protected $methods = array(
+        // to verify if pugin is enabled
         'l7.ping'           => 'ping',
-        'l7.setPricelists'  => 'setPricelists',
         // TODO: other methods
+        'l7.setPricelists'  => 'setPricelists',
+
+        'l7.setHardware'    => 'setHardware',
     );
     
     public function __construct()

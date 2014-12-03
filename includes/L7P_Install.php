@@ -44,7 +44,7 @@ class L7P_Install
         $this->create_pages();
         
         // rewrite endpoints
-        $this->rewrite_endpoints();
+        // $this->rewrite_endpoints();
         
         // other settup
         
@@ -91,18 +91,18 @@ class L7P_Install
             'pricing' => array(
                 'name'      => 'pricing',
                 'title'     => 'Plans',
-                'content'   => $pages_contents['rates'],
+                'content'   => $pages_contents['pricing'],
                 'post_type' => 'page',
             ),
             'rates' => array(
                 'name'      => 'rates',
-                'title'     => 'Call rates',
+                'title'     => 'Call Rates',
                 'content'   => $pages_contents['rates'],
                 'post_type' => 'page',
             ),
             'telephone_numbers' => array(
                 'name'      => 'telephone_numbers',
-                'title'     => 'Telephone numbers',
+                'title'     => 'Telephone Numbers',
                 'content'   => $pages_contents['telephone_numbers'],
                 'post_type' => 'page',
             ),
@@ -170,7 +170,8 @@ class L7P_Install
             'post_status'       => 'publish',
             'post_type'         => $post_type,
             'post_author'       => 1,
-            'post_name'         => $page_name,
+            // slug
+            'post_name'         => sanitize_title($page_name),
             'post_title'        => $page_title,
             'post_content'      => $page_content,
             'post_parent'       => 0,
@@ -183,7 +184,7 @@ class L7P_Install
             $page_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->posts . " WHERE post_type='page' AND post_content LIKE %s LIMIT 1;", "%{$page_content}%"));
         } else {
             // search for an existing page with the specified page name
-            $page_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->posts . " WHERE post_type='page' AND post_name = %s LIMIT 1;", $page_name));
+            $page_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->posts . " WHERE post_type='page' AND post_name = %s LIMIT 1;", sanitize_title($page_name)));
         }
         
         if (!$page_id) {
@@ -225,11 +226,11 @@ class L7P_Install
             <li>`Free inbound calls`</li>
             <li>`Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a>`</li>
          </ul>
-          |if:auth|
+          [if is_auth]
            <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">`Buy Plan Now`</a>
-          |else|
+          [else]
            <a href="`/en/register#P`" class="button b-dborder b-freetrial">`Free Trial`</a>
-          |endif|
+          [/if]
         
         </div>
       </div>	
@@ -252,11 +253,11 @@ class L7P_Install
                                         Russia, Singapore, South Korea, Spain, Sweden, Switzerland, Taiwan, Turkey, U.S. Virgin Islands, 
                                         United Kingdom, United States, Vatican, Venezuela">chosen country`</a></li>
           </ul>
-          |if:auth|
+          [if is_auth]
           <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">`Buy Plan Now`</a>
-          |else|
+          [else]
           <a href="`/en/register#S`" class="button b-dborder b-freetrial">`Free Trial`</a>
-          |endif|
+          [/if]
         </div>
       </div>		
       <div class="plan">
@@ -278,11 +279,11 @@ class L7P_Install
                                         United Kingdom, United States, Vatican, Venezuela">listed countries </a>
               and to mobile phones in <a class="tooltip" title="Canada, China, Hong Kong S.A.R., China, Puerto Rico, United States">these countries`</a></li>
           </ul>
-          |if:auth|
+          [if is_auth]
           <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">`Buy Plan Now`</a>
-          |else|
+          [else]
           <a href="`/en/register#A`" class="button b-dborder b-freetrial">`Free Trial`</a>
-          |endif|
+          [/if]
         </div>
       </div>	
     </div>
@@ -359,7 +360,7 @@ CONTENT
 					</table>
 				</div>
 				<div class="col-1-2">
-          |if:term_has_local|
+          [if:term_has_local|
 					<table class="table dom-calls">
 						<thead>
 							<tr>
@@ -367,39 +368,39 @@ CONTENT
 							</tr>
 							<tr>
 								<td><strong>`Destination`</strong></td>
-                              |if:term_unlimited_local|
+                              [if:term_unlimited_local|
                                 <td><strong>`Unlimited Plan`</strong><br>`(Per minute rate)`</td>
                                 <td><strong>`Pay As You Go`</strong><br>`(Per minute rate)`</td>
-                              |else|
+                              [else]
                                 <td><strong>`Per minute rate`</strong></td>
-                              |endif|
+                              [/if]
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>`Calls to Landlines`</td>
-                              |if:term_unlimited_local|
-                                <td>|if:term_local_fixed_free|Free|else|%TERM_LOCAL_FIXED%|endif|</td>
+                              [if:term_unlimited_local|
+                                <td>[if:term_local_fixed_free|Free[else]%TERM_LOCAL_FIXED%[/if]</td>
                                 <td>%TERM_LOCAL_FIXED%</td>
-                              |else|
+                              [else]
                                 <td>%TERM_LOCAL_FIXED%</td>
-                              |endif|
+                              [/if]
 							</tr>
 						</tbody>
 						<tbody>
 							<tr>
 								<td>`Calls to Mobiles`</td>
-                              |if:term_unlimited_local|
-                                <td>|if:term_local_mobile_free|Free|else|%TERM_LOCAL_MOBILE%|endif|</td>
+                              [if:term_unlimited_local|
+                                <td>[if:term_local_mobile_free|Free[else]%TERM_LOCAL_MOBILE%[/if]</td>
                                 <td>%TERM_LOCAL_MOBILE%</td>
-                              |else|
+                              [else]
                                 <td>%TERM_LOCAL_MOBILE%</td>
-                              |endif|
+                              [/if]
 							</tr>
 						</tbody>
 					</table>
           
-         |endif|
+         [/if]
 				</div>
 			</div>
       
@@ -427,7 +428,7 @@ CONTENT
         |foreach:term_countries|
 					<tr>
 						<td><a href="%TERM_ROUTE_URL%">%TERM_ROUTE_COUNTRY%</a></td>
-						<td>|if:term_is_unlimited|Free|endif|</td>
+						<td>[if:term_is_unlimited|Free[/if]</td>
 						<td>%TERM_FIXED%</td>
 						<td>%TERM_MOBILE%</td>
 					</tr>
@@ -502,12 +503,12 @@ CONTENT
               <td>%TERM_ROUTE_NAME%</td>
               <td>%TERM_ROUTE_PREFIXES%</td>
               <td>%TERM_ROUTE_RATE%
-              |if:term_route_unlimited|
+              [if:term_route_unlimited|
                 (Free*)</td>
-              |endif|
-              |if:term_route_conn_fee|
+              [/if]
+              [if:term_route_conn_fee|
                 Connection fee: %TERM_ROUTE_CONN_FEE%
-              |endif|
+              [/if]
             </tr>
           </tbody>
         |endforeach|
@@ -631,7 +632,7 @@ CONTENT
 				<tbody>
 					<tr>
 						<td><a href="%DDI_COUNTRY_URL%">%DDI_COUNTRY_NAME%</a></td>
-						<td>|if:ddi_is_unlimited|`Free`|endif|</td>
+						<td>[if:ddi_is_unlimited|`Free`[/if]</td>
 						<td>%DDI_SETUP_FEE%</td>
 						<td>%DDI_MONTHLY_FEE%</td>
 					</tr>
@@ -690,7 +691,7 @@ CONTENT
 			</div>
       
       
-  |if:ddi_national|
+  [if:ddi_national|
 
 			<table class="table v-numbers-single">
 				<thead>
@@ -716,9 +717,9 @@ CONTENT
 				</tbody>
 			</table>
   
-  |endif|
+  [/if]
 
-  |if:ddi_ddi_city|
+  [if:ddi_ddi_city|
 			<table class="table v-numbers-single">
 				<thead>
 					<tr>
@@ -737,9 +738,9 @@ CONTENT
 					<tr>
 						<td>%DDI_CITY_NAME%</td>
 						<td>
-            |if:ddi_has_area_code|
+            [if:ddi_has_area_code|
               %DDI_AREA_CODE%
-            |endif|
+            [/if]
             </td>
 						<td>%DDI_SETUP_FEE%</td>
 						<td>%DDI_MONTHLY_FEE%</td>
@@ -753,9 +754,9 @@ CONTENT
 					</tr>
 				</tfoot>
 			</table>
-  |endif|
+  [/if]
 
-  |if:ddi_ddi_toll_free|
+  [if:ddi_ddi_toll_free|
     <table class="table v-toll-free">
       <thead>
         <tr>
@@ -776,9 +777,9 @@ CONTENT
           <tr>
             <td>`Toll Free`</td>
             <td>
-            |if:ddi_has_area_code|
+            [if:ddi_has_area_code|
               %DDI_AREA_CODE%
-            |endif|
+            [/if]
             </td>
             <td>%DDI_SETUP_FEE%</td>
             <td>%DDI_MONTHLY_FEE%</td>
@@ -789,7 +790,7 @@ CONTENT
       |endforeach|
       
     </table>
-  |endif|
+  [/if]
 
 		</section>
 		<section class="dark-bg text-center">
@@ -820,7 +821,7 @@ CONTENT
         
 				<ul class="state-list">
           
-  |if:ddi_states|
+  [if:ddi_states|
     
     |foreach:ddi_states|
       
@@ -828,14 +829,14 @@ CONTENT
       
     |endforeach|
     
-  |endif|
+  [/if]
   
 				</ul>
         
         
 			</div>
       
-|if:ddi_ddi_toll_free|
+[if:ddi_ddi_toll_free|
 
 			<table class="table v-toll-free">
 				<thead>
@@ -864,7 +865,7 @@ CONTENT
     |endforeach|
 				</tbody>
 			</table>
-|endif|
+[/if]
 
 		</section>
 		<section class="dark-bg text-center">
@@ -996,7 +997,7 @@ CONTENT
       <li><a href="%PHONE_ACCESSORY_URL%">`Accesories`</a></li>
     </ul>
       <ul class="product-list clearfix">
-        |if:phones|
+        [if:phones|
           
           |foreach:phones|
             
@@ -1013,18 +1014,18 @@ CONTENT
               <div class="desc">
               <p class="small">%PHONE_SHORT_DESCRIPTION%... <a href="%PHONE_URL%">`Read more.`</a></p>
               <p class="small text-right">
-                |if:phone_in_stock|
+                [if:phone_in_stock|
                   <span class="text-grey">%PHONE_STOCK% `in stock`</span> <a href="#" class="button-b" onclick="buy('%PHONE_URL%');">`Buy`</a>	
-                |else|
+                [else]
                   <span class="text-grey">`Out of stock`</span>
-                |endif|
+                [/if]
               </div>
             </li>
           |endforeach|
           
-        |else|
+        [else]
           <li>`No phones are available at the moment.`</li>
-        |endif|
+        [/if]
       </ul>
     </div>
   </section>
@@ -1065,12 +1066,12 @@ CONTENT
 							<figure>
 									<img src="%PHONE_IMG%">
 							</figure>
-            |if:phone_in_stock|
+            [if:phone_in_stock|
 						<button class="button b-dborder center" onclick="buy('%PHONE_URL%');">`Buy This`</button>
 						<p class="small text-center text-grey">%PHONE_STOCK% in stock</p>
-            |else|
+            [else]
             <p class="small text-center text-grey">`Out of stock`</p>
-            |endif|
+            [/if]
 					</div>
 					<div class="col-2-3 product-content">
 						%PHONE_SHORT_DESCRIPTION%
@@ -1105,7 +1106,7 @@ CONTENT
   </tr>
 </tbody></table>
 
-|if:phone_has_reviews|
+[if:phone_has_reviews|
   
   |foreach:phone_reviews|
     
@@ -1130,11 +1131,11 @@ CONTENT
   |endforeach|
   
   
-|else|
+[else]
   No reviews yet,<br/>
   be the first to write one.<br/><br/>
 
-|endif|
+[/if]
 
 <h2>Write your own review</h2>
 

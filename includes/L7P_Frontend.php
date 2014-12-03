@@ -16,7 +16,7 @@ class L7P_Frontend
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
 
         // TODO: to be fixed
-        add_action('pre_get_posts', array($this, 'pre_get_posts'));
+        //add_action('pre_get_posts', array($this, 'pre_get_posts'));
     }
 
 	/**
@@ -53,7 +53,7 @@ class L7P_Frontend
 	    if ($query->is_main_query()) {
 	        
 	        // TODO: to be fixed
-	        query_posts('pagename=rates');
+	        // query_posts('pagename=rates');
 	    }
 	}
 
