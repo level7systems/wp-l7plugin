@@ -10,24 +10,28 @@
 
 class L7P_Content
 {
-    private $inline_tags = array();
-    
     public function __construct()
     {
         // TODO
         $user_webproduct_code = l7p_get_option('luser_webproduct', 'v');
-        $this->inline_tags = $this->get_inlines($user_webproduct_code);
         
         add_filter('the_content', array($this, 'parse_content'), 20);
     }
     
     public function parse_content($content)
     {
-        // TODO: 
         if (is_single() || is_page()) {
             // parse for extra syntax
             
+            // strip PHP tags to avoid injcections
+            $content = preg_replace("#<\?.*?(\?>|$)#s", "", $content);
+            // 
             $content = $this->apply_callbacks($content);
+            
+            // execute PHP functions
+            ob_start();
+            $content = eval("?> " . $content);
+            $content = ob_get_clean();
         }
         
         return $content;
@@ -41,12 +45,9 @@ class L7P_Content
         $regex = array(
             '/<\?/si',
             '/\?>/si',
-            '/\|else\|/',
-            '/\|endif\|/',
-            '/\|endforeach\|/',
-            // TODO
-            '/<cms\s+id="block"\s+name="(.*)"\s*\/>/',
-            '/<cms\s+id="slot"\s+name="(.*)"\s*\/>/',
+            '/\[else\]/',
+            '/\[\/if\]/',
+            '/\[\/foreach\]/'
         );
     
         $replace = array(
@@ -55,20 +56,21 @@ class L7P_Content
             '<?php else : ?>',
             '<?php endif ?>',
             '<?php endforeach ?>',
-            // TODO
-            '<?php include_component("cms","block",array("block_name" => "$1", "culture" => $sf_user->getCulture())) ?><?php include_slot("$1") ?>',
-            '<?php include_slot("$1") ?>',
         );
     
         $content = preg_replace($regex, $replace, $content);
     
-        $content = preg_replace_callback('/\`(.*)\`/msU', array($this, 'i18n'), $content);
-        $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'mysyntax_url'), $content);
-        $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array($this, 'mysyntax_image'), $content);
-        $content = preg_replace_callback('/\%([A-Z,_]+)\%/imU', array($this, 'mysyntax_inline'), $content);
-        $content = preg_replace_callback('/\|if\:(.*)\|/mU', array($this, 'mysyntax_cond'), $content);
-        $content = preg_replace_callback('/\|foreach\:(.*)\|/mU', array($this, 'mysyntax_foreach'), $content);
-        $content = preg_replace_callback('/<cms\s+id="(.*)"\s*\/>/mU', array($this, 'mysyntax_partial'), $content);
+        // TODO
+        // $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'url'), $content);
+        
+        $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array($this, 'image'), $content);
+
+        $content = preg_replace_callback('/\[if (.*)\]/mU', array($this, 'if_statement'), $content);
+        $content = preg_replace_callback('/\[foreach (.*)\]/mU', array($this, 'foreach_statement'), $content);
+        // block
+        $content = preg_replace_callback('/\[block (.*)\]/imU', array($this, 'block'), $content);
+        // inlines
+        $content = preg_replace_callback('/\[([A-Z,_]+)\]/imU', array($this, 'inline'), $content);
     
         return $content;
     }
@@ -77,19 +79,32 @@ class L7P_Content
     /**
      * Renders %INLINE_TAGS%
      */
-    public function mysyntax_inline($m)
+    public function inline($m)
     {
-        if (!isset($this->inline_tags[$m[1]])) {
-            return '<span MySyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Invalid inline tag:'.$m[1].'</div>';
+        $tag = $m[1];
+        $inline = "l7p_inline_" . $tag;
+        if (!is_callable($inline)) {
+            return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Invalid inline tag:'.$tag.'</div>';
         }
     
-        return '<?php echo '.$this->inline_tags[$m[1]]['function'].' ?>';
+        return sprintf("<?php echo call_user_func('%s') ?>", $inline);
+    }
+    
+    public function block($m)
+    {
+        $tag = $m[1];
+        $block = "l7p_block_" . $tag;
+        if (!is_callable($block)) {
+            return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Invalid block:'.$tag.'</div>';
+        }
+    
+        return sprintf("<?php echo call_user_func('%s') ?>", $block);
     }
     
     /**
-     * Renderes img tag
+     * TODO
      */
-    public static function mysyntax_image($m, $with_php_tag = true)
+    public static function image($m, $with_php_tag = true)
     {
         $temp = array();
     
@@ -124,9 +139,9 @@ class L7P_Content
     }
     
     /**
-     * Returns page URL
+     * TODO
      */
-    public static function mysyntax_url($match)
+    public static function url($match)
     {
         $m = array();
     
@@ -215,58 +230,25 @@ class L7P_Content
     }
     
     /**
-     * Returns __('') translation tag
-     */
-    public static function i18n($m)
-    {
-        $replace_from = array();
-        $replace_to = array();
-    
-        $tokens = array();
-    
-        $_m = array();
-    
-        if (preg_match_all('/%[a-z,_]+%/iU',$m[1],$_m))
-        {
-            foreach ($_m[0] as $i => $token)
-            {
-                $i++;
-    
-                $_token = trim($token,"%");
-    
-                if (isset(self::$inline_tags[$_token]))
-                {
-                    $tag = self::$inline_tags[$_token]['function'];
-                }
-                else
-                {
-                    $tag = '"<!--- Inline tag \''.trim($token,"%").'\' not found -->"';
-                }
-    
-                $replace_from[] = $token;
-                $replace_to[] = '%'.$i.'%';
-    
-                $tokens[] = '"%'.$i.'%" => '.$tag;
-            }
-    
-            $m[1] = str_replace($replace_from, $replace_to, $m[1]);
-        }
-    
-        if ($tokens)
-        {
-            return '<?php echo __("'.str_replace('"','\"',$m[1]).'", array('.implode(",",$tokens).') ) ?>';
-        }
-        else
-        {
-            return '<?php echo __("'.str_replace('"','\"',$m[1]).'") ?>';
-        }
-    }
-    
-    /**
      * Returns IF/ELSE condition
      */
-    public static function mysyntax_cond($m)
+    public static function if_statement($m)
     {
+        $params = explode(" ", $m[1]);
+        $condition = array_shift($params);
+        
+        if (!is_callable($condition)) {
+            $condition = "l7p_".$condition;
+        }
+        
+        if (is_callable($condition)) {
+            if ($params) {
+                return sprintf("<?php if (%s(%s)) : ?>", $condition, implode(", ", $params));
+            }
+            return sprintf("<?php if (%s()) : ?>", $condition);
+        }
+        
+        /*
         if (strpos($m[1],":"))
         {
             $temp = explode(":",$m[1]);
@@ -289,13 +271,9 @@ class L7P_Content
             	    return '<!-- unknown condition '.$temp[0].' --> <?php if (false) : ?>';
             }
         }
-    
+        
         switch ($m[1])
         {
-        	case 'auth':
-        	    return '<?php if ($sf_user->isAuthenticated()) : ?>';
-        	    break;
-    
         	case 'login_email':
         	    return '<?php if ($sf_flash->has("login-email")) : ?>';
         	    break;
@@ -429,12 +407,15 @@ class L7P_Content
             default:
                 return '<!-- unknown condition '.$m[1].' --> <?php if (false) : ?>';
         }
+        */
+        
+        return '<!-- unknown condition '.$condition.' --> <?php if (false) : ?>';
     }
     
     /**
     * Returns FOREACH loop
     */
-    public static function mysyntax_foreach($m)
+    public static function foreach_statement($m)
     {
     	switch ($m[1])
         {
@@ -517,64 +498,6 @@ class L7P_Content
     
         return '<!-- failed to parse foreach --> <?php foreach (array() as $val) : ?>';
 
-    }
-
-    /**
-    * Gets partial
-   */
-    public static function mysyntax_partial($m)
-    {
-        $user = sfContext::getInstance()->getUser();
-        
-        $blocks = sfConfig::get('app_web-product_block');
-        
-        if (isset($blocks[$user->getWebProductCode()]))
-        {
-            $available_partials = array_merge($blocks['all'],$blocks[$user->getWebProductCode()]);
-        }
-        else
-        {
-            $available_partials = $blocks['all'];
-        }
-        
-        if (!isset($available_partials[$m[1]]))
-        {
-            return '<div MySyntaxError="true" style="color: balck; padding: 5px; height: 40px; width: 100%; border: 1px solid red; background: #FFA500; font-weight: bold;">Error: invalid partial:<br/>'.$m[1].'</div>';
-        }
-        
-        if (isset($available_partials[$m[1]]['partial']))
-        {
-            return '<?php include_partial("'.$available_partials[$m[1]]['partial'].'") ?>';
-        }
-        else if (isset($available_partials[$m[1]]['code']))
-        {
-            return '<?php '.$available_partials[$m[1]]['code'].' ?>';
-        }
-        else
-        {
-          return '<div MySyntaxError="true" style="color: balck; padding: 5px; height: 40px; width: 100%; border: 1px solid red; background: #FFA500; font-weight: bold;">Error: unable to process partial tag:<br/>'.$m[1].'</div>';
-        }
-    }
-    
-    private function get_inlines($web_product_code)
-    {
-        $inlines = array(
-        	
-        );
-        
-        if (in_array($web_product_code, array('v', 'r' , 'h'))) {
-            $prod_code = 'v';
-        } else {
-            $prod_code = 'c';
-        }
-        
-        if (isset($inlines[$prod_code])) {
-            $available_inlines = array_merge($inlines['all'], $inlines[$prod_code]);
-        } else {
-            $available_inlines = $inlines['all'];
-        }
-        
-        return $available_inlines;
     }
 }
 

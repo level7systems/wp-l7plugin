@@ -14,120 +14,55 @@ class L7P_Shortcodes
     {
         // shortcodes
         $shortcodes = array(
-            'if'            => array(
-                'callback'      => __CLASS__ . '::if_statement',
-                'description'   => ""
-            ),
-            'foreach'       => array(
-                'callback'      => __CLASS__ . '::foreach_statement',
-                'description'   => ""
-            ),
-            'user_charge'   => array(
+            'USER_CHARGE'   => array(
                 'callback'      => __CLASS__ . '::user_charge',
                 'description'   => ""
             ),
-            'user_unlimited'=> array(
+            'USER_UNLIMITED'=> array(
                 'callback'      => __CLASS__ . '::user_unlimited',
                 'description'   => ""
             ),
-            'user_unlimited_int'=> array(
+            'USER_UNLIMITED_INT'=> array(
                 'callback'      => __CLASS__ . '::user_unlimited_int',
                 'description'   => ""
             ),
-            'app_url'       => array(
+            'APP_URL'       => array(
                 'callback'      => __CLASS__ . '::app_url',
                 'description'   => "Application URL"
             ),
         );
 
-        foreach ($shortcodes as $shortcode => $function ) {
-            add_shortcode($shortcode, $function);
+        foreach ($shortcodes as $shortcode => $options) {
+            add_shortcode($shortcode, $options['callback']);
         }
         
-    }
-    
-    public static function if_statement($atts, $content="")
-    {
-        if (empty($atts)) return '';
-        
-        $condition = $atts[0];
-        
-        // TODO: check template internal variable
-        
-        if (is_callable('l7p_'.$condition)) {
-            $condition = call_user_func('l7p_'.$condition);
-        }elseif (is_callable($condition)) {
-            $condition = call_user_func($condition);
-        } elseif (is_bool($condition)) {
-            // do nothing
-        } elseif (is_array($condition)) {
-            $condition = count($condition) > 0;
-        } else {
-            $condition = (boolean)$condition;
-        }
-        
-        return self::if_handler($atts, $content, $condition);
-    }
-    
-    private static function if_handler($atts, $content, $condition)
-    {
-        $else = '[else]';
-        if (strpos($content, $else) !== false) {
-            list($if, $else) = explode($else, $content, 2);
-        } else {
-            $if = $content;
-            $else = "";
-        }
-        
-        return do_shortcode($condition ? $if : $else);
-    }
-    
-    public static function foreach_statement($atts, $content="")
-    {
-        if (empty($atts)) return '';
-    
-        $collection = $atts[0];
-    
-        if (is_array($condition)) {
-            $count = count($condition);
-        } else {
-            throw new \Exception('Only arrays are alllowed for foreach statement.');
-        }
-        
-        $else = '[else]';
-        if (strpos($content, $else) !== false) {
-            list($foreach, $else) = explode($else, $content, 2);
-        } else {
-            $foreach = $content;
-            $else = "";
-        }
-    
-        return do_shortcode($condition ? $if : $else);
-        
-        return self::if_handler($atts, $content, $condition);
     }
     
     public static function user_charge($atts)
     {
-        // if ( empty( $atts ) ) return '';
-    
-        // TODO
-    
-		return "To be implemented";
+		return self::charge('user');
 	}
 	
 	public static function user_unlimited($atts)
 	{
-	    // TODO
-	    
-	    return "To be implemented";
+	    return self::charge('user-S');
 	}
 	
 	public static function user_unlimited_int($atts)
 	{
-	    // TODO
+	    return self::charge('user-A');
+	}
+	
+	private static function charge($service)
+	{
+	    if (!$currency = l7p_get_session('currency')) {
+	      $currency = l7p_get_option('currency', 'USD');	        
+	    }
 	    
-	    return "To be implemented";
+	    $charges = l7p_get_option('charges', array());
+	    $charge = array_key_exists($service, $charges) ? $charges[$service][$currency] : 0;
+	    
+	    return l7p_currency_symbol($charge, $currency);
 	}
 	
 	public static function app_url()

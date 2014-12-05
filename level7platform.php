@@ -124,6 +124,9 @@ class Level7Platform
 	public function init()
 	{
 	    // TODO
+	    
+	    // session initialization
+	    $this->init_session();
 	}
 	
 	public function plugin_url()
@@ -134,6 +137,13 @@ class Level7Platform
 	public function plugin_path()
 	{
 	    return untrailingslashit( plugin_dir_path( __FILE__ ) );
+	}
+	
+	private function init_session()
+	{
+	    if (!session_id()) {
+	        session_start();
+	    }
 	}
 }
 
