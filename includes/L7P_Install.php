@@ -219,7 +219,7 @@ class L7P_Install
         <h2 class="h3">Pay As You Go</h2>
         <div class="inner">
           <ul>
-            <li><span class="price">%USER_CHARGE%</span><br>per user monthly</li>
+            <li><span class="price">[USER_CHARGE]</span><br>per user monthly</li>
             <li>Free setup</li>
             <li>24/7 Technical Support</li>
             <li>All <a href="/en/features">features</a> included</li>
@@ -238,7 +238,7 @@ class L7P_Install
         <h2 class="h3">Unlimited Domestic</h2>
         <div class="inner">
           <ul>
-            <li><span class="price">%USER_UNLIMITED%</span><br>per user monthly</li>
+            <li><span class="price">[USER_UNLIMITED]</span><br>per user monthly</li>
             <li>Free setup</li>
             <li>24/7 Technical Support</li>
             <li>All <a href="/en/features">features</a> included</li>
@@ -264,7 +264,7 @@ class L7P_Install
         <h2 class="h3">Unlimited International</h2>
         <div class="inner">
           <ul>
-            <li><span class="price">%USER_UNLIMITED_INT%</span><br>per user monthly</li>
+            <li><span class="price">[USER_UNLIMITED_INT]</span><br>per user monthly</li>
             <li>Free setup</li>
             <li>24/7 Technical Support</li>
             <li>All <a href="/en/features">features</a> included</li>
@@ -360,15 +360,15 @@ CONTENT
 					</table>
 				</div>
 				<div class="col-1-2">
-          [if:term_has_local|
+          [if term_has_local]
 					<table class="table dom-calls">
 						<thead>
 							<tr>
-								<td colspan="3"><h2 class="h3">Domestic calls (%COUNTRY_NAME%)</h2></td>
+								<td colspan="3"><h2 class="h3">Domestic calls ([COUNTRY_NAME])</h2></td>
 							</tr>
 							<tr>
 								<td><strong>Destination</strong></td>
-                              [if:term_unlimited_local|
+                              [if term_unlimited_local]
                                 <td><strong>Unlimited Plan</strong><br>(Per minute rate)</td>
                                 <td><strong>Pay As You Go</strong><br>(Per minute rate)</td>
                               [else]
@@ -379,22 +379,22 @@ CONTENT
 						<tbody>
 							<tr>
 								<td>Calls to Landlines</td>
-                              [if:term_unlimited_local|
-                                <td>[if:term_local_fixed_free|Free[else]%TERM_LOCAL_FIXED%[/if]</td>
-                                <td>%TERM_LOCAL_FIXED%</td>
+                              [if term_unlimited_local]
+                                <td>[if term_local_fixed_free]Free[else][TERM_LOCAL_FIXED][/if]</td>
+                                <td>[TERM_LOCAL_FIXED]</td>
                               [else]
-                                <td>%TERM_LOCAL_FIXED%</td>
+                                <td>[TERM_LOCAL_FIXED]</td>
                               [/if]
 							</tr>
 						</tbody>
 						<tbody>
 							<tr>
 								<td>Calls to Mobiles</td>
-                              [if:term_unlimited_local|
-                                <td>[if:term_local_mobile_free|Free[else]%TERM_LOCAL_MOBILE%[/if]</td>
-                                <td>%TERM_LOCAL_MOBILE%</td>
+                              [if term_unlimited_local]
+                                <td>[if term_local_mobile_free]Free[else][TERM_LOCAL_MOBILE][/if]</td>
+                                <td>[TERM_LOCAL_MOBILE]</td>
                               [else]
-                                <td>%TERM_LOCAL_MOBILE%</td>
+                                <td>[TERM_LOCAL_MOBILE]</td>
                               [/if]
 							</tr>
 						</tbody>
@@ -421,21 +421,21 @@ CONTENT
       </tr>
     </thead>
 
-    |foreach:term_letters|
+    [foreach term_letters]
       <tbody>
-        <tr id="%TERM_LETTER%" class="letter"><td colspan="4">%TERM_LETTER%</td></tr>
+        <tr id="[TERM_LETTER]" class="letter"><td colspan="4">[TERM_LETTER]</td></tr>
         
-        |foreach:term_countries|
+        [foreach term_countries]
 					<tr>
-						<td><a href="%TERM_ROUTE_URL%">%TERM_ROUTE_COUNTRY%</a></td>
-						<td>[if:term_is_unlimited|Free[/if]</td>
-						<td>%TERM_FIXED%</td>
-						<td>%TERM_MOBILE%</td>
+						<td><a href="[TERM_ROUTE_URL]">[TERM_ROUTE_COUNTRY]</a></td>
+						<td>[if term_is_unlimited]Free[/if]</td>
+						<td>[TERM_FIXED]</td>
+						<td>[TERM_MOBILE]</td>
 					</tr>
-        |endforeach|
+        [/foreach]
         
       </tbody>
-    |endforeach|
+    [/foreach]
   </table>
     
 		</section>
@@ -449,14 +449,14 @@ CONTENT
 							We use ENUM external link technology to find alternative connection to dialled number. 
 							However if we need to deliver your call over traditional telephone network following principles apply:<br>
 							Calls are billed per second<br>
-							Minimum call charge is %TERM_MIN_CHARGE%<br>
+							Minimum call charge is [TERM_MIN_CHARGE]<br>
 							Prices exclude VAT<br>
 							<span class="super-small text-grey">20% VAT applies to Customers based in United Kingdom and EU customers without 
 							a VAT number.</span></p>
 					</div>
 					<div class="col-1-3">
 						<div class="icon-sms"><span>SMS - Text Messages</span></div>
-						<p>You can send text messages from our website after creating account with us. It cost only %SMS_CHARGE% per message.</p>
+						<p>You can send text messages from our website after creating account with us. It cost only [SMS_CHARGE] per message.</p>
 					</div>
 					<div class="col-1-3">
 						<div class="icon-web-calls"><span>Web Calls</span></div>
@@ -477,7 +477,7 @@ CONTENT
 		<div class="main-image pricing-image m-hidden"></div>
 		<header class="page-header dark-bg tr-d">
 			<div class="inner">
-				<h1>%TERM_ROUTE_COUNTRY% - Call Rates</h1>
+				<h1>[TERM_ROUTE_COUNTRY] - Call Rates</h1>
 				<p class="byline"><span class="text-grey">Check</span> 
 					<span class="text-orange">the costs of calls</span> to landlines and mobiles</p>
 					[block currency_form]
@@ -497,21 +497,21 @@ CONTENT
                 <td><strong>Per minute rate</strong></td>
               </tr>
             </thead>
-        |foreach:term_routes|
+        [foreach term_routes]
           <tbody>
             <tr>
-              <td>%TERM_ROUTE_NAME%</td>
-              <td>%TERM_ROUTE_PREFIXES%</td>
-              <td>%TERM_ROUTE_RATE%
-              [if:term_route_unlimited|
+              <td>[TERM_ROUTE_NAME]</td>
+              <td>[TERM_ROUTE_PREFIXES]</td>
+              <td>[TERM_ROUTE_RATE]
+              [if term_route_unlimited]
                 (Free*)</td>
               [/if]
-              [if:term_route_conn_fee|
-                Connection fee: %TERM_ROUTE_CONN_FEE%
+              [if term_route_conn_fee]
+                Connection fee: [TERM_ROUTE_CONN_FEE]
               [/if]
             </tr>
           </tbody>
-        |endforeach|
+        [/foreach]
             <tfoot>
               <tr>
                 <td colspan="3">*-Free with Unlimited Plan</td>
@@ -529,14 +529,14 @@ CONTENT
 							We use ENUM external link technology to find alternative connection to dialled number. 
 							However if we need to deliver your call over traditional telephone network following principles apply:<br>
 							Calls are billed per second<br>
-							Minimum call charge is %TERM_MIN_CHARGE%<br>
+							Minimum call charge is [TERM_MIN_CHARGE]<br>
 							Prices exclude VAT<br>
 							<span class="super-small text-grey">20% VAT applies to Customers based in United Kingdom and EU customers without 
 							a VAT number.</span></p>
 					</div>
 					<div class="col-1-3">
 						<div class="icon-sms"><span>SMS - Text Messages</span></div>
-						<p>You can send text messages from our website after creating account with us. It cost only %SMS_CHARGE% per message.</p>
+						<p>You can send text messages from our website after creating account with us. It cost only [SMS_CHARGE] per message.</p>
 					</div>
 					<div class="col-1-3">
 						<div class="icon-web-calls"><span>Web Calls</span></div>
@@ -628,17 +628,17 @@ CONTENT
 					</tr>
 				</thead>
 
-      |foreach:ddi_paid|
+      [foreach ddi_paid]
 				<tbody>
 					<tr>
-						<td><a href="%DDI_COUNTRY_URL%">%DDI_COUNTRY_NAME%</a></td>
-						<td>[if:ddi_is_unlimited|Free[/if]</td>
-						<td>%DDI_SETUP_FEE%</td>
-						<td>%DDI_MONTHLY_FEE%</td>
+						<td><a href="[DDI_COUNTRY_URL]">[DDI_COUNTRY_NAME]</a></td>
+						<td>[if ddi_is_unlimited]Free[/if]</td>
+						<td>[DDI_SETUP_FEE]</td>
+						<td>[DDI_MONTHLY_FEE]</td>
 					</tr>
 				</tbody>
       
-      |endforeach|
+      [/foreach]
 
 				<tfoot>
 					<tr>
@@ -679,7 +679,7 @@ CONTENT
 		<header class="page-header dark-bg tr-d">
 			<div class="inner">
 				<h1>Business Telephone Numbers<br><span class="byline"><span class="text-grey">in</span>
-					<span class="text-orange">%DDI_COUNTRY_NAME%</span></span> </h1>
+					<span class="text-orange">[DDI_COUNTRY_NAME]</span></span> </h1>
 					[block currency_form]
 			</div>
 		</header>
@@ -687,11 +687,11 @@ CONTENT
 
 			<div class="inner">
 				<a href="/en/telephone-numbers" class="button-b no-margin">Go back to full list</a>
-				<p>Country phone code: <strong>+%DDI_COUNTRY_TEL_CODE%</strong></p><br><br>
+				<p>Country phone code: <strong>+[DDI_COUNTRY_TEL_CODE]</strong></p><br><br>
 			</div>
       
       
-  [if:ddi_national|
+  [if ddi_national]
 
 			<table class="table v-numbers-single">
 				<thead>
@@ -704,22 +704,22 @@ CONTENT
 					</tr>
 				</thead>
 				<tbody>
-      |foreach:ddi_national|
+      [foreach ddi_national]
         <tr>
           <td>National</td>
-          <td>(%DDI_AREA_CODE%)</td>
-          <td>%DDI_SETUP_FEE%</td>
-          <td>%DDI_MONTHLY_FEE%</td>
-          <td><button class="button-b" onclick="buy('%DDI_BUY_URL%');">Buy</button></td>
+          <td>([DDI_AREA_CODE])</td>
+          <td>[DDI_SETUP_FEE]</td>
+          <td>[DDI_MONTHLY_FEE]</td>
+          <td><button class="button-b" onclick="buy('[DDI_BUY_URL]');">Buy</button></td>
         </tr>
-      |endforeach|
+      [/foreach]
 
 				</tbody>
 			</table>
   
   [/if]
 
-  [if:ddi_ddi_city|
+  [if ddi_ddi_city]
 			<table class="table v-numbers-single">
 				<thead>
 					<tr>
@@ -733,21 +733,21 @@ CONTENT
 						<td></td>
 					</tr>
 				</thead>
-    |foreach:ddi_city|
+    [foreach ddi_city]
 				<tbody>
 					<tr>
-						<td>%DDI_CITY_NAME%</td>
+						<td>[DDI_CITY_NAME]</td>
 						<td>
-            [if:ddi_has_area_code|
-              %DDI_AREA_CODE%
+            [if ddi_has_area_code]
+              [DDI_AREA_CODE]
             [/if]
             </td>
-						<td>%DDI_SETUP_FEE%</td>
-						<td>%DDI_MONTHLY_FEE%</td>
-						<td><button class="button-b" onclick="buy('%DDI_BUY_URL%');">Buy</button></td>
+						<td>[DDI_SETUP_FEE]</td>
+						<td>[DDI_MONTHLY_FEE]</td>
+						<td><button class="button-b" onclick="buy('[DDI_BUY_URL]');">Buy</button></td>
 					</tr>
 				</tbody>
-    |endforeach|
+    [/foreach]
 				<tfoot>
 					<tr>
 						<td colspan="5"></td>
@@ -756,7 +756,7 @@ CONTENT
 			</table>
   [/if]
 
-  [if:ddi_ddi_toll_free|
+  [if ddi_ddi_toll_free]
     <table class="table v-toll-free">
       <thead>
         <tr>
@@ -772,22 +772,22 @@ CONTENT
         </tr>
       </thead>
       
-      |foreach:ddi_toll_free|
+      [foreach ddi_toll_free]
         <tbody>
           <tr>
             <td>Toll Free</td>
             <td>
-            [if:ddi_has_area_code|
-              %DDI_AREA_CODE%
+            [if ddi_has_area_code]
+              [DDI_AREA_CODE]
             [/if]
             </td>
-            <td>%DDI_SETUP_FEE%</td>
-            <td>%DDI_MONTHLY_FEE%</td>
-            <td>%DDI_MIN_RATE%</td>
-            <td><button class="button-b" onclick="buy('%DDI_BUY_URL%');">Buy</button></td>
+            <td>[DDI_SETUP_FEE]</td>
+            <td>[DDI_MONTHLY_FEE]</td>
+            <td>[DDI_MIN_RATE]</td>
+            <td><button class="button-b" onclick="buy('[DDI_BUY_URL]');">Buy</button></td>
           </tr>
         </tbody>
-      |endforeach|
+      [/foreach]
       
     </table>
   [/if]
@@ -821,13 +821,13 @@ CONTENT
         
 				<ul class="state-list">
           
-  [if:ddi_states|
+  [if ddi_states]
     
-    |foreach:ddi_states|
+    [foreach ddi_states]
       
-      <li><a href="%DDI_STATE_URL%">%DDI_STATE_NAME%</a></li>
+      <li><a href="[DDI_STATE_URL]">[DDI_STATE_NAME]</a></li>
       
-    |endforeach|
+    [/foreach]
     
   [/if]
   
@@ -836,7 +836,7 @@ CONTENT
         
 			</div>
       
-[if:ddi_ddi_toll_free|
+[if ddi_ddi_toll_free]
 
 			<table class="table v-toll-free">
 				<thead>
@@ -853,16 +853,16 @@ CONTENT
 				</thead>
 				<tbody>
   
-  |foreach:ddi_toll_free|
+  [foreach ddi_toll_free]
       <tr>
         <td>Toll Free</td>
-        <td>(%DDI_AREA_CODE%)</td>
-        <td>%DDI_SETUP_FEE%</td>
-        <td>%DDI_MONTHLY_FEE%</td>
-        <td>%DDI_MIN_RATE%</td>
-        <td><button class="button-b" onclick="buy('%DDI_BUY_URL%','Toll+Free');">Buy</button></td>
+        <td>([DDI_AREA_CODE])</td>
+        <td>[DDI_SETUP_FEE]</td>
+        <td>[DDI_MONTHLY_FEE]</td>
+        <td>[DDI_MIN_RATE]</td>
+        <td><button class="button-b" onclick="buy('[DDI_BUY_URL]','Toll+Free');">Buy</button></td>
       </tr>
-    |endforeach|
+    [/foreach]
 				</tbody>
 			</table>
 [/if]
@@ -896,10 +896,10 @@ CONTENT
 						<figure class="img-hw"><img class src="http://static.ssl7.net/images/1/vs/desk-phones.jpg" alt="Desk Phones"></figure>
 					</div>
 					<div class="col-1-2 float-h-b r">
-						<h2 class="h3">Desk Phones</h2> <a href="%PHONE_DESK_URL%" class="button-b">Browse All</a>
+						<h2 class="h3">Desk Phones</h2> <a href="[PHONE_DESK_URL]" class="button-b">Browse All</a>
 						<p>A range of specialist, multi-featured Business VoIP desk phones that connect to your LAN
 							or Broadband (ADSL) router. Each phone offers a range of innovative options, with prices
-							starting from just %PHONE_DESK_MIN_PRICE%.</p>
+							starting from just [PHONE_DESK_MIN_PRICE].</p>
 					</div>
 					</div>
 			</div>
@@ -911,10 +911,10 @@ CONTENT
 						<figure class="img-hw"><img class src="http://static.ssl7.net/images/1/vs/dect-phones.jpg" alt="DECT Phones"></figure>
 					</div>
 					<div class="col-1-2 float-h-b l">
-						<h2 class="h3">DECT Phones</h2> <a href="%PHONE_DECT_URL%" class="button-b">Browse All</a>
+						<h2 class="h3">DECT Phones</h2> <a href="[PHONE_DECT_URL]" class="button-b">Browse All</a>
 						<p>A selection of high quality, cordless VoIP phones designed to give you complete freedom
 							of movement, by enabling multiple VoIP phones to operate from just one base. Prices
-							starting from just %PHONE_DECT_MIN_PRICE%.</p>
+							starting from just [PHONE_DECT_MIN_PRICE].</p>
 					</div>
 				</div>
 			</div>
@@ -926,7 +926,7 @@ CONTENT
 						<figure class="img-hw"><img class src="http://static.ssl7.net/images/1/vs/conf-phones.jpg" alt="Conference Phones"></figure>
 					</div>
 					<div class="col-1-2 float-h-b r">
-						<h2 class="h3">Conference Phones</h2> <a href="%PHONE_CONF_URL%" class="button-b">Browse All</a>
+						<h2 class="h3">Conference Phones</h2> <a href="[PHONE_CONF_URL]" class="button-b">Browse All</a>
 						<p>Highly advanced conference phones, offering crystal clear hosted PBX conversations between
 							groups of all sizes, from 4 to 40 people, across all distances.</p>
 					</div>
@@ -942,7 +942,7 @@ CONTENT
 						</figure>
 					</div>
 					<div class="col-1-2 float-h-b l">
-						<h2 class="h3">VoIP Adapters</h2> <a href="%PHONE_ADAPTOR_URL%" class="button-b">Browse All</a>
+						<h2 class="h3">VoIP Adapters</h2> <a href="[PHONE_ADAPTOR_URL]" class="button-b">Browse All</a>
 						<p>VoIP adapters allow you to easily connect an ordinary analogue telephone to a VoIP Phone Adapter.
 							This enables anyone to benefit from a VoIP telephone system without the need for a specialist
 							VoIP phone or PC.</p>
@@ -959,7 +959,7 @@ CONTENT
 						</figure>
 					</div>
 					<div class="col-1-2 float-h-b r">
-						<h2 class="h3">Accesories</h2> <a href="%PHONE_ACCESSORY_URL%" class="button-b">Browse All</a>
+						<h2 class="h3">Accesories</h2> <a href="[PHONE_ACCESSORY_URL]" class="button-b">Browse All</a>
 						<p>A range of accessories designed to improve you VoIP business phone system experience. From
 							hands free microphone ear piece sets to expansion modules to specialist Klarvoice handsets.</p>
 					</div>
@@ -990,38 +990,38 @@ CONTENT
 <section class="tr-w">
   <div class="inner">
     <ul class="product-nav">
-      <li><a href="%PHONE_DESK_URL%">Desk Phones</a></li>
-      <li><a href="%PHONE_DECT_URL%">DECT Phones</a></li>
-      <li><a href="%PHONE_CONF_URL%">Conference Phones</a></li>
-      <li><a href="%PHONE_ADAPTOR_URL%">VoIP Adapters</a></li>
-      <li><a href="%PHONE_ACCESSORY_URL%">Accesories</a></li>
+      <li><a href="[PHONE_DESK_URL]">Desk Phones</a></li>
+      <li><a href="[PHONE_DECT_URL]">DECT Phones</a></li>
+      <li><a href="[PHONE_CONF_URL]">Conference Phones</a></li>
+      <li><a href="[PHONE_ADAPTOR_URL]">VoIP Adapters</a></li>
+      <li><a href="[PHONE_ACCESSORY_URL]">Accesories</a></li>
     </ul>
       <ul class="product-list clearfix">
-        [if:phones|
+        [if phones]
           
-          |foreach:phones|
+          [foreach phones]
             
             <li class="product clearfix">
               <div class="head">
-                <h2 class="h3"><a href="%PHONE_URL%">%PHONE_MANUFACTURER% %PHONE_MODEL%</a></h2>
-                <span class="price">%PHONE_PRICE%</span>
-                <a href="%PHONE_URL%">
+                <h2 class="h3"><a href="[PHONE_URL]">[PHONE_MANUFACTURER] [PHONE_MODEL]</a></h2>
+                <span class="price">[PHONE_PRICE]</span>
+                <a href="[PHONE_URL]">
                   <figure>
-                      <img src="%PHONE_THUMB_IMG%">
+                      <img src="[PHONE_THUMB_IMG]">
                   </figure>
                 </a>
               </div>
               <div class="desc">
-              <p class="small">%PHONE_SHORT_DESCRIPTION%... <a href="%PHONE_URL%">Read more.</a></p>
+              <p class="small">[PHONE_SHORT_DESCRIPTION]... <a href="[PHONE_URL]">Read more.</a></p>
               <p class="small text-right">
-                [if:phone_in_stock|
-                  <span class="text-grey">%PHONE_STOCK% in stock</span> <a href="#" class="button-b" onclick="buy('%PHONE_URL%');">Buy</a>	
+                [if phone_in_stock]
+                  <span class="text-grey">[PHONE_STOCK] in stock</span> <a href="#" class="button-b" onclick="buy('[PHONE_URL]');">Buy</a>	
                 [else]
                   <span class="text-grey">Out of stock</span>
                 [/if]
               </div>
             </li>
-          |endforeach|
+          [/foreach]
           
         [else]
           <li>No phones are available at the moment.</li>
@@ -1044,7 +1044,7 @@ CONTENT
 		<div class="main-image hardware-image m-hidden"></div>
 		<header class="page-header dark-bg tr-d">
 			<div class="inner">
-				<h1>%PHONE_GROUP_NAME% - %PHONE_MANUFACTURER% %PHONE_MODEL%</h1>
+				<h1>[PHONE_GROUP_NAME] - [PHONE_MANUFACTURER] [PHONE_MODEL]</h1>
 				<p class="byline"><span class="text-grey">see </span> <span class="text-orange">the detailed specification</span> 
 					of this hardware</p>
 				[block currency_form]
@@ -1053,28 +1053,28 @@ CONTENT
 		<section class="tr-w">
 			<div class="inner">
         <ul class="product-nav">
-          <li><a href="%PHONE_DESK_URL%">Desk Phones</a></li>
-          <li><a href="%PHONE_DECT_URL%">DECT Phones</a></li>
-          <li><a href="%PHONE_CONF_URL%">Conference Phones</a></li>
-          <li><a href="%PHONE_ADAPTOR_URL%">VoIP Adapters</a></li>
-          <li><a href="%PHONE_ACCESSORY_URL%">Accesories</a></li>
+          <li><a href="[PHONE_DESK_URL]">Desk Phones</a></li>
+          <li><a href="[PHONE_DECT_URL]">DECT Phones</a></li>
+          <li><a href="[PHONE_CONF_URL]">Conference Phones</a></li>
+          <li><a href="[PHONE_ADAPTOR_URL]">VoIP Adapters</a></li>
+          <li><a href="[PHONE_ACCESSORY_URL]">Accesories</a></li>
         </ul>
 				<div class="grid-row product">
 					<div class="col-1-3 product-head">
-						<h2 class="h3">%PHONE_MANUFACTURER% %PHONE_MODEL%</h2>
-						<span class="price">%PHONE_PRICE%</span>
+						<h2 class="h3">[PHONE_MANUFACTURER] [PHONE_MODEL]</h2>
+						<span class="price">[PHONE_PRICE]</span>
 							<figure>
-									<img src="%PHONE_IMG%">
+									<img src="[PHONE_IMG]">
 							</figure>
-            [if:phone_in_stock|
-						<button class="button b-dborder center" onclick="buy('%PHONE_URL%');">Buy This</button>
-						<p class="small text-center text-grey">%PHONE_STOCK% in stock</p>
+            [if phone_in_stock]
+						<button class="button b-dborder center" onclick="buy('[PHONE_URL]');">Buy This</button>
+						<p class="small text-center text-grey">[PHONE_STOCK] in stock</p>
             [else]
             <p class="small text-center text-grey">Out of stock</p>
             [/if]
 					</div>
 					<div class="col-2-3 product-content">
-						%PHONE_SHORT_DESCRIPTION%
+						[PHONE_SHORT_DESCRIPTION]
 					</div>
 				</div>
 			</div>
@@ -1090,45 +1090,45 @@ CONTENT
 CONTENT
 
             ,'hardware_model'   => <<<CONTENT
-You are here: <a href="/en/hardware">VoIP Hardware</a> &raquo; <a href="%PHONE_GROUP_URL%">%PHONE_GROUP_NAME%</a> &raquo; <a href="%PHONE_URL%">%PHONE_NAME%</a> &raquo; Reviews
+You are here: <a href="/en/hardware">VoIP Hardware</a> &raquo; <a href="[PHONE_GROUP_URL]">[PHONE_GROUP_NAME]</a> &raquo; <a href="[PHONE_URL]">[PHONE_NAME]</a> &raquo; Reviews
 
 <table><tbody>
   <tr>
     <td>
-      <h2>Reviews of %PHONE_NAME%</h2>
-      <a href="%PHONE_URL%">Back to phone description</a>
+      <h2>Reviews of [PHONE_NAME]</h2>
+      <a href="[PHONE_URL]">Back to phone description</a>
     </td>
     <td>
-      <a href="%PHONE_URL%">
-      <img src="%PHONE_THUMB_IMG%" alt="%PHONE_NAME%" />
+      <a href="[PHONE_URL]">
+      <img src="[PHONE_THUMB_IMG]" alt="[PHONE_NAME]" />
       </a>
     </td>
   </tr>
 </tbody></table>
 
-[if:phone_has_reviews|
+[if phone_has_reviews]
   
-  |foreach:phone_reviews|
+  [foreach phone_reviews]
     
     <table style="width: 100%;" border="0"><tbody>
       <tr>
         <td style="width: 100px; background: #ADD8E6; padding: 10px;">
           review by:<br/>
-          <b>%PHONE_REVIEW_AUTHOR%></b>
+          <b>[PHONE_REVIEW_AUTHOR]></b>
           <br/>
-          %PHONE_REVIEW_DATE%
+          [PHONE_REVIEW_DATE]
           <br/><br/>
           rating:<br/>
-          %PHONE_RATING%
+          [PHONE_RATING]
         </td>
         <td style="padding-left: 10px;" valign="top">
-          %PHONE_REVIEW_TEXT%
+          [PHONE_REVIEW_TEXT]
         </td>
       </tr>
     </tbody></table>
     <br/><br/>
     
-  |endforeach|
+  [/foreach]
   
   
 [else]
@@ -1140,7 +1140,7 @@ You are here: <a href="/en/hardware">VoIP Hardware</a> &raquo; <a href="%PHONE_G
 <h2>Write your own review</h2>
 
 
-<form action="%PHONE_REVIEWS_URL%" method="post" />
+<form action="[PHONE_REVIEWS_URL]" method="post" />
 
 Your name:<span class="form-required"> *</span><br />
 
