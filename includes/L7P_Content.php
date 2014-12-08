@@ -60,14 +60,14 @@ class L7P_Content
     
         $content = preg_replace($regex, $replace, $content);
     
-        // TODO
+        // TODO: url
         // $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'url'), $content);
-        
+        // image
         $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array($this, 'image'), $content);
-
+        // statements
         $content = preg_replace_callback('/\[if (.*)\]/mU', array($this, 'if_statement'), $content);
         $content = preg_replace_callback('/\[foreach (.*)\]/mU', array($this, 'foreach_statement'), $content);
-        // block
+        // blocks
         $content = preg_replace_callback('/\[block (.*)\]/imU', array($this, 'block'), $content);
         // inlines
         $content = preg_replace_callback('/\[([A-Z,_]+)\]/imU', array($this, 'inline'), $content);
@@ -84,7 +84,7 @@ class L7P_Content
         $tag = $m[1];
         $inline = "l7p_inline_" . $tag;
         if (!is_callable($inline)) {
-            return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Invalid inline tag:'.$tag.'</div>';
+            return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Undefined shortcode tag:'.$tag.'</div>';
         }
     
         return sprintf("<?php echo call_user_func('%s') ?>", $inline);
@@ -95,7 +95,7 @@ class L7P_Content
         $tag = $m[1];
         $block = "l7p_block_" . $tag;
         if (!is_callable($block)) {
-            return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Invalid block:'.$tag.'</div>';
+            return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Undefined block:'.$tag.'</div>';
         }
     
         return sprintf("<?php echo call_user_func('%s') ?>", $block);
@@ -108,10 +108,8 @@ class L7P_Content
     {
         $temp = array();
     
-        foreach (explode("|",$m[1]) as $part)
-        {
+        foreach (explode("|",$m[1]) as $part) {
             if (!trim($part)) continue;
-    
             $temp[] = trim(trim($part),"'");
         }
     
@@ -119,23 +117,16 @@ class L7P_Content
     
         $options = (isset($temp[2])) ? ' '.$temp[2] : '';
     
-        if (strpos($temp[0],"%CULTURE%") === false)
-        {
+        if (strpos($temp[0], "%CULTURE%") === false) {
             $src_img = $temp[0];
-        }
-        else
-        {
+        } else {
             $src_img = str_replace("%CULTURE%","'.get_culture().'",$temp[0]);
         }
     
-        if ($with_php_tag)
-        {
+        if ($with_php_tag) {
             return "<?php echo image_tag('".$src_img."','alt=\"".$temp[1]."\"".$options."') ?>";
         }
-        else
-        {
-            return "image_tag('".$src_img."','alt=\"".$temp[1]."\"".$options."')";
-        }
+        return "image_tag('".$src_img."','alt=\"".$temp[1]."\"".$options."')";
     }
     
     /**

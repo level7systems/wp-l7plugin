@@ -14,8 +14,9 @@ class L7P_XmlRpc_Api
         // to verify if pugin is enabled
         'l7.ping'           => 'ping',
         // TODO: other methods
+        'l7.setSettings'    => 'setSettings',
+        'l7.setCharges'     => 'setCharges',
         'l7.setPricelists'  => 'setPricelists',
-
         'l7.setHardware'    => 'setHardware',
     );
     
