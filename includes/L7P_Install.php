@@ -139,14 +139,14 @@ class L7P_Install
             ),
             'hardware_model' => array(
                 'name'      => 'hardware_phone',
-                'title'     => 'hardware phone details',
+                'title'     => 'Hardware phone details',
                 'content'   => $pages_contents['hardware_phone'],
                 'post_type' => 'level7platform_page',
             ),
-            'hardware_reviews' => array(
-                'name'      => 'hardware_reviews',
-                'title'     => 'hardware phone reviews',
-                'content'   => $pages_contents['hardware_reviews'],
+            'manual' => array(
+                'name'      => 'manual',
+                'title'     => 'Administrator manual',
+                'content'   => $pages_contents['manual'],
                 'post_type' => 'level7platform_page',
             ),
         );
@@ -1182,6 +1182,40 @@ Product rating:<span class="form-required"> *</span>
 <span style="font-size: 11px; color: gray;">
 All submitted reviews/comments become the licensed property of VoIP Studio.
 </span>
+CONTENT
+
+            , 'manual'        => <<<CONTENT
+<article class="main support-page">
+  <div class="main-image support-image"></div>
+  <header class="page-header dark-bg tr-d">
+    <div class="inner">
+      <h1>%MANUAL_NAME%<span class="byline"><span class="text-orange">%MANUAL_CHAPTER%</span></span></h1>
+    </div>
+  </header>
+  <section>
+    <div class="inner">		
+      <div class="grid-row">
+        <div class="col-1-3">
+          <h3 class="text-grey">`Choose a chapter`</h3>
+          <div class="chapters">
+            %MANUAL_TOC%
+          </div>
+        </div>
+        <div class="col-2-3 content-overwrite">
+          %MANUAL_CONTENT%
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="dark-bg home-trial text-center">
+    <div class="inner">
+      <h3 class="h1"><span class="text-orange">`Support</span> Centre`</h3>
+      <p>`Access to the VoIP Studio Support Center is only granted to our customers.<br class="m-hidden">
+        Please login into Customer Portal to open a new Support Ticket.`</p>
+      <a href="%LOGIN_URL%" class="button-b b-set button-b-white">`Login`</a>
+    </div>
+  </section>
+</article>
 CONTENT
         );
     }
