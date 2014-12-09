@@ -59,7 +59,8 @@ class L7P_Admin
                 'section'     => self::OPTION_PERMALINKS,
                 'value'       => $permalinks['rates_page_slug'],
                 'placeholder' => 'voip-call-rates',
-                'pre'         => '/'
+                'pre'         => '/',
+                'post'        => '/:country',
             )
         );
         
@@ -76,9 +77,12 @@ class L7P_Admin
                 'value'       => $permalinks['virtual_numbers_page_slug'],
                 'placeholder' => 'telephone-numbers',
                 'pre'         => '/',
+                'post'        => '/:country-or-state',
                 'help'        => 'Virtual Telephone Numbers'
             )
         );
+        
+        // TODO: check if has_shop option is enabled
         
         // hardware page
         add_settings_field(
@@ -93,6 +97,24 @@ class L7P_Admin
                 'value'       => $permalinks['hardware_page_slug'],
                 'placeholder' => 'hardware',
                 'pre'         => '/',
+                'post'        => '/:category-or-phone',
+            )
+        );
+        
+        // manual page
+        add_settings_field(
+            'manual_page_slug',  // id
+            __( 'Hardware page', 'level7platform' ), 	  // setting label
+            'text_input',                                 // display callback
+            'level7platform',                 		      // settings page
+            'level7platform_permalinks_section',          // section
+            array(
+            'name'        => 'manual_page_slug',
+            'section'     => self::OPTION_PERMALINKS,
+            'value'       => $permalinks['manual_page_slug'],
+            'placeholder' => 'manual',
+            'pre'         => '/',
+            'post'        => '/:chapter',
             )
         );
         
