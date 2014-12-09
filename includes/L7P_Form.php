@@ -16,6 +16,7 @@ function text_input($args)
     $value = isset($args['value']) ? esc_attr($args['value']) : '';
     $placeholder = isset($args['placeholder']) ? esc_attr($args['placeholder']) : '';
     $pre = isset($args['pre']) ? esc_attr($args['pre']) : false;
+    $post = isset($args['post']) ? esc_attr($args['post']) : false;
     $help = isset($args['help']) ? esc_attr($args['help']) : false;
     
     // field section
@@ -29,6 +30,11 @@ function text_input($args)
     }
     
     echo "<input type='text' name='$name' value='$value' placeholder='$placeholder' />";
+    
+    // post field
+    if ($post) {
+        echo $post;
+    }
     
     if ($help) {
         echo "<p><small>$help</small></p>";
