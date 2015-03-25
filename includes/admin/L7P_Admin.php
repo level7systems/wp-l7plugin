@@ -10,173 +10,169 @@
 
 class L7P_Admin
 {
-    /**
-     * Name of the option key that store permalinks settings
-     * @var string
-     */
-    const OPTION_PERMALINKS = 'level7platform_permalinks';
-    
+
     private $messages = array(
-    	'notice'   => array(),
-        'error'   => array()
+        'notice' => array(),
+        'error' => array()
     );
-    
+
     public function __construct()
     {
-        add_action('admin_menu', array( $this, 'menu' ), 5);
+        add_action('admin_menu', array($this, 'menu'), 5);
     }
-    
+
     public function menu()
     {
         add_menu_page("Level7 Platform", "Level7 Platform", 'manage_options', 'l7-settings', null, null, 57);
-        add_submenu_page( 'l7-settings', 'Settings', 'Settings', 'manage_options', 'l7-settings', array($this, 'settings_page'));
+        add_submenu_page('l7-settings', 'Settings', 'Settings', 'manage_options', 'l7-settings', array($this, 'settings_page'));
     }
-    
-    public function settings_page() {
-        
-        register_setting('level7platform_settings', self::OPTION_PERMALINKS);
-        
+
+    public function settings_page()
+    {
+
+        register_setting('level7platform_settings', Level7Platform::OPTION_PERMALINKS);
+
         // Save settings if data has been posted
         if (!empty($_POST)) {
             $this->save();
         }
-        
+
         // Add a section to the permalinks page
-        add_settings_section('level7platform_permalinks_section', __( 'Permalinks', 'level7platform' ),
-          array($this, 'permalinks_section_callback'), 'level7platform');
+        add_settings_section('level7platform_permalinks_section', __('Permalinks', 'level7platform'), array($this, 'permalinks_section_callback'), 'level7platform');
+
+        $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
+
         
-        $permalinks = get_option(self::OPTION_PERMALINKS);
+        // TODO: add support for defaults values from placeholders
         
         // rate page
         add_settings_field(
-            'rates_page_slug',  // id
-            __( 'Country rates page', 'level7platform' ), // setting label
-            'text_input',                                 // display callback
-            'level7platform',                 		      // settings page
-            'level7platform_permalinks_section',          // section
+            'rates_page_slug', // id
+            __('Country rates page', 'level7platform'), // setting label
+            'text_input', // display callback
+            'level7platform', // settings page
+            'level7platform_permalinks_section', // section
             array(
-                'name'        => 'rates_page_slug',
-                'section'     => self::OPTION_PERMALINKS,
-                'value'       => $permalinks['rates_page_slug'],
-                'placeholder' => 'voip-call-rates',
-                'pre'         => '/',
-                'post'        => '/:country',
+            'name' => 'rates_page_slug',
+            'section' => Level7Platform::OPTION_PERMALINKS,
+            'value' => $permalinks['rates_page_slug'],
+            'placeholder' => 'voip-call-rates',
+            'pre' => '/',
+            'post' => '/:country',
             )
         );
-        
+
         // virtual numbers page
         add_settings_field(
-            'virtual_numbers_page_slug',  // id
-            __( 'Virtual numbers page', 'level7platform' ), // setting label
-            'text_input',                                 // display callback
-            'level7platform',                 		      // settings page
-            'level7platform_permalinks_section',          // section
+            'virtual_numbers_page_slug', // id
+            __('Virtual numbers page', 'level7platform'), // setting label
+            'text_input', // display callback
+            'level7platform', // settings page
+            'level7platform_permalinks_section', // section
             array(
-                'name'        => 'virtual_numbers_page_slug',
-                'section'     => self::OPTION_PERMALINKS,
-                'value'       => $permalinks['virtual_numbers_page_slug'],
-                'placeholder' => 'telephone-numbers',
-                'pre'         => '/',
-                'post'        => '/:country-or-state',
-                'help'        => 'Virtual Telephone Numbers'
+            'name' => 'virtual_numbers_page_slug',
+            'section' => Level7Platform::OPTION_PERMALINKS,
+            'value' => $permalinks['virtual_numbers_page_slug'],
+            'placeholder' => 'telephone-numbers',
+            'pre' => '/',
+            'post' => '/:country-or-state',
+            'help' => 'Virtual Telephone Numbers'
             )
         );
-        
+
         // TODO: check if has_shop option is enabled
-        
         // hardware page
         add_settings_field(
-            'hardware_page_slug',  // id
-            __( 'Hardware page', 'level7platform' ), 	      // setting label
-            'text_input',                                 // display callback
-            'level7platform',                 		      // settings page
-            'level7platform_permalinks_section',          // section
+            'hardware_page_slug', // id
+            __('Hardware page', 'level7platform'), // setting label
+            'text_input', // display callback
+            'level7platform', // settings page
+            'level7platform_permalinks_section', // section
             array(
-                'name'        => 'hardware_page_slug',
-                'section'     => self::OPTION_PERMALINKS,
-                'value'       => $permalinks['hardware_page_slug'],
-                'placeholder' => 'hardware',
-                'pre'         => '/',
-                'post'        => '/:category-or-phone',
+            'name' => 'hardware_page_slug',
+            'section' => Level7Platform::OPTION_PERMALINKS,
+            'value' => $permalinks['hardware_page_slug'],
+            'placeholder' => 'hardware',
+            'pre' => '/',
+            'post' => '/:category-or-phone',
             )
         );
-        
+
         // manual page
         add_settings_field(
-            'manual_page_slug',  // id
-            __( 'Hardware page', 'level7platform' ), 	  // setting label
-            'text_input',                                 // display callback
-            'level7platform',                 		      // settings page
-            'level7platform_permalinks_section',          // section
+            'manual_page_slug', // id
+            __('Manual page', 'level7platform'), // setting label
+            'text_input', // display callback
+            'level7platform', // settings page
+            'level7platform_permalinks_section', // section
             array(
-            'name'        => 'manual_page_slug',
-            'section'     => self::OPTION_PERMALINKS,
-            'value'       => $permalinks['manual_page_slug'],
-            'placeholder' => 'manual',
-            'pre'         => '/',
-            'post'        => '/:chapter',
+                'name' => 'manual_page_slug',
+                'section' => Level7Platform::OPTION_PERMALINKS,
+                'value' => $permalinks['manual_page_slug'],
+                'placeholder' => 'manual',
+                'pre' => '/',
+                'post' => '/:chapter',
             )
         );
-        
+
         ?>
-        
+
         <div class="wrap">
-            
+
             <?php echo $this->show_messages() ?>
-            
+
             <h2>Settings</h2>
-            
+
             <form action='' method='POST' >
-            
+
                 <?php settings_fields('level7platform_settings'); ?>
                 <?php do_settings_sections('level7platform'); ?>
                 <?php submit_button("Save", 'primary'); ?>
-                
+
             </form>
         </div>
-        
-        <?php 
+
+        <?php
     }
-    
-    	
-	public function permalinks_section_callback()
+
+    public function permalinks_section_callback()
     {
-        echo wpautop( __( 'These settings control the permalinks used for pages. These settings only apply when <strong>not using "default" permalinks below</strong>.', 'level7platform' ) );
+        echo wpautop(__('These settings control the permalinks used for pages. These settings only apply when <strong>not using "default" permalinks below</strong>.', 'level7platform'));
     }
-    
+
     private function save()
     {
         if (empty($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'level7platform_settings-options')) {
-            die( __( 'Action failed. Please refresh the page and retry.', 'level7platform' ) );
+            die(__('Action failed. Please refresh the page and retry.', 'level7platform'));
         }
-        
-        $permalinks_data = $_POST[self::OPTION_PERMALINKS];
-        
+
+        $permalinks_data = $_POST[Level7Platform::OPTION_PERMALINKS];
+
         // validation is not neccessary
         foreach ($permalinks_data as $key => $val) {
             $permalinks_data[$key] = sanitize_title($val);
         }
-        
+
         // save data
-        update_option(self::OPTION_PERMALINKS, $permalinks_data);
-        
+        update_option(Level7Platform::OPTION_PERMALINKS, $permalinks_data);
+
         $this->add_message('notice', __('Settings saved.', 'level7platform'));
     }
-    
+
     private function add_message($key, $msg)
     {
         if (!array_key_exists($key, $this->messages)) {
             $this->messages[$key] = array();
         }
-        
+
         $this->messages[$key][] = $msg;
     }
 
-
     private function show_messages()
     {
+
         ?>
-        
+
         <?php if (count($this->messages['notice'])): ?>
             <div id="setting-error-settings_updated" class="updated settings-error"> 
                 <?php foreach ($this->messages['notice'] as $msg): ?>
@@ -184,7 +180,7 @@ class L7P_Admin
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-        
+
         <?php if (count($this->messages['error'])): ?>
             <div id="setting-error-invalid_siteurl" class="error settings-error"> 
                 <?php foreach ($this->messages['error'] as $msg): ?>
@@ -192,7 +188,7 @@ class L7P_Admin
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-        
+
         <?php
     }
 }

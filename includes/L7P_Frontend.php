@@ -8,72 +8,129 @@
  * file that was distributed with this source code.
  */
 
-class L7P_Frontend 
+class L7P_Frontend
 {
-    public function __construct() 
+
+    public $query_vars = array();
+
+    public function __construct()
     {
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
+        add_action('init', array($this, 'add_endpoints'));
 
-        // TODO: to be fixed
-        //add_action('pre_get_posts', array($this, 'pre_get_posts'));
+        add_filter('query_vars', array($this, 'add_query_vars'), 0);
+        // TODO: to be fixed ?
+        add_action('pre_get_posts', array($this, 'pre_get_posts'));
+
+        $this->init_query_vars();
     }
 
-	/**
-	 * Enqueue styles
-	 */
-	public function styles()
-	{
-		wp_enqueue_style(
-            'level7-login',
-            plugins_url('/assets/css/level7-login.css', L7P_PLUGIN_FILE)
-		);
-		
-		wp_enqueue_style(
-            'level7-jquery-ui-css',
-            plugins_url('/assets/css/jquery-ui.css', L7P_PLUGIN_FILE)
-		);
-	}
-	
-	/**
-	 * Enqueue scripts
-	 */
-	public function scripts()
-	{
-	    wp_enqueue_script(
-    	    'level7-login',
-    	    plugins_url('/assets/js/level7-login.js', L7P_PLUGIN_FILE),
-    	    array('jquery', 'jquery-ui-dialog')
-	    );
-	
-	}
-	
-	public function pre_get_posts($query)
-	{
-	    if ($query->is_main_query()) {
-	        
-	        // TODO: to be fixed
-	        // query_posts('pagename=rates');
-	    }
-	}
+    /**
+     * Enqueue styles
+     */
+    public function styles()
+    {
+        wp_enqueue_style(
+            'level7-login', plugins_url('/assets/css/level7-login.css', L7P_PLUGIN_FILE)
+        );
 
-	public function routes()
-	{
-	    $routes = array(
-            'rate'              => get_option('level7platform_rate', 'rate'),
-	        'rates'             => get_option('level7platform_rates', 'rates'),
-	        'telephone_numbers' => get_option('level7platform_telephone_numbers', 'telephone-numbers'),
-	        'hardware'          => get_option('level7platform_rate', 'hardware'),
-	    );
-	    
-	    foreach ($routes as $route) {
-	        
-	        add_rewrite_endpoint($route, EP_ROOT | EP_PAGES);
-	    }
-	}
-	
-	
+        wp_enqueue_style(
+            'level7-jquery-ui-css', plugins_url('/assets/css/jquery-ui.css', L7P_PLUGIN_FILE)
+        );
+    }
 
+    /**
+     * Enqueue scripts
+     */
+    public function scripts()
+    {
+        wp_enqueue_script(
+            'level7-login', plugins_url('/assets/js/level7-login.js', L7P_PLUGIN_FILE), array('jquery', 'jquery-ui-dialog')
+        );
+    }
+
+    /**
+     * Init query vars by loading options.
+     */
+    public function init_query_vars()
+    {
+        echo "init query vars <br />";
+        
+        $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
+        
+        // Query vars to add to WP
+        $this->query_vars = array(
+            'rates'             => $permalinks['rates_page_slug'],
+            'telephone_numbers' => $permalinks['virtual_numbers_page_slug'],
+            'hardware'          => $permalinks['hardware_page_slug'],
+            'manual'            => $permalinks['manual_page_slug'],
+        );
+        
+        print_r($this->query_vars);
+    }
+
+    /**
+     * Add endpoints for query vars
+     */
+    public function add_endpoints()
+    {
+        echo "add endpoints <br/>";
+        foreach ($this->query_vars as $key => $var) {
+            add_rewrite_endpoint($var, EP_ROOT | EP_PAGES);
+            //add_rewrite_endpoint($var, EP_ALL);
+        }
+        
+        // TODO: to be removed
+        flush_rewrite_rules();
+    }
+
+    /**
+     * add_query_vars function.
+     *
+     * @access public
+     * @param array $vars
+     * @return array
+     */
+    public function add_query_vars($vars)
+    {
+        echo "add query vars <br/>";
+
+        foreach ($this->query_vars as $key => $var) {
+            $vars[] = $key;
+        }
+
+        return $vars;
+    }
+
+    /**
+     * Get query vars
+     *
+     * @return array
+     */
+    public function get_query_vars()
+    {
+        return $this->query_vars;
+    }
+
+    public function pre_get_posts($query)
+    {
+        // we only want to affect the main query
+        if (!$query->is_main_query()) {
+            return;
+        }
+        
+        $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
+
+        echo "pre_get_posts <br/>";
+
+        echo '<pre>';
+        print_r($query);
+        echo '</pre>';
+
+        // TODO: to be fixed
+        // query_posts('pagename=rates');
+    }
 }
 
 return new L7P_Frontend();
