@@ -5,3 +5,4 @@
 # build directory for Sencha (ExtJS) projects
 /extjs/build/.sass-cache/
 /extjs/build/temp/
+/nbproject/
