@@ -39,8 +39,8 @@ class L7P_Post_Types
         register_post_type(
             'level7platform_page',
             array(
-                'label'         => __("Page templates", 'level7platform'),
-                'description'   => __( 'This is where you can manage Level7 platform page templates.', 'level7platform' ),
+                'label'         => __("Page templates", 'level7platform'), 
+               'description'   => __( 'This is where you can manage Level7 platform page templates.', 'level7platform' ),
                 'labels'        => array(
             	
                 ),
@@ -48,17 +48,27 @@ class L7P_Post_Types
                 'description'   => __( 'This is where you can manage Level7 platform page templates.', 'level7platform' ),
                 'show_in_menu'  => 'l7-settings',
                 'capability_type'     => 'page',
-                'supports'      => array( 'title', 'editor', 'excerpt', 'thumbnail', 'custom-fields', 'page-attributes' ),
+                'map_meta_cap'        => true,
+                // TODO: implement as in product
+                // TODO: implement custom capabilities ?
                 'capabilities'  => array(
-                    'create_pages' => false,
-                    'edit_page'    => true
+                    // TODO: block preview
+                    'show_posts' => false,
+                    'create_posts' => false,
+                    'edit_posts'    => true,
+                    'delete_posts'    => false,
+                    'delete_published_posts'    => false,
                 ),
-                
+                'supports'      => array( 'title', 'editor', 'excerpt', 'thumbnail', 'custom-fields', 'page-attributes' ),
+               'rewrite'             => false,
+                'query_var'           => true,
                 // 'rewrite'             => $product_permalink ? array( 'slug' => untrailingslashit( $product_permalink ), 'with_front' => false, 'feeds' => true ) : false,
+                /*
                 'rewrite'               => array(
                     'slug'       => 'level7platform_page',
                     'with_front' => false
                 ),
+                */
             )
         );
         

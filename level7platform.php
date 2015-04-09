@@ -115,13 +115,15 @@ class Level7Platform
         include_once('includes/L7P_Install.php');
 
         if (is_admin()) {
-            include_once('includes/admin/L7P_Admin_Functions.php');
-            include_once('includes/L7P_Form.php');
-            include_once('includes/admin/L7P_Admin.php');
+            include_once('includes/admin/L7P_Functions.php');
+            include_once('includes/admin/L7P_Form.php');
+            include_once('includes/L7P_Admin.php');
         } else { // Frontend
+            include_once('includes/frontend/L7P_Content.php');
+            include_once('includes/frontend/L7P_Block.php');
+            include_once('includes/frontend/L7P_Inline.php');
+            include_once('includes/frontend/L7P_Shortcodes.php');
             include_once('includes/L7P_Frontend.php');
-            include_once('includes/L7P_Shortcodes.php');
-            include_once('includes/L7P_Content.php');
         }
 
         // Post Types

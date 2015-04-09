@@ -55,19 +55,15 @@ class L7P_Frontend
      */
     public function init_query_vars()
     {
-        echo "init query vars <br />";
-        
         $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
-        
+
         // Query vars to add to WP
         $this->query_vars = array(
-            'rates'             => $permalinks['rates_page_slug'],
-            'telephone_numbers' => $permalinks['virtual_numbers_page_slug'],
-            'hardware'          => $permalinks['hardware_page_slug'],
-            'manual'            => $permalinks['manual_page_slug'],
+            'rates' => $permalinks['rates'],
+            'telephone_numbers' => $permalinks['telephone_numbers'],
+            'hardware' => $permalinks['hardware'],
+            'manual' => $permalinks['manual'],
         );
-        
-        print_r($this->query_vars);
     }
 
     /**
@@ -75,14 +71,9 @@ class L7P_Frontend
      */
     public function add_endpoints()
     {
-        echo "add endpoints <br/>";
         foreach ($this->query_vars as $key => $var) {
             add_rewrite_endpoint($var, EP_ROOT | EP_PAGES);
-            //add_rewrite_endpoint($var, EP_ALL);
         }
-        
-        // TODO: to be removed
-        flush_rewrite_rules();
     }
 
     /**
@@ -94,8 +85,6 @@ class L7P_Frontend
      */
     public function add_query_vars($vars)
     {
-        echo "add query vars <br/>";
-
         foreach ($this->query_vars as $key => $var) {
             $vars[] = $key;
         }
@@ -119,17 +108,98 @@ class L7P_Frontend
         if (!$query->is_main_query()) {
             return;
         }
+
+        $permalinks = get_option(Level7Platform::OPTION_PERMALINKS, array());
+
+        foreach ($permalinks as $page_name => $value) {
+
+            if (isset($query->query_vars[$value])) {
+
+                $query_value = $query->query_vars[$value];
+                if ($page_name == "rates") {
+
+                    $parts = array_filter(explode("/", $query_value));
+                    if (count($parts) == 1) {
+                        // call rates country
+                        $country = $query_value;
+                        $page_name .= "_country";
+                    } else {
+                        return $this->error_404();
+                    }
+                } else if ($page_name == 'telephone_numbers') {
+
+                    $parts = array_filter(explode("/", $query_value));
+                    if (count($parts) == 1) {
+                        // phone number country
+                        $country = $query_value;
+                        $page_name .= "_country";
+                    } else if (count($parts) == 2) {
+                        // phone numbers state
+                        $country = $parts[0];
+                        $state = $parts[1];
+                        $page_name .= "_state";
+                    } else {
+                        // errorr 404
+                        return $this->error_404();
+                    }
+
+
+                    // is country
+                    /*
+                      if (is_country($query_value)) {
+
+                      }
+
+                      if (is_state($query_value)) {
+
+                      }
+                     */
+                } else if ($page_name == 'hardware') {
+                    
+                    $parts = array_filter(explode("/", $query_value));
+                    if (count($parts) == 1) {
+                        // hardware group
+                        $group = $query_value;
+                        $page_name .= "_group";
+                    } else if (count($parts) == 2) {
+                        // hardware model
+                        $model = $parts[0];
+                        $state = $parts[1];
+                        $page_name .= "_model";
+                    } else {
+                        // errorr 404
+                        return $this->error_404();
+                    }
+                    
+                } else if ($page_name == 'manual') {
+                    
+                    $parts = array_filter(explode("/", $query_value));
+                    if (count($parts) == 1) {
+                        // manual chapter
+                        $chapter = $query_value;
+                        $page_name .= "_chapter";
+                    } else {
+                        return $this->error_404();
+                    }
+                }
+
+                // query for given post
+                $query->is_page = true;
+                $query->is_home = false;
+                $query->is_singular = true;
+                $query->set('post_type', 'level7platform_page');
+                $query->set('name', $page_name);
+            }
+        }
+
+    }
+
+    private function error_404()
+    {
+        global $wp_query;
         
-        $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
-
-        echo "pre_get_posts <br/>";
-
-        echo '<pre>';
-        print_r($query);
-        echo '</pre>';
-
-        // TODO: to be fixed
-        // query_posts('pagename=rates');
+        $wp_query->set_404();
+        status_header(404);
     }
 }
 

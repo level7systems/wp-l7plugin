@@ -42,21 +42,19 @@ class L7P_Admin
 
         $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
 
-        
         // TODO: add support for defaults values from placeholders
-        
         // rate page
         add_settings_field(
-            'rates_page_slug', // id
+            'rates', // id
             __('Country rates page', 'level7platform'), // setting label
             'text_input', // display callback
             'level7platform', // settings page
             'level7platform_permalinks_section', // section
             array(
-            'name' => 'rates_page_slug',
+            'name' => 'rates',
             'section' => Level7Platform::OPTION_PERMALINKS,
-            'value' => $permalinks['rates_page_slug'],
-            'placeholder' => 'voip-call-rates',
+            'value' => $permalinks['rates'],
+            'placeholder' => $this->get_field_default_value('rates'),
             'pre' => '/',
             'post' => '/:country',
             )
@@ -64,16 +62,16 @@ class L7P_Admin
 
         // virtual numbers page
         add_settings_field(
-            'virtual_numbers_page_slug', // id
+            'telephone_numbers', // id
             __('Virtual numbers page', 'level7platform'), // setting label
             'text_input', // display callback
             'level7platform', // settings page
             'level7platform_permalinks_section', // section
             array(
-            'name' => 'virtual_numbers_page_slug',
+            'name' => 'telephone_numbers',
             'section' => Level7Platform::OPTION_PERMALINKS,
-            'value' => $permalinks['virtual_numbers_page_slug'],
-            'placeholder' => 'telephone-numbers',
+            'value' => $permalinks['telephone_numbers'],
+            'placeholder' => $this->get_field_default_value('telephone_numbers'),
             'pre' => '/',
             'post' => '/:country-or-state',
             'help' => 'Virtual Telephone Numbers'
@@ -83,16 +81,16 @@ class L7P_Admin
         // TODO: check if has_shop option is enabled
         // hardware page
         add_settings_field(
-            'hardware_page_slug', // id
+            'hardware', // id
             __('Hardware page', 'level7platform'), // setting label
             'text_input', // display callback
             'level7platform', // settings page
             'level7platform_permalinks_section', // section
             array(
-            'name' => 'hardware_page_slug',
+            'name' => 'hardware',
             'section' => Level7Platform::OPTION_PERMALINKS,
-            'value' => $permalinks['hardware_page_slug'],
-            'placeholder' => 'hardware',
+            'value' => $permalinks['hardware'],
+            'placeholder' => $this->get_field_default_value('hardware'),
             'pre' => '/',
             'post' => '/:category-or-phone',
             )
@@ -100,21 +98,21 @@ class L7P_Admin
 
         // manual page
         add_settings_field(
-            'manual_page_slug', // id
+            'manual', // id
             __('Manual page', 'level7platform'), // setting label
             'text_input', // display callback
             'level7platform', // settings page
             'level7platform_permalinks_section', // section
             array(
-                'name' => 'manual_page_slug',
-                'section' => Level7Platform::OPTION_PERMALINKS,
-                'value' => $permalinks['manual_page_slug'],
-                'placeholder' => 'manual',
-                'pre' => '/',
-                'post' => '/:chapter',
+            'name' => 'manual',
+            'section' => Level7Platform::OPTION_PERMALINKS,
+            'value' => $permalinks['manual'],
+            'placeholder' => $this->get_field_default_value('manual'),
+            'pre' => '/',
+            'post' => '/:chapter',
             )
         );
-
+        
         ?>
 
         <div class="wrap">
@@ -150,11 +148,17 @@ class L7P_Admin
 
         // validation is not neccessary
         foreach ($permalinks_data as $key => $val) {
+
+            if (empty($val)) {
+                $val = $this->get_field_default_value($key);
+            }
             $permalinks_data[$key] = sanitize_title($val);
         }
 
         // save data
         update_option(Level7Platform::OPTION_PERMALINKS, $permalinks_data);
+        
+        flush_rewrite_rules();
 
         $this->add_message('notice', __('Settings saved.', 'level7platform'));
     }
@@ -190,6 +194,18 @@ class L7P_Admin
         <?php endif; ?>
 
         <?php
+    }
+
+    private function get_field_default_value($id)
+    {
+        $defaults = array(
+            'rates'             => 'voip-call-rates',
+            'telephone_numbers' => 'telephone-numbers',
+            'hardware'          => 'hardware',
+            'manual'            => 'manual'
+        );
+        
+        return isset($defaults[$id]) ? $defaults[$id] : "";
     }
 }
 

@@ -62,6 +62,7 @@ class L7P_Install
         wp_delete_post(get_option('level7platform_rates_page_id'));
         wp_delete_post(get_option('level7platform_telephone_numbers_page_id'));
         wp_delete_post(get_option('level7platform_hardware_page_id'));
+        wp_delete_post(get_option('level7platform_manual_page_id'));
         
         // delete options
         $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'level7platform_%';");
@@ -85,8 +86,7 @@ class L7P_Install
         
         $pages_contents = $this->get_pages_contents();
         
-        // 3 standard pages
-        // TODO: add more pages to installer
+        // 5 standard pages
         $pages = array(
             'pricing' => array(
                 'name'      => 'pricing',
@@ -110,6 +110,12 @@ class L7P_Install
                 'name'      => 'hardware',
                 'title'     => 'Hardware',
                 'content'   => $pages_contents['hardware'],
+                'post_type' => 'page',
+            ),
+            'manual' => array(
+                'name'      => 'manual',
+                'title'     => 'Manuals',
+                'content'   => $pages_contents['manual'],
                 'post_type' => 'page',
             ),
             // templates for dynamic pages
@@ -143,10 +149,10 @@ class L7P_Install
                 'content'   => $pages_contents['hardware_phone'],
                 'post_type' => 'level7platform_page',
             ),
-            'manual' => array(
-                'name'      => 'manual',
-                'title'     => 'Administrator manual',
-                'content'   => $pages_contents['manual'],
+            'manual_chapter' => array(
+                'name'      => 'manual_chapter',
+                'title'     => 'Manual chapter',
+                'content'   => $pages_contents['manual_chapter'],
                 'post_type' => 'level7platform_page',
             ),
         );
