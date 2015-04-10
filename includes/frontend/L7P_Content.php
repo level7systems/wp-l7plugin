@@ -85,7 +85,7 @@ class L7P_Content
             return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Undefined shortcode tag:' . $tag . '</div>';
         }
 
-        return sprintf("<?php echo call_user_func('%s') ?>", $inline);
+        return '<?php echo ' . call_user_func($inline) . '; ?>';
     }
 
     public function block($m)
@@ -384,17 +384,20 @@ class L7P_Content
         switch ($m[1]) {
             // Termination
             case 'term_letters':
-                return '<?php foreach ((isset($letters) ? $letters : array()) as $firstletter => $countries) : ?>';
-                break;
+                return '<?php '
+                . '$currency = l7p_get_session(\'currency\', l7p_get_settings(\'default_culture\'));'
+                . '$pricelist = l7p_get_pricelist(); $letters = $pricelist[\'letters\'][strtolower($currency)];'
+                . 'foreach ((isset($letters) ? $letters : array()) as $firstletter => $countries):'
+                . ' ?>';
+                
             case 'term_countries':
                 return '<?php $letter_changed = true; foreach ((isset($countries) ? $countries : array()) as $country_name => $term_data) : ?>';
-                break;
+                
             case 'term_letter_routes':
                 return '<?php foreach ((isset($term_data) ? $term_data : array()) as $route) : ?>';
-                break;
+                
             case 'term_routes':
                 return '<?php foreach ((isset($routes) ? $routes : array()) as $term_name => $term_data) : ?>';
-                break;
 
             // Fax
             case 'fax_letters':

@@ -36,16 +36,29 @@ function l7p_inline_charge($service)
     if (!$currency = l7p_get_session('currency')) {
         $currency = l7p_get_option('currency', 'USD');
     }
-     
+
     $charges = l7p_get_option('charges', array());
     $charge = array_key_exists($service, $charges) ? $charges[$service][$currency] : 0;
-     
+
     return l7p_currency_symbol($charge, $currency);
 }
 
-function l7p_inline_term_letters()
+// Displays termination route first name (if different from previous one).
+function l7p_inline_term_letter()
 {
-    // TODO
+    return 'isset($firstletter) ? $firstletter : \'<!-- TERM_LETTER not defined -->\'';
+}
+
+// Displays mobile termination rate
+function l7p_inline_term_mobile()
+{
+    return '(($term_data[\'mobile\'] * 100) <= 100) ? l7p_currency_symbol($term_data[\'mobile\'],1,true) : l7p_currency_symbol($term_data[\'mobile\'])';
+}
+
+// Displays fixed termination rate
+function l7p_inline_term_fixed()
+{
+    return '(($term_data[\'fixed\'] * 100) <= 100) ? l7p_currency_symbol($term_data[\'fixed\'],1,true) : l7p_currency_symbol($term_data[\'fixed\'])';
 }
 
 function l7p_inline_term_countries()
@@ -53,44 +66,56 @@ function l7p_inline_term_countries()
     // TODO
 }
 
+// country url
+function l7p_inline_term_route_url()
+{
+    return '\'?country=\'.$country_name';
+    //return 'url_for(__(\'@country_rates\').\'?country=\'.$country_name)';
+}
 
-
+// display country name
+function l7p_inline_term_route_country()
+{
+    return 'isset($country_name) ? $country_name : \'<!-- TERM_ROUTE_COUNTRY not defined -->\'';
+}
 
 // TODO
 function l7p_inline_app_url()
 {
     // TODO
-    return  "app_url(get_entry_app()).__('/app')";
+    return "app_url(get_entry_app()).__('/app')";
 }
-
 # Phones
-
 // desk category page URL
-function l7p_inline_phone_desk_url() {
-    return url_for(__('@phones_group').'?group='.__('Desk Phones'));
+function l7p_inline_phone_desk_url()
+{
+    return url_for(__('@phones_group') . '?group=' . __('Desk Phones'));
 }
 
 // desk min. price
-function l7p_inline_phone_desk_min_price() {
+function l7p_inline_phone_desk_min_price()
+{
     return isset($min_price) ? currency_symbol($min_price['Desk Phones']) : '<!-- PHONE_DESK_MIN_PRICE not defined -->';
 }
 
 // DECT category page URL
-function l7p_inline_phone_dect_url() {
-    return url_for(__('@phones_group').'?group='.__('DECT Phones'));
+function l7p_inline_phone_dect_url()
+{
+    return url_for(__('@phones_group') . '?group=' . __('DECT Phones'));
 }
-               
+
 // DECT min. price
-function l7p_inline_phone_dect_min_price() {
+function l7p_inline_phone_dect_min_price()
+{
     return isset($min_price) ? currency_symbol($min_price['DECT Phones']) : '<!-- PHONE_DECT_MIN_PRICE not defined -->';
 }
 
 // conference category page URL
-function l7p_inline_phone_conf_url() {
+function l7p_inline_phone_conf_url()
+{
 
-    return url_for(__('@phones_group').'?group='.__('Conference Phones'));
+    return url_for(__('@phones_group') . '?group=' . __('Conference Phones'));
 }
-
 /*
     PHONE_CONF_MIN_PRICE:
     function: "isset($min_price) ? currency_symbol($min_price['Conference Phones']) : '<!-- PHONE_CONF_MIN_PRICE not defined -->'"

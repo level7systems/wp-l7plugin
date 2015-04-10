@@ -9,16 +9,23 @@
  */
 
 function l7p_block_currency_form() {
-    $currency = l7p_get_session('currency', 'USD');
+    $default_currency = 'USD';
+    $selected_currency = l7p_get_session('currency', $default_currency);
+    $currencies = l7p_get_currencies();
+    
+    echo '<pre>';
+    print_r(l7p_get_pricelist()['letters']);
+    echo '</pre>';
     
     if (l7p_is_post_request() && array_key_exists('currency', $_POST)) {
         
         // verify allowed currencied
-        $currency = $_POST['currency'];
-        if (in_array($currency, l7p_get_currencies())) {
-            l7p_set_session('currency', $currency);
+        $selected_currency = $_POST['currency'];
+        if (in_array($selected_currency, $currencies)) {
+            echo $selected_currency;
+            l7p_update_session('currency', $selected_currency);
         } else {
-            $currency = l7p_get_session('currency', 'USD');
+            $selected_currency = l7p_get_session('currency', $default_currency);
         }
     }
     
@@ -26,11 +33,9 @@ function l7p_block_currency_form() {
     ?>
         <form method="post" action="" class="currency-form">
             <select name="currency" id="currency" onchange="this.form.submit()">
-                <option value="EUR"<?php if ($currency == 'EUR'): ?>selected="selected"<?php endif; ?>>Euro</option>
-                <option value="USD"<?php if ($currency == 'USD'): ?>selected="selected"<?php endif; ?>>US Dollar</option>
-                <option value="JPY"<?php if ($currency == 'JPY'): ?>selected="selected"<?php endif; ?>>Japanese Yen</option>
-                <option value="GBP"<?php if ($currency == 'GBP'): ?>selected="selected"<?php endif; ?>>British Pound Sterling</option>
-                <option value="PLN"<?php if ($currency == 'PLN'): ?>selected="selected"<?php endif; ?>>Polish Zloty</option>
+                <?php foreach ($currencies as $currency_iso): ?>
+                    <option value="<?php echo $currency_iso ?>"<?php if ($selected_currency == $currency_iso): ?>selected="selected"<?php endif; ?>><?php echo l7p_currency_name($currency_iso) ?></option>
+                <?php endforeach; ?>
             </select>
         </form>
     <?php 

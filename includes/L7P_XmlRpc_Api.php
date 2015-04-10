@@ -15,9 +15,9 @@ class L7P_XmlRpc_Api
         'l7.ping'           => 'ping',
         // TODO: other methods
         'l7.setSettings'    => 'setSettings',
+        'l7.setPricelist'   => 'setPricelist',
+        
         'l7.setCharges'     => 'setCharges',
-        'l7.setPricelists'  => 'setPricelists',
-        'l7.setHardware'    => 'setHardware',
     );
     
     public function __construct()
@@ -28,28 +28,32 @@ class L7P_XmlRpc_Api
     public function registerMethods($methods)
     {
         foreach($this->methods as $ns => $method) {
-            $methods[$ns] = array($this, $method);
+            $methods[trim($ns)] = array($this, trim($method));
         }
         
         return $methods;
     }
     
-    // TODO: to be implemented
-    
-    public static function setPricelists(array $pricelists)
+    public function setSettings($settings)
     {
-        // TODO
-        
-        // returning errors to client
-        // return new IXR_Error(500, "Some error");
-        
         // TODO: add additional checks
-        update_option('pricelists', $pricelists);
+        l7p_update_option('settings', $settings);
         
         return "OK";
     }
     
-    public static function ping()
+    public function setPricelist($pricelist)
+    {
+        // returning errors to client
+        // return new IXR_Error(500, "Some error");
+        
+        // TODO: add additional checks
+        l7p_update_option('pricelist', $pricelist);
+        
+        return "OK";
+    }
+    
+    public function ping()
     {
         return "OK";
     }
