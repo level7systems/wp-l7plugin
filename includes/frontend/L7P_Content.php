@@ -13,7 +13,7 @@ class L7P_Content
 
     public function __construct()
     {
-        // TODO
+// TODO
         $user_webproduct_code = l7p_get_option('user_webproduct', 'v');
 
         add_filter('the_content', array($this, 'parse_content'), 20);
@@ -22,13 +22,13 @@ class L7P_Content
     public function parse_content($content)
     {
         if (is_single() || is_page()) {
-            // parse for extra syntax
-            // strip PHP tags to avoid injcections
+// parse for extra syntax
+// strip PHP tags to avoid injcections
             $content = preg_replace("#<\?.*?(\?>|$)#s", "", $content);
-            // 
+// 
             $content = $this->apply_callbacks($content);
 
-            // execute PHP functions
+// execute PHP functions
             ob_start();
             $content = eval("?> " . $content);
             $content = ob_get_clean();
@@ -39,7 +39,7 @@ class L7P_Content
 
     private function apply_callbacks($content)
     {
-        // static tags and blocks
+// static tags and blocks
         $regex = array(
             '/<\?/si',
             '/\?>/si',
@@ -58,22 +58,22 @@ class L7P_Content
 
         $content = preg_replace($regex, $replace, $content);
 
-        // TODO: url
-        // $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'url'), $content);
-        // image
+// TODO: url
+// $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'url'), $content);
+// image
         $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array($this, 'image'), $content);
-        // statements
+// statements
         $content = preg_replace_callback('/\[if (.*)\]/mU', array($this, 'if_statement'), $content);
         $content = preg_replace_callback('/\[foreach (.*)\]/mU', array($this, 'foreach_statement'), $content);
-        // blocks
+// blocks
         $content = preg_replace_callback('/\[block (.*)\]/imU', array($this, 'block'), $content);
-        // inlines
+// inlines
         $content = preg_replace_callback('/\[([A-Z,_]+)\]/imU', array($this, 'inline'), $content);
 
         return $content;
     }
 
-    // TODO
+// TODO
     /**
      * Renders %INLINE_TAGS%
      */
@@ -202,176 +202,151 @@ class L7P_Content
         $condition = array_shift($params);
 
         if (!is_callable($condition)) {
-            $condition = "l7p_" . $condition;
+            $func = "l7p_" . $condition;
         }
 
-        if (is_callable($condition)) {
+        if (is_callable($func)) {
             if ($params) {
-                return sprintf("<?php if (%s(%s)) : ?>", $condition, implode(", ", $params));
+                return sprintf("<?php if (%s(%s)) : ?>", $func, implode(", ", $params));
             }
-            return sprintf("<?php if (%s()) : ?>", $condition);
+            return sprintf("<?php if (%s()) : ?>", $func);
         }
 
-        /*
-          if (strpos($m[1],":"))
-          {
-          $temp = explode(":",$m[1]);
+        switch ($condition) {
 
-          switch ($temp[0])
-          {
-          case 'currency':
-          return '<?php if ($sf_user->getCurrency() == "'.$temp[1].'") : ?>';
-          break;
-          case 'url':
-          return '<?php if (is_url_match("'.$temp[1].'")) : ?>';
-          break;
-          case 'has_slot':
-          return '<?php if (has_slot("'.$temp[1].'")) : ?>';
-          break;
-          case 'auth':
-          return '<?php if ($sf_user->isAuthenticated()) : ?>';
-          break;
-          default:
-          return '<!-- unknown condition '.$temp[0].' --> <?php if (false) : ?>';
-          }
-          }
+            case 'login_email':
+                return '<?php if ($sf_flash->has("login-email")) : ?>';
+                break;
 
-          switch ($m[1])
-          {
-          case 'login_email':
-          return '<?php if ($sf_flash->has("login-email")) : ?>';
-          break;
+            case 'subscribed':
+                return '<?php if (isset($subscriber) && $subscriber->getIsSubscribed()) : ?>';
+                break;
 
-          case 'subscribed':
-          return '<?php if (isset($subscriber) && $subscriber->getIsSubscribed()) : ?>';
-          break;
+// Termination
+            case 'term_has_local':
+                return '<?php if (isset($domestic) && isset($domestic["fixed"]) && isset($domestic["mobile"])) : ?>';
+                break;
+            case 'term_unlimited_local':
+                return '<?php if (isset($package_routes) && (in_array(get_geo()."-L",$package_routes) || in_array(get_geo()."-M",$package_routes))) : ?>';
+                break;
+            case 'term_local_mobile_free':
+                return '<?php if (isset($package_routes) && in_array(get_geo()."-M",$package_routes)) : ?>';
+                break;
+            case 'term_local_fixed_free':
+                return '<?php if (isset($package_routes) && in_array(get_geo()."-L",$package_routes)) : ?>';
+                break;
+            case 'term_is_unlimited':
+                return '<?php if (isset($term_data) && $term_data["fixed-package"]) : ?>';
+                break;
+            case 'term_route_unlimited':
+                return '<?php if (isset($term_data) && $term_data["package"]) : ?>';
+                break;
+            case 'term_route_conn_fee':
+                return '<?php if (isset($term_data) && $term_data["connection"]) : ?>';
+                break;
+            case 'term_next_letter':
+                return '<?php if ($letter_changed) :;$letter_changed = false ?>';
+                break;
 
-          // Termination
-          case 'term_has_local':
-          return '<?php if (isset($domestic) && isset($domestic["fixed"]) && isset($domestic["mobile"])) : ?>';
-          break;
-          case 'term_unlimited_local':
-          return '<?php if (isset($package_routes) && (in_array(get_geo()."-L",$package_routes) || in_array(get_geo()."-M",$package_routes))) : ?>';
-          break;
-          case 'term_local_mobile_free':
-          return '<?php if (isset($package_routes) && in_array(get_geo()."-M",$package_routes)) : ?>';
-          break;
-          case 'term_local_fixed_free':
-          return '<?php if (isset($package_routes) && in_array(get_geo()."-L",$package_routes)) : ?>';
-          break;
-          case 'term_is_unlimited':
-          return '<?php if (isset($term_data) && $term_data["fixed-package"]) : ?>';
-          break;
-          case 'term_route_unlimited':
-          return '<?php if (isset($term_data) && $term_data["package"]) : ?>';
-          break;
-          case 'term_route_conn_fee':
-          return '<?php if (isset($term_data) && $term_data["connection"]) : ?>';
-          break;
-          case 'term_next_letter':
-          return '<?php if ($letter_changed) :;$letter_changed = false ?>';
-          break;
+// Fax
+            case 'fax_next_letter':
+                return '<?php if ($fax_letter_changed) :;$fax_letter_changed = false ?>';
+                break;
 
-          // Fax
-          case 'fax_next_letter':
-          return '<?php if ($fax_letter_changed) :;$fax_letter_changed = false ?>';
-          break;
+// DDIs
+            case 'ddi_free':
+                return '<?php if (isset($free) && $free) : ?>';
+                break;
+            case 'ddi_paid':
+                return '<?php if (isset($paid) && $paid) : ?>';
+                break;
+            case 'ddi_national':
+                return '<?php if (isset($national) && $national) : ?>';
+                break;
+            case 'ddi_ddi_city':
+                return '<?php if (isset($cities) && $cities) : ?>';
+                break;
+            case 'ddi_ddi_toll_free':
+                return '<?php if (isset($toll_free) && $toll_free) : ?>';
+                break;
+            case 'ddi_is_unlimited':
+                return '<?php if (isset($ddi_data) && $ddi_data["package"]) : ?>';
+                break;
+            case 'ddi_is_free':
+                return '<?php if (isset($ddi_data) && $ddi_data["is_free"]) : ?>';
+                break;
+            case 'ddi_has_area_code':
+                return '<?php if (isset($ddi_data) && $ddi_data["area_code"]) : ?>';
+                break;
+            case 'ddi_states':
+                return '<?php if (isset($states) && $states) : ?>';
+                break;
 
-          // DDIs
-          case 'ddi_free':
-          return '<?php if (isset($free) && $free) : ?>';
-          break;
-          case 'ddi_paid':
-          return '<?php if (isset($paid) && $paid) : ?>';
-          break;
-          case 'ddi_national':
-          return '<?php if (isset($national) && $national) : ?>';
-          break;
-          case 'ddi_ddi_city':
-          return '<?php if (isset($cities) && $cities) : ?>';
-          break;
-          case 'ddi_ddi_toll_free':
-          return '<?php if (isset($toll_free) && $toll_free) : ?>';
-          break;
-          case 'ddi_is_unlimited':
-          return '<?php if (isset($ddi_data) && $ddi_data["package"]) : ?>';
-          break;
-          case 'ddi_is_free':
-          return '<?php if (isset($ddi_data) && $ddi_data["is_free"]) : ?>';
-          break;
-          case 'ddi_has_area_code':
-          return '<?php if (isset($ddi_data) && $ddi_data["area_code"]) : ?>';
-          break;
-          case 'ddi_states':
-          return '<?php if (isset($states) && $states) : ?>';
-          break;
+// Phones
+            case 'phone_has_desk':
+                return '<?php if (isset($min_price) && $min_price["Desk Phones"]) : ?>';
+                break;
+            case 'phone_has_dect':
+                return '<?php if (isset($min_price) && $min_price["DECT Phones"]) : ?>';
+                break;
+            case 'phone_has_conference':
+                return '<?php if (isset($min_price) && $min_price["Conference Phones"]) : ?>';
+                break;
+            case 'phone_has_adaptor':
+                return '<?php if (isset($min_price) && $min_price["VoIP Adaptors"]) : ?>';
+                break;
+            case 'phone_has_accessory':
+                return '<?php if (isset($min_price) && $min_price["Accessories"]) : ?>';
+                break;
+            case 'phones':
+                return '<?php if (isset($phones) && $phones) : ?>';
+                break;
+            case 'phone_in_stock':
+                return '<?php if (isset($phone_data) && $phone_data["stock"] > 0) : ?>';
+                break;
+            case 'phone_eol':
+                return '<?php if (isset($phone_data) && $phone_data["active"] == 0) : ?>';
+                break;
+            case 'phone_has_reviews':
+                return '<?php if (isset($phone_data) && $phone_data["review_count"] > 0) : ?>';
+                break;
 
-          // Phones
-          case 'phone_has_desk':
-          return '<?php if (isset($min_price) && $min_price["Desk Phones"]) : ?>';
-          break;
-          case 'phone_has_dect':
-          return '<?php if (isset($min_price) && $min_price["DECT Phones"]) : ?>';
-          break;
-          case 'phone_has_conference':
-          return '<?php if (isset($min_price) && $min_price["Conference Phones"]) : ?>';
-          break;
-          case 'phone_has_adaptor':
-          return '<?php if (isset($min_price) && $min_price["VoIP Adaptors"]) : ?>';
-          break;
-          case 'phone_has_accessory':
-          return '<?php if (isset($min_price) && $min_price["Accessories"]) : ?>';
-          break;
-          case 'phones':
-          return '<?php if (isset($phones) && $phones) : ?>';
-          break;
-          case 'phone_in_stock':
-          return '<?php if (isset($phone_data) && $phone_data["stock"] > 0) : ?>';
-          break;
-          case 'phone_eol':
-          return '<?php if (isset($phone_data) && $phone_data["active"] == 0) : ?>';
-          break;
-          case 'phone_has_reviews':
-          return '<?php if (isset($phone_data) && $phone_data["review_count"] > 0) : ?>';
-          break;
+# Blog
+            case 'blog_has_tag':
+                return '<?php if (isset($tag) && $tag) : ?>';
+                break;
+            case 'blog_has_posts':
+                return '<?php if (isset($pager) && $pager->getResults()) : ?>';
+                break;
 
-          # Blog
-          case 'blog_has_tag':
-          return '<?php if (isset($tag) && $tag) : ?>';
-          break;
-          case 'blog_has_posts':
-          return '<?php if (isset($pager) && $pager->getResults()) : ?>';
-          break;
+            case 'blog_post_has_comments':
+                return '<?php if (isset($post) && $post->countPublishedComments() > 0) : ?>';
+                break;
+            case 'blog_has_to_paginate':
+                return '<?php if (isset($pager) && $pager->haveToPaginate()) : ?>';
+                break;
+            case 'blog_pager_first_page':
+                return '<?php if (isset($pager) && $pager->getPage() == 1) : ?>';
+                break;
+            case 'blog_pager_current_page':
+                return '<?php if (isset($pager) && isset($page_no) && $page_no == $pager->getPage()) : ?>';
+                break;
+            case 'blog_pager_not_last':
+                return '<?php if (isset($pager) && isset($page_no) && $page_no != $pager->getCurrentMaxLink()) : ?>';
+                break;
+            case 'blog_pager_last':
+                return '<?php if (isset($pager) && $pager->getPage() == $pager->getCurrentMaxLink()) : ?>';
+                break;
+            case 'blog_recent':
+                return '<?php if (isset($recent) && $recent) : ?>';
+                break;
+            case 'blog_tags':
+                return '<?php if (isset($tags) && $tags) : ?>';
+                break;
 
-          case 'blog_post_has_comments':
-          return '<?php if (isset($post) && $post->countPublishedComments() > 0) : ?>';
-          break;
-          case 'blog_has_to_paginate':
-          return '<?php if (isset($pager) && $pager->haveToPaginate()) : ?>';
-          break;
-          case 'blog_pager_first_page':
-          return '<?php if (isset($pager) && $pager->getPage() == 1) : ?>';
-          break;
-          case 'blog_pager_current_page':
-          return '<?php if (isset($pager) && isset($page_no) && $page_no == $pager->getPage()) : ?>';
-          break;
-          case 'blog_pager_not_last':
-          return '<?php if (isset($pager) && isset($page_no) && $page_no != $pager->getCurrentMaxLink()) : ?>';
-          break;
-          case 'blog_pager_last':
-          return '<?php if (isset($pager) && $pager->getPage() == $pager->getCurrentMaxLink()) : ?>';
-          break;
-          case 'blog_recent':
-          return '<?php if (isset($recent) && $recent) : ?>';
-          break;
-          case 'blog_tags':
-          return '<?php if (isset($tags) && $tags) : ?>';
-          break;
-
-          default:
-          return '<!-- unknown condition '.$m[1].' --> <?php if (false) : ?>';
-          }
-         */
+            default:
+                return '<!-- unknown condition ' . $m[1] . ' --> <?php if (false) : ?>';
+        }
 
         return '<!-- unknown condition ' . $condition . ' --> <?php if (false) : ?>';
     }
@@ -382,24 +357,29 @@ class L7P_Content
     public static function foreach_statement($m)
     {
         switch ($m[1]) {
-            // Termination
+// Termination
             case 'term_letters':
                 return '<?php '
-                . '$currency = l7p_get_session(\'currency\', l7p_get_settings(\'default_culture\'));'
-                . '$pricelist = l7p_get_pricelist(); $letters = $pricelist[\'letters\'][strtolower($currency)];'
-                . 'foreach ((isset($letters) ? $letters : array()) as $firstletter => $countries):'
-                . ' ?>';
-                
-            case 'term_countries':
-                return '<?php $letter_changed = true; foreach ((isset($countries) ? $countries : array()) as $country_name => $term_data) : ?>';
-                
-            case 'term_letter_routes':
-                return '<?php foreach ((isset($term_data) ? $term_data : array()) as $route) : ?>';
-                
-            case 'term_routes':
-                return '<?php foreach ((isset($routes) ? $routes : array()) as $term_name => $term_data) : ?>';
+                    . '$letters = l7p_get_pricelist_letters();'
+                    . 'foreach ((isset($letters) ? $letters : array()) as $firstletter => $countries):'
+                    . ' ?>';
 
-            // Fax
+            case 'term_countries':
+                return '<?php '
+                    . '$letter_changed = true; foreach ((isset($countries) ? $countries : array()) as $country_name => $term_data):'
+                    . ' ?>';
+
+            case 'term_letter_routes':
+                return '<?php '
+                    . 'foreach ((isset($term_data) ? $term_data : array()) as $route):'
+                    . ' ?>';
+
+            case 'term_routes':
+                return '<?php '
+                    . '$country_code = l7p_get_country_code_from_query(); $routes = l7p_get_pricelist_country($country_code);'
+                    . 'foreach ((isset($routes) ? $routes : array()) as $term_name => $term_data):'
+                    . ' ?>';
+// Fax
             case 'fax_letters':
                 return '<?php foreach ((isset($fax_letters) ? $fax_letters : array()) as $fax_firstletter => $fax_countries) : ?>';
                 break;
@@ -410,32 +390,46 @@ class L7P_Content
                 return '<?php foreach ((isset($fax_country_data) ? $fax_country_data : array()) as $fax_data) : ?>';
                 break;
 
-            // DDI
+// DDI
             case 'ddi_free':
-                return '<?php foreach ((isset($free) ? $free : array()) as $ddi_data) : ?>';
-                break;
+                return '<?php '
+                    . '$free = l7p_get_ddi(\'free\'); '
+                    . 'foreach ((isset($free) ? $free : array()) as $ddi_data):'
+                    . ' ?>';
+                
             case 'ddi_paid':
-                return '<?php foreach ((isset($paid) ? $paid : array()) as $ddi_data) : ?>';
-                break;
+                return '<?php '
+                    . '$paid = l7p_get_ddi(\'paid\'); '
+                    . 'foreach ((isset($paid) ? $paid : array()) as $ddi_data):'
+                    . ' ?>';
+                
             case 'ddi_national':
-                return '<?php foreach ((isset($national) ? $national : array()) as $ddi_data) : ?>';
-                break;
+                return '<?php '
+                    . 'foreach ((isset($national) ? $national : array()) as $ddi_data):'
+                    . ' ?>';
+                
             case 'ddi_city':
-                return '<?php foreach ((isset($cities) ? $cities : array()) as $ddi_data) : ?>';
-                break;
+                return '<?php '
+                    . 'foreach ((isset($cities) ? $cities : array()) as $ddi_data):'
+                    . ' ?>';
+                
             case 'ddi_toll_free':
-                return '<?php foreach ((isset($toll_free) ? $toll_free : array()) as $ddi_data) : ?>';
-                break;
+                return '<?php '
+                    . 'foreach ((isset($toll_free) ? $toll_free : array()) as $ddi_data):'
+                    . ' ?>';
+                
             case 'ddi_states':
-                return '<?php foreach ((isset($states) ? $states : array()) as $state_data) : ?>';
-                break;
+                return '<?php '
+                    . 'foreach ((isset($states) ? $states : array()) as $state_data):'
+                    . ' ?>';
 
-            // Phones
+// Phones
             case 'phones':
-                return '<?php foreach ((isset($phones) ? $phones : array()) as $phone_data) : ?>';
-                break;
+                return '<?php '
+                    . 'foreach ((isset($phones) ? $phones : array()) as $phone_data):'
+                    . ' ?>';
 
-            # Blog
+# Blog
             case 'blog_posts':
                 return '<?php foreach ($pager->getResults() as $post) : ?>';
                 break;
@@ -452,7 +446,7 @@ class L7P_Content
                 return '<?php foreach ((isset($post) ? $post->getPostHasTags() : array()) as $post_has_tag) : ?>';
                 break;
 
-            // Sitemap
+// Sitemap
             case 'sitemap':
                 return '<?php foreach ((isset($sitemap) ? $sitemap : array()) as $sitemap_data) : ?>';
                 break;

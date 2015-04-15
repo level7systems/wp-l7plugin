@@ -108,7 +108,7 @@ class L7P_Frontend
         if (!$query->is_main_query()) {
             return;
         }
-
+        
         $permalinks = get_option(Level7Platform::OPTION_PERMALINKS, array());
 
         foreach ($permalinks as $page_name => $value) {

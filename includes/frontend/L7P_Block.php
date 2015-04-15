@@ -9,13 +9,13 @@
  */
 
 function l7p_block_currency_form() {
-    $default_currency = 'USD';
-    $selected_currency = l7p_get_session('currency', $default_currency);
+    
+    $selected_currency = l7p_get_currency();
     $currencies = l7p_get_currencies();
     
-    echo '<pre>';
-    print_r(l7p_get_pricelist()['letters']);
-    echo '</pre>';
+    // echo '<pre>';
+    // print_r(l7p_get_pricelist_country('pl'));
+    // echo '</pre>';
     
     if (l7p_is_post_request() && array_key_exists('currency', $_POST)) {
         
@@ -25,7 +25,7 @@ function l7p_block_currency_form() {
             echo $selected_currency;
             l7p_update_session('currency', $selected_currency);
         } else {
-            $selected_currency = l7p_get_session('currency', $default_currency);
+            $selected_currency = l7p_get_currency();
         }
     }
     

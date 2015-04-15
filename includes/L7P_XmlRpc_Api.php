@@ -16,6 +16,8 @@ class L7P_XmlRpc_Api
         // TODO: other methods
         'l7.setSettings'    => 'setSettings',
         'l7.setPricelist'   => 'setPricelist',
+        'l7.setRoutes'      => 'setRoutes',
+        'l7.setDdi'         => 'setDdi',
         
         'l7.setCharges'     => 'setCharges',
     );
@@ -49,6 +51,20 @@ class L7P_XmlRpc_Api
         
         // TODO: add additional checks
         l7p_update_option('pricelist', $pricelist);
+        
+        return "OK";
+    }
+    
+    public function setRoutes($routes)
+    {
+        l7p_update_option('routes', json_decode($routes, true));
+        
+        return "OK";
+    }
+    
+    public function setDdi($ddi)
+    {
+        l7p_update_option('ddi', json_decode($ddi, true));
         
         return "OK";
     }

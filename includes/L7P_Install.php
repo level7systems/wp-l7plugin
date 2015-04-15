@@ -228,14 +228,14 @@ class L7P_Install
             <li><span class="price">[USER_CHARGE]</span><br>per user monthly</li>
             <li>Free setup</li>
             <li>24/7 Technical Support</li>
-            <li>All <a href="/en/features">features</a> included</li>
+            <li>All <a href="/features">features</a> included</li>
             <li>Free inbound calls</li>
             <li>Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a></li>
          </ul>
           [if is_auth]
            <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">Buy Plan Now</a>
           [else]
-           <a href="/en/register#P" class="button b-dborder b-freetrial">Free Trial</a>
+           <a href="/register#P" class="button b-dborder b-freetrial">Free Trial</a>
           [/if]
         
         </div>
@@ -247,10 +247,10 @@ class L7P_Install
             <li><span class="price">[USER_UNLIMITED]</span><br>per user monthly</li>
             <li>Free setup</li>
             <li>24/7 Technical Support</li>
-            <li>All <a href="/en/features">features</a> included</li>
+            <li>All <a href="/features">features</a> included</li>
             <li>Free inbound calls</li>
             <li>Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a></li>
-            <li>Inclusive <a href="/en/telephone-numbers">geographical number</a> for each user</li>
+            <li>Inclusive <a href="/telephone-numbers">geographical number</a> for each user</li>
             <li>Free outbound calls to fixed lines in one 
               <a class="tooltip" title="Argentina,
                                         Australia, Austria, Belgium, Brazil São Paulo, Canada, Chile, China, Croatia, Czech Republic, 
@@ -262,7 +262,7 @@ class L7P_Install
           [if is_auth]
           <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">Buy Plan Now</a>
           [else]
-          <a href="/en/register#S" class="button b-dborder b-freetrial">Free Trial</a>
+          <a href="/register#S" class="button b-dborder b-freetrial">Free Trial</a>
           [/if]
         </div>
       </div>		
@@ -273,10 +273,10 @@ class L7P_Install
             <li><span class="price">[USER_UNLIMITED_INT]</span><br>per user monthly</li>
             <li>Free setup</li>
             <li>24/7 Technical Support</li>
-            <li>All <a href="/en/features">features</a> included</li>
+            <li>All <a href="/features">features</a> included</li>
             <li>Free inbound calls</li>
             <li>Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a></li>
-            <li>Inclusive <a href="/en/telephone-numbers">geographical number</a> for each user</li>
+            <li>Inclusive <a href="/telephone-numbers">geographical number</a> for each user</li>
             <li>Free outbound calls to fixed lines in all <a class="tooltip" title="Argentina,
                                         Australia, Austria, Belgium, Brazil São Paulo, Canada, Chile, China, Croatia, Czech Republic, 
                                         Denmark, FranceGermany, Greece, Guam, Hong Kong S.A.R., China, Hungary, Ireland, Israel, 
@@ -288,7 +288,7 @@ class L7P_Install
           [if is_auth]
           <a href="https://ssl7.net/voipstudio.com/u/app" class="button b-dborder b-freetrial">Buy Plan Now</a>
           [else]
-          <a href="/en/register#A" class="button b-dborder b-freetrial">Free Trial</a>
+          <a href="/register#A" class="button b-dborder b-freetrial">Free Trial</a>
           [/if]
         </div>
       </div>	
@@ -321,7 +321,7 @@ class L7P_Install
             is no contract or minimum notice period.</p>
         </div>
       </div>
-      <a href="/en/register" class="button-b button-b-white">Take a Free Trial</a>
+      <a href="/register" class="button-b button-b-white">Take a Free Trial</a>
     </div>
   </section>
 </article>
@@ -494,7 +494,7 @@ CONTENT
             <thead>
               <tr>
                 <td class="float-h-b clearfix" colspan="3">
-                  <a href="/en/rates" class="button-b">Go back to full list</a>
+                  <a href="/rates" class="button-b">Go back to full list</a>
                 </td>
               </tr>
               <tr>
@@ -665,14 +665,14 @@ CONTENT
 				<p>VoIPstudio provides a comprehensive range of virtual numbers for businesses looking to 
 					expand their reach. We are a widely trusted call forwarding service provider, enabling our 
 					subscribers to forward their calls to any carrier in the world.</p>
-				<a href="/en/features" class="button-b b-set">Read more</a>
+				<a href="/features" class="button-b b-set">Read more</a>
 			</div>
 		</section>
 		<section class="dark-bg text-center">
 			<div class="inner">
 				<h3 class="h1">Buy a <span class="text-orange">Virtual</span> number</h3>
 				<p class="byline">and start<span class="text-orange"> taking calls!</span></p>
-				<p>You can also start our <a href="/en/register">30-day free trial</a>.<br>In case you need any further information, 
+				<p>You can also start our <a href="/register">30-day free trial</a>.<br>In case you need any further information, 
 					please feel free to call<br class="m-hidden"> +1 310 870 9750 (US), +44 203 432 9230 (UK).</p>
 			</div>
 		</section>
@@ -692,7 +692,7 @@ CONTENT
 		<section class="tr-w">
 
 			<div class="inner">
-				<a href="/en/telephone-numbers" class="button-b no-margin">Go back to full list</a>
+				<a href="/telephone-numbers" class="button-b no-margin">Go back to full list</a>
 				<p>Country phone code: <strong>+[DDI_COUNTRY_TEL_CODE]</strong></p><br><br>
 			</div>
       
@@ -803,7 +803,7 @@ CONTENT
 			<div class="inner">
 				<h3 class="h1">Buy a <span class="text-orange">Virtual</span> number</h3>
 				<p class="byline">and connect with our <span class="text-orange"> telephone system </span> instantly!</p>
-				<p>You can also start our <a href="/en/register">30-day free trial</a>.<br>In case you need any further information, 
+				<p>You can also start our <a href="/register">30-day free trial</a>.<br>In case you need any further information, 
 					please feel free to call<br class="m-hidden"> +1 310 870 9750 (US), +44 203 432 9230 (UK).</p>
 			</div>
 		</section>
@@ -822,7 +822,7 @@ CONTENT
 		</header>
 		<section class="tr-w">
 			<div class="inner">
-				<a href="/en/telephone-numbers" class="button-b no-margin">Go back to full list</a>
+				<a href="/telephone-numbers" class="button-b no-margin">Go back to full list</a>
 				<p class="big fat">Select a State</p>
         
 				<ul class="state-list">
@@ -878,7 +878,7 @@ CONTENT
 			<div class="inner">
 				<h3 class="h1">Buy a <span class="text-orange">Virtual</span> number</h3>
 				<p class="byline">and start<span class="text-orange"> taking calls!</span></p>
-				<p>You can also start our <a href="/en/register">30-day free trial</a>.<br>In case you need any further information, 
+				<p>You can also start our <a href="/register">30-day free trial</a>.<br>In case you need any further information, 
 					please feel free to call<br class="m-hidden"> +1 310 870 9750 (US), +44 203 432 9230 (UK).</p>
 			</div>
 		</section>
@@ -976,7 +976,7 @@ CONTENT
 			<div class="inner">
 				<h3 class="h1">Not sure which VoIPstudio Plan</h3>
 				<p class="byline"><span class="text-orange">is most suitable</span> for Your Company?</p>
-					<a href="/en/pricing" class="button-b button-b-white">Check Our Pricing</a>
+					<a href="/pricing" class="button-b button-b-white">Check Our Pricing</a>
 			</div>
 		</section>
 	</article>
@@ -1039,7 +1039,7 @@ CONTENT
     <div class="inner">
       <h3 class="h1">Not sure which VoIPstudio Plan</h3>
       <p class="byline"><span class="text-orange">is most suitable</span> for Your Company?</p>
-        <a href="/en/pricing" class="button-b button-b-white">Check Our Pricing</a>
+        <a href="/pricing" class="button-b button-b-white">Check Our Pricing</a>
     </div>
   </section>
 </article>
@@ -1089,14 +1089,14 @@ CONTENT
 			<div class="inner">
 				<h3 class="h1">Not sure which VoIPstudio Plan</h3>
 				<p class="byline"><span class="text-orange">is most suitable</span> for Your Company?</p>
-					<a href="/en/pricing" class="button-b button-b-white">Check Our Pricing</a>
+					<a href="/pricing" class="button-b button-b-white">Check Our Pricing</a>
 			</div>
 		</section>
 	</article>
 CONTENT
 
             ,'hardware_model'   => <<<CONTENT
-You are here: <a href="/en/hardware">VoIP Hardware</a> &raquo; <a href="[PHONE_GROUP_URL]">[PHONE_GROUP_NAME]</a> &raquo; <a href="[PHONE_URL]">[PHONE_NAME]</a> &raquo; Reviews
+You are here: <a href="/hardware">VoIP Hardware</a> &raquo; <a href="[PHONE_GROUP_URL]">[PHONE_GROUP_NAME]</a> &raquo; <a href="[PHONE_URL]">[PHONE_NAME]</a> &raquo; Reviews
 
 <table><tbody>
   <tr>
