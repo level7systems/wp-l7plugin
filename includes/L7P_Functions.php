@@ -148,19 +148,14 @@ function l7p_get_country_name_from_query()
 {
     global $wp_query;
 
-    return isset($wp_query->query_vars['country']) ? $wp_query->query_vars['country'] : '';
+    return isset($wp_query->query_vars['country']) ? strtr($wp_query->query_vars['country'], array('+' => ' ')) : '';
 }
 
 function l7p_get_phone_name_from_query()
 {
     global $wp_query;
-    $permalinks = l7p_get_permalinks();
 
-    if (!isset($wp_query->query_vars[$permalinks['telephone_numbers']])) {
-        return "";
-    }
-
-    return strtr($wp_query->query_vars[$permalinks['telephone_numbers']], array("+" => " "));
+    return isset($wp_query->query_vars['model']) ? strtr($wp_query->query_vars['model'], array('+' => ' ')) : '';
 }
 
 function l7p_get_pricelist()
@@ -250,11 +245,8 @@ function l7p_url_for($route, $params)
         '@country_rates'    => '/:permalink_rates/:country',
         '@numbers'          => '/:permalink_telephone_numbers/:country',
         '@numbers_state'    => '/:permalink_telephone_numbers/:state',
-        'phone_page'        => '/:permalink_hardware/:group:/model',
+        '@phone_page'        => '/:permalink_hardware/:group:/model',
         '@phones_group'     => '/:permalink_hardware/:group',
-// TODO: verify if we need this
-//        '@phone_reviews'    => '/:permalink_hardware/:group:/model',
-        
     );
 
     return strtr($routes[$route], $replace_pairs);
