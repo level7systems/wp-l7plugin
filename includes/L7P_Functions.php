@@ -38,6 +38,11 @@ function l7p_is_post_request()
     return $_SERVER['REQUEST_METHOD'] === 'POST';
 }
 
+function l7p_get_locale()
+{
+    return substr(get_locale(), 0, 2);
+}
+
 function l7p_get_session($key, $default = false)
 {
     $key = "l7p_" . $key;
@@ -48,6 +53,18 @@ function l7p_update_session($key, $val)
 {
     $key = "l7p_" . $key;
     $_SESSION[$key] = $val;
+}
+
+function l7p_get_permalinks()
+{
+    $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
+    
+    return array(
+        'rates' => isset($permalinks['rates']) ? $permalinks['rates'] : 'voip-call-rates',
+        'telephone_numbers' => isset($permalinks['telephone_numbers']) ? $permalinks['telephone_numbers'] : 'telephone-numbers',
+        'hardware' => isset($permalinks['hardware']) ? $permalinks['hardware'] : 'hardware',
+        'manual' => isset($permalinks['manual']) ? $permalinks['manual'] : 'manual',
+    );
 }
 
 function l7p_get_currency_names()
@@ -115,24 +132,11 @@ function l7p_get_currencies($culture = false)
 
 function l7p_get_countries()
 {
-    $locale = substr(get_locale(), 0, 2);
-    $default_locale = 'en';
-    $countries = l7p_get_settings('countries', array());
-
-    if (isset($countries[$locale])) {
-        return $countries[$locale];
-    }
-
-    if (isset($countries[$default_locale])) {
-        return $countries[$default_locale];
-    }
-
-    return array();
+    return l7p_get_settings('countries', array());
 }
 
 function l7p_get_country_code_from_query()
 {
-
     $country_name = l7p_get_country_name_from_query();
     $countries = l7p_get_countries();
     $country_code = strtolower(array_search($country_name, $countries));
@@ -143,26 +147,20 @@ function l7p_get_country_code_from_query()
 function l7p_get_country_name_from_query()
 {
     global $wp_query;
-    $permalinks = get_option(Level7Platform::OPTION_PERMALINKS, array());
 
-    if (!isset($wp_query->query_vars[$permalinks['telephone_numbers']])) {
-        return "";
-    }
-
-    // TODO: to be verified
-    return strtr($wp_query->query_vars[$permalinks['telephone_numbers']], array("+" => " "));
+    return isset($wp_query->query_vars['country']) ? $wp_query->query_vars['country'] : '';
 }
 
 function l7p_get_phone_name_from_query()
 {
     global $wp_query;
-    $permalinks = get_option(Level7Platform::OPTION_PERMALINKS, array());
+    $permalinks = l7p_get_permalinks();
 
-    if (!isset($wp_query->query_vars[$permalinks['rates']])) {
+    if (!isset($wp_query->query_vars[$permalinks['telephone_numbers']])) {
         return "";
     }
 
-    return strtr($wp_query->query_vars[$permalinks['rates']], array("+" => " "));
+    return strtr($wp_query->query_vars[$permalinks['telephone_numbers']], array("+" => " "));
 }
 
 function l7p_get_pricelist()
@@ -240,7 +238,7 @@ function l7p_url_for($route, $params)
 {
 
     $replace_pairs = array();
-    foreach (get_option(Level7Platform::OPTION_PERMALINKS) as $key => $permalink) {
+    foreach (l7p_get_permalinks() as $key => $permalink) {
         $replace_pairs[sprintf(':permalink_%s', $key)] = $permalink;
     }
 

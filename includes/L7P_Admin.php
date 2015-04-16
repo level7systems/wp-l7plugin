@@ -158,6 +158,10 @@ class L7P_Admin
         // save data
         update_option(Level7Platform::OPTION_PERMALINKS, $permalinks_data);
         
+        // rewrite rules
+        L7P()->query->add_rewrite_rules();
+        
+        // flush rules after install
         flush_rewrite_rules();
 
         $this->add_message('notice', __('Settings saved.', 'level7platform'));

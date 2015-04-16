@@ -43,14 +43,14 @@ class L7P_Install
         // create pages
         $this->create_pages();
         
-        // rewrite endpoints
-        // $this->rewrite_endpoints();
-        
-        // other settup
-        
+        // rewrite rules
+        L7P()->query->add_rewrite_rules();
         
         // flush rules after install
         flush_rewrite_rules();
+        
+        // other settup
+        
     }
     
     public function uninstall()
@@ -101,7 +101,7 @@ class L7P_Install
                 'post_type' => 'page',
             ),
             'telephone_numbers' => array(
-                'name'      => 'telephone_numbers',
+                'name'      => 'telephone-numbers',
                 'title'     => 'Telephone Numbers',
                 'content'   => $pages_contents['telephone_numbers'],
                 'post_type' => 'page',
@@ -138,13 +138,13 @@ class L7P_Install
                 'post_type' => 'level7platform_page',
             ),
             'hardware_group' => array(
-                'name'      => 'hardware_category',
-                'title'     => 'Hardware category',
+                'name'      => 'hardware_group',
+                'title'     => 'Hardware group',
                 'content'   => $pages_contents['hardware_group'],
                 'post_type' => 'level7platform_page',
             ),
             'hardware_model' => array(
-                'name'      => 'hardware_phone',
+                'name'      => 'hardware_model',
                 'title'     => 'Hardware phone details',
                 'content'   => $pages_contents['hardware_phone'],
                 'post_type' => 'level7platform_page',
@@ -1224,26 +1224,6 @@ CONTENT
 </article>
 CONTENT
         );
-    }
-    
-    private function rewrite_endpoints()
-    {
-        $permalinks = get_option(L7P_Admin::OPTION_PERMALINKS);
-        
-        // TODO: to be fixed
-        $this->query_vars = array(
-            // rates action
-            'rates'              => $permalinks['rate_page_slug'] ? $permalinks['rate_page_slug'] : 'voip-call-rates',
-            // telephone numbers
-            'telephone-numbers'  => $permalinks['telephone_numbers_page_slug'] ? $permalinks['rates_page_slug'] : 'pricing',
-            // hardware
-            'hardware'           => $permalinks['rate_page_slug'] ? $permalinks['rate_page_slug'] : 'hardware',
-        );
-        
-        foreach ( $this->query_vars as $key => $var ) {
-            add_rewrite_endpoint( $var, EP_ROOT | EP_PAGES );
-        }
-        
     }
 }
 

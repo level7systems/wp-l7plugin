@@ -26,6 +26,11 @@ class Level7Platform
     const OPTION_PERMALINKS = 'level7platform_permalinks';
 
     /**
+	 * @var L7P_Query $query
+	 */
+	public $query = null;
+    
+    /**
      * @var WooCommerce The single instance of the class
      * @since 2.1
      */
@@ -61,7 +66,6 @@ class Level7Platform
 
         // WP hooks
         add_action('init', array($this, 'init'), 0);
-        add_action('init', array('L7P_Shortcodes', 'init'));
 
         // Loaded action
         do_action('level7platform_loaded');
@@ -122,9 +126,11 @@ class Level7Platform
             include_once('includes/frontend/L7P_Content.php');
             include_once('includes/frontend/L7P_Block.php');
             include_once('includes/frontend/L7P_Inline.php');
-            include_once('includes/frontend/L7P_Shortcodes.php');
             include_once('includes/L7P_Frontend.php');
         }
+        
+        // Query class
+		$this->query = include( 'includes/L7P_Query.php' );  
 
         // Post Types
         include_once('includes/L7P_Post_Types.php');
