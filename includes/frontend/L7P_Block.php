@@ -13,9 +13,9 @@ function l7p_block_currency_form() {
     $selected_currency = l7p_get_currency();
     $currencies = l7p_get_currencies();
     
-    // echo '<pre>';
-    // print_r(l7p_get_pricelist_country('pl'));
-    // echo '</pre>';
+//    echo '<pre>';
+//    print_r(l7p_get_pricelist_letters());
+//    echo '</pre>';
     
     if (l7p_is_post_request() && array_key_exists('currency', $_POST)) {
         

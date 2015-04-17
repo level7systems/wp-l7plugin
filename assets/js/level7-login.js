@@ -46,6 +46,7 @@ jQuery(document).ready(function() {
       buttons: {
         "Login": function() {
           
+        // TODO: CORS with IE8 support
         var $form = jQuery('#login-form');
           jQuery.ajax({
             type: "POST",

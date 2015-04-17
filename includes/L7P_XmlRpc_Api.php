@@ -36,35 +36,35 @@ class L7P_XmlRpc_Api
         return $methods;
     }
     
-    public function setSettings($settings)
+    public function setSettings($params)
     {
         // TODO: add additional checks
-        l7p_update_option('settings', $settings);
+        l7p_update_option('settings', json_decode($params, true));
         
         return "OK";
     }
     
-    public function setPricelist($pricelist)
+    public function setPricelist($params)
     {
         // returning errors to client
         // return new IXR_Error(500, "Some error");
         
         // TODO: add additional checks
-        l7p_update_option('pricelist', $pricelist);
+        l7p_update_option('pricelist', json_decode($params, true));
         
         return "OK";
     }
     
-    public function setRoutes($routes)
+    public function setRoutes($params)
     {
-        l7p_update_option('routes', json_decode($routes, true));
+        l7p_update_option('routes', json_decode($params, true));
         
         return "OK";
     }
     
-    public function setDdi($ddi)
+    public function setDdi($params)
     {
-        l7p_update_option('ddi', json_decode($ddi, true));
+        l7p_update_option('ddi', json_decode($params, true));
         
         return "OK";
     }

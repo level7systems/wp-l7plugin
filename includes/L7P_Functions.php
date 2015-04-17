@@ -231,7 +231,6 @@ function l7p_get_pricelist_country($country_code)
 
 function l7p_url_for($route, $params)
 {
-
     $replace_pairs = array();
     foreach (l7p_get_permalinks() as $key => $permalink) {
         $replace_pairs[sprintf(':permalink_%s', $key)] = $permalink;
@@ -245,9 +244,17 @@ function l7p_url_for($route, $params)
         '@country_rates'    => '/:permalink_rates/:country',
         '@numbers'          => '/:permalink_telephone_numbers/:country',
         '@numbers_state'    => '/:permalink_telephone_numbers/:state',
-        '@phone_page'        => '/:permalink_hardware/:group:/model',
+        '@phone_page'       => '/:permalink_hardware/:group:/model',
         '@phones_group'     => '/:permalink_hardware/:group',
     );
+    
+    $url = strtr($routes[$route], $replace_pairs);
+    
+    // WPML integration
+    if (function_exists('icl_get_current_language')) {
+        $lang = icl_get_current_language();
+        $url = '/' . $lang . $url;
+    }
 
-    return strtr($routes[$route], $replace_pairs);
+    return $url;
 }

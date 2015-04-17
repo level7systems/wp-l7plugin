@@ -42,7 +42,7 @@ class L7P_Query
         if (!$query->is_main_query()) {
             return;
         }
-
+        
 //        echo '<pre>';
 //        print_r($query->query_vars);
 //        echo '</pre>';
@@ -119,17 +119,17 @@ class L7P_Query
     public function add_rewrite_rules()
     {
         $permalink = l7p_get_permalinks();
-
+        
         // rates
-        add_rewrite_rule(sprintf("^%s/([\w\-\+]+)/?$", $permalink['rates']), 'index.php?name=rates&country=$matches[1]', 'top');
+        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink['rates']), 'index.php?name=rates&country=$matches[1]', 'top');
         // wirtual numbers
-        add_rewrite_rule(sprintf("^%s/([\w\-\+]+)/?$", $permalink['telephone_numbers']), 'index.php?name=telephone_numbers&country=$matches[1]', 'top');
-        add_rewrite_rule(sprintf("^%s/([\w\-\+]+)/([\w\-\+]+)/?$", $permalink['telephone_numbers']), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[1]', 'top');
+        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink['telephone_numbers']), 'index.php?name=telephone_numbers&country=$matches[1]&lang=en', 'top');
+        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/([\w\-\+]+)/?$", $permalink['telephone_numbers']), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[1]&lang=en', 'top');
         // hardware
-        add_rewrite_rule(sprintf("^%s/([\w\-\+]+)/?$", $permalink['hardware']), 'index.php?name=hardware&group=$matches[1]', 'top');
-        add_rewrite_rule(sprintf("^%s/([\w\-\+]+)/([\w\-\+]+)/?$", $permalink['hardware']), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]', 'top');
+        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink['hardware']), 'index.php?name=hardware&group=$matches[1]', 'top');
+        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/([\w\-\+]+)/?$", $permalink['hardware']), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]', 'top');
         // manual
-        add_rewrite_rule(sprintf("^%s/([\w\-\+]+)/?$", $permalink['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
+        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
     }
 }
 
