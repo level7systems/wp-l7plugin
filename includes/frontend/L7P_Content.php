@@ -261,10 +261,16 @@ class L7P_Content
                 return '<?php if (isset($paid) && $paid) : ?>';
                 break;
             case 'ddi_national':
-                return '<?php if (isset($national) && $national) : ?>';
+                return '<?php '
+                    . '$national = l7p_get_country_national(l7p_get_country_code_from_query());'
+                    . 'if (isset($national) && $national):'
+                    . ' ?>';
                 break;
             case 'ddi_ddi_city':
-                return '<?php if (isset($cities) && $cities) : ?>';
+                return '<?php '
+                    . '$cities = l7p_get_country_cities(l7p_get_country_code_from_query());'
+                    . 'if (isset($cities) && $cities):'
+                    . ' ?>';
                 break;
             case 'ddi_ddi_toll_free':
                 return '<?php if (isset($toll_free) && $toll_free) : ?>';
@@ -405,11 +411,13 @@ class L7P_Content
                 
             case 'ddi_national':
                 return '<?php '
+                    . '$national = l7p_get_country_national(l7p_get_country_code_from_query(), \'national\');'
                     . 'foreach ((isset($national) ? $national : array()) as $ddi_data):'
                     . ' ?>';
                 
             case 'ddi_city':
                 return '<?php '
+                    . '$cities = l7p_get_country_cities(l7p_get_country_code_from_query(), \'cities\'); '
                     . 'foreach ((isset($cities) ? $cities : array()) as $ddi_data):'
                     . ' ?>';
                 

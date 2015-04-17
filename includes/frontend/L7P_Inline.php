@@ -138,6 +138,8 @@ function l7p_inline_term_route_url()
 
 # DDIs
 
+// TODO: those functions need heavy refactoring!
+
 // displays DDI country two letter code
 function l7p_inline_ddi_country_code()
 {
@@ -147,13 +149,13 @@ function l7p_inline_ddi_country_code()
 // displays DDI country name
 function l7p_inline_ddi_country_name()
 {
-    return '$ddi_data[\'country_name\']';
+    return 'l7p_get_country_ddi_data(l7p_get_country_code_from_query(), \'country_name\'); ';
 }
 
 // displays DDI country telephone code
 function l7p_inline_ddi_country_tel_code()
 {
-    return '$ddi_data[\'country_tel_code\']';
+    return 'l7p_get_country_ddi_data(l7p_get_country_code_from_query(), \'country_tel_code\'); ';
 }
 
 // displays DDI area code

@@ -206,9 +206,22 @@ function l7p_get_pricelist_letters()
     return $letters;
 }
 
+function l7p_get_pricelist_country($country_code)
+{
+    $currency = l7p_get_currency();
+    $routes = l7p_get_routes();
+
+    return isset($routes[$currency][$country_code]) ? $routes[$currency][$country_code] : array();
+}
+
 function l7p_get_routes()
 {
     return l7p_get_option('routes', array());
+}
+
+function l7p_get_ddi_countries()
+{
+    return l7p_get_option('ddi_countries', array());
 }
 
 function l7p_get_ddi($type = 'free')
@@ -221,12 +234,32 @@ function l7p_get_ddi($type = 'free')
     return array();
 }
 
-function l7p_get_pricelist_country($country_code)
+function l7p_get_country_ddi_data($country_code, $key = false)
 {
     $currency = l7p_get_currency();
-    $routes = l7p_get_routes();
+    $ddi = l7p_get_ddi_countries();
+    
+    if (!$key) {
+        return isset($ddi[$currency][$country_code]['ddi_data']) ? $ddi[$currency][$country_code]['ddi_data'] : array();
+    }
+    
+    return isset($ddi[$currency][$country_code]['ddi_data'][$key]) ? $ddi[$currency][$country_code]['ddi_data'][$key] : array();
+}
 
-    return isset($routes[$currency][$country_code]) ? $routes[$currency][$country_code] : array();
+function l7p_get_country_national($country_code)
+{
+    $currency = l7p_get_currency();
+    $ddi = l7p_get_ddi_countries();
+    
+    return isset($ddi[$currency][$country_code]['national']) ? $ddi[$currency][$country_code]['national'] : array();
+}
+
+function l7p_get_country_cities($country_code)
+{
+    $currency = l7p_get_currency();
+    $ddi = l7p_get_ddi_countries();
+    
+    return isset($ddi[$currency][$country_code]['cities']) ? $ddi[$currency][$country_code]['cities'] : array();
 }
 
 function l7p_url_for($route, $params)
