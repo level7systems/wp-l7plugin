@@ -256,37 +256,42 @@ class L7P_Content
 // DDIs
             case 'ddi_free':
                 return '<?php if (isset($free) && $free) : ?>';
-                break;
+                
             case 'ddi_paid':
                 return '<?php if (isset($paid) && $paid) : ?>';
-                break;
+                
             case 'ddi_national':
                 return '<?php '
-                    . '$national = l7p_get_country_national(l7p_get_country_code_from_query());'
+                    . '$national = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'national\');'
                     . 'if (isset($national) && $national):'
                     . ' ?>';
-                break;
+                
             case 'ddi_ddi_city':
                 return '<?php '
-                    . '$cities = l7p_get_country_cities(l7p_get_country_code_from_query());'
+                    . '$cities = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'cities\');'
                     . 'if (isset($cities) && $cities):'
                     . ' ?>';
-                break;
+                
             case 'ddi_ddi_toll_free':
-                return '<?php if (isset($toll_free) && $toll_free) : ?>';
-                break;
+                return '<?php '
+                    . '$toll_free = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'toll_free\');'
+                    . 'if (isset($toll_free) && $toll_free):'
+                    . ' ?>';
+                
             case 'ddi_is_unlimited':
                 return '<?php if (isset($ddi_data) && $ddi_data["package"]) : ?>';
-                break;
+                
             case 'ddi_is_free':
                 return '<?php if (isset($ddi_data) && $ddi_data["is_free"]) : ?>';
-                break;
+                
             case 'ddi_has_area_code':
                 return '<?php if (isset($ddi_data) && $ddi_data["area_code"]) : ?>';
-                break;
+                
             case 'ddi_states':
-                return '<?php if (isset($states) && $states) : ?>';
-                break;
+                return '<?php '
+                . '$states = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'states\');'
+                . 'if (isset($states) && $states):'
+                . ' ?>';
 
 // Phones
             case 'phone_has_desk':
@@ -305,19 +310,29 @@ class L7P_Content
                 return '<?php if (isset($min_price) && $min_price["Accessories"]) : ?>';
                 break;
             case 'phones':
-                return '<?php if (isset($phones) && $phones) : ?>';
-                break;
+                return '<?php '
+                    . '$phones = l7p_get_phones();'
+                    . 'if (isset($phones) && $phones):'
+                    . ' ?>';
+                
             case 'phone_in_stock':
-                return '<?php if (isset($phone_data) && $phone_data["stock"] > 0) : ?>';
-                break;
+                return '<?php '
+                    . 'if (isset($phone_data) && $phone_data["stock"] > 0):'
+                    . ' ?>';
+                
             case 'phone_eol':
-                return '<?php if (isset($phone_data) && $phone_data["active"] == 0) : ?>';
-                break;
+                return '<?php '
+                    . 'if (isset($phone_data) && $phone_data["active"] == 0):'
+                    . ' ?>';
+                
+            // TODO: to be removed
             case 'phone_has_reviews':
-                return '<?php if (isset($phone_data) && $phone_data["review_count"] > 0) : ?>';
-                break;
+                return '<?php if '
+                    . '(isset($phone_data) && $phone_data["review_count"] > 0):'
+                    . ' ?>';
 
 # Blog
+// TODO: to be removed
             case 'blog_has_tag':
                 return '<?php if (isset($tag) && $tag) : ?>';
                 break;
@@ -411,29 +426,32 @@ class L7P_Content
                 
             case 'ddi_national':
                 return '<?php '
-                    . '$national = l7p_get_country_national(l7p_get_country_code_from_query(), \'national\');'
+                    . '$national = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'national\');'
                     . 'foreach ((isset($national) ? $national : array()) as $ddi_data):'
                     . ' ?>';
                 
             case 'ddi_city':
                 return '<?php '
-                    . '$cities = l7p_get_country_cities(l7p_get_country_code_from_query(), \'cities\'); '
+                    . '$cities = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'cities\'); '
                     . 'foreach ((isset($cities) ? $cities : array()) as $ddi_data):'
                     . ' ?>';
                 
             case 'ddi_toll_free':
                 return '<?php '
+                    . '$toll_free = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'toll_free\'); '
                     . 'foreach ((isset($toll_free) ? $toll_free : array()) as $ddi_data):'
                     . ' ?>';
                 
             case 'ddi_states':
                 return '<?php '
+                    . '$states = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'states\'); '
                     . 'foreach ((isset($states) ? $states : array()) as $state_data):'
                     . ' ?>';
 
 // Phones
             case 'phones':
                 return '<?php '
+                    . '$phones = l7p_get_phones();'
                     . 'foreach ((isset($phones) ? $phones : array()) as $phone_data):'
                     . ' ?>';
 

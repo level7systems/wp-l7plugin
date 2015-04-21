@@ -58,14 +58,14 @@ class L7P_Install
         global $wpdb;
         
         // delete created pages or wp_trash_post
-        wp_delete_post(get_option('level7platform_pricing_page_id'));
-        wp_delete_post(get_option('level7platform_rates_page_id'));
-        wp_delete_post(get_option('level7platform_telephone_numbers_page_id'));
-        wp_delete_post(get_option('level7platform_hardware_page_id'));
-        wp_delete_post(get_option('level7platform_manual_page_id'));
+        wp_delete_post(l7p_get_option('pricing_page_id'));
+        wp_delete_post(l7p_get_option('rates_page_id'));
+        wp_delete_post(l7p_get_option('telephone_numbers_page_id'));
+        wp_delete_post(l7p_get_option('hardware_page_id'));
+        wp_delete_post(l7p_get_option('manual_page_id'));
         
         // delete options
-        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'level7platform_%';");
+        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'l7p_%';");
         
         // delete posts + data
         $wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type IN ('level7_page', 'level7platform_page');" );
@@ -89,68 +89,68 @@ class L7P_Install
         // 5 standard pages
         $pages = array(
             'pricing' => array(
-                'name'      => 'pricing',
+                'slug'      => 'pricing',
                 'title'     => 'Plans',
                 'content'   => $pages_contents['pricing'],
                 'post_type' => 'page',
             ),
             'rates' => array(
-                'name'      => 'rates',
+                'slug'      => 'rates',
                 'title'     => 'Call Rates',
                 'content'   => $pages_contents['rates'],
                 'post_type' => 'page',
             ),
             'telephone_numbers' => array(
-                'name'      => 'telephone-numbers',
+                'slug'      => 'telephone-numbers',
                 'title'     => 'Telephone Numbers',
                 'content'   => $pages_contents['telephone_numbers'],
                 'post_type' => 'page',
             ),
             'hardware' => array(
-                'name'      => 'hardware',
+                'slug'      => 'hardware',
                 'title'     => 'Hardware',
                 'content'   => $pages_contents['hardware'],
                 'post_type' => 'page',
             ),
             'manual' => array(
-                'name'      => 'manual',
+                'slug'      => 'manual',
                 'title'     => 'Manuals',
                 'content'   => $pages_contents['manual'],
                 'post_type' => 'page',
             ),
             // templates for dynamic pages
             'rates_country' => array(
-                'name'      => 'rates_country',
+                'slug'      => 'country-rates',
                 'title'     => 'Country call rates',
                 'content'   => $pages_contents['rates_country'],
                 'post_type' => 'level7platform_page',
             ),
             'telephone_numbers_country' => array(
-                'name'      => 'telephone_numbers_country',
+                'slug'      => 'country-telephone-numbers',
                 'title'     => 'Country telephone numbers',
                 'content'   => $pages_contents['telephone_numbers_country'],
                 'post_type' => 'level7platform_page',
             ),
             'telephone_numbers_state' => array(
-                'name'      => 'telephone_numbers_state',
+                'slug'      => 'state-telephone-numbers',
                 'title'     => 'State telephone numbers',
                 'content'   => $pages_contents['telephone_numbers_state'],
                 'post_type' => 'level7platform_page',
             ),
             'hardware_group' => array(
-                'name'      => 'hardware_group',
+                'slug'      => 'hardware-group',
                 'title'     => 'Hardware group',
                 'content'   => $pages_contents['hardware_group'],
                 'post_type' => 'level7platform_page',
             ),
             'hardware_model' => array(
-                'name'      => 'hardware_model',
+                'slug'      => 'hardware-model',
                 'title'     => 'Hardware phone details',
-                'content'   => $pages_contents['hardware_phone'],
+                'content'   => $pages_contents['hardware_model'],
                 'post_type' => 'level7platform_page',
             ),
             'manual_chapter' => array(
-                'name'      => 'manual_chapter',
+                'slug'      => 'manual-chapter',
                 'title'     => 'Manual chapter',
                 'content'   => $pages_contents['manual_chapter'],
                 'post_type' => 'level7platform_page',
@@ -160,7 +160,8 @@ class L7P_Install
         foreach ($pages as $key => $page_data) {
             
             $this->create_page(
-                $page_data['name'],
+                $key,
+                $page_data['slug'],
                 $page_data['title'],
                 $page_data['content'],
                 $page_data['post_type']
@@ -168,7 +169,7 @@ class L7P_Install
         }
     }
     
-    private function create_page($page_name, $page_title, $page_content, $post_type = 'page')
+    private function create_page($page_name, $page_slug, $page_title, $page_content, $post_type = 'page')
     {
         global $wpdb;
         
@@ -177,7 +178,7 @@ class L7P_Install
             'post_type'         => $post_type,
             'post_author'       => 1,
             // slug
-            'post_name'         => sanitize_title($page_name),
+            'post_name'         => sanitize_title($page_slug),
             'post_title'        => $page_title,
             'post_content'      => $page_content,
             'post_parent'       => 0,
@@ -197,10 +198,7 @@ class L7P_Install
             $page_id =  wp_insert_post($page_data);
         }
         
-        // sabe page_id under wp option
-        if ($post_type == 'page') {
-            update_option(sprintf("level7platform_%s_page_id", $page_name), $page_id);
-        }
+        l7p_update_option(sprintf("%s_page_id", $page_name), $page_id);
         
         return $page_id;
     }
@@ -1095,101 +1093,6 @@ CONTENT
 	</article>
 CONTENT
 
-            ,'hardware_model'   => <<<CONTENT
-You are here: <a href="/hardware">VoIP Hardware</a> &raquo; <a href="[PHONE_GROUP_URL]">[PHONE_GROUP_NAME]</a> &raquo; <a href="[PHONE_URL]">[PHONE_NAME]</a> &raquo; Reviews
-
-<table><tbody>
-  <tr>
-    <td>
-      <h2>Reviews of [PHONE_NAME]</h2>
-      <a href="[PHONE_URL]">Back to phone description</a>
-    </td>
-    <td>
-      <a href="[PHONE_URL]">
-      <img src="[PHONE_THUMB_IMG]" alt="[PHONE_NAME]" />
-      </a>
-    </td>
-  </tr>
-</tbody></table>
-
-[if phone_has_reviews]
-  
-  [foreach phone_reviews]
-    
-    <table style="width: 100%;" border="0"><tbody>
-      <tr>
-        <td style="width: 100px; background: #ADD8E6; padding: 10px;">
-          review by:<br/>
-          <b>[PHONE_REVIEW_AUTHOR]></b>
-          <br/>
-          [PHONE_REVIEW_DATE]
-          <br/><br/>
-          rating:<br/>
-          [PHONE_RATING]
-        </td>
-        <td style="padding-left: 10px;" valign="top">
-          [PHONE_REVIEW_TEXT]
-        </td>
-      </tr>
-    </tbody></table>
-    <br/><br/>
-    
-  [/foreach]
-  
-  
-[else]
-  No reviews yet,<br/>
-  be the first to write one.<br/><br/>
-
-[/if]
-
-<h2>Write your own review</h2>
-
-
-<form action="[PHONE_REVIEWS_URL]" method="post" />
-
-Your name:<span class="form-required"> *</span><br />
-
-<input type="text" name="author" id="author" value="Anonymous" /><br /><br />
-
-Your review:<span class="form-required"> *</span><br />
-
-<textarea name="text" id="text" rows="12" cols="50"></textarea><br /><br />
-
-Product rating:<span class="form-required"> *</span> 
-<select name="stars" id="stars"><option value="0">-- select --</option>
-<option value="1">One star</option>
-<option value="2">Two stars</option>
-<option value="3">Three stars</option>
-<option value="4">Four stars</option>
-<option value="5">Five stars</option>
-</select>
-<br /><br /><br />
-
-<img src="/captcha?1392389959" alt="Captcha image" />
-
-<table><tbody>
-  <tr>
-    <td>
-      To help us prevent automated abuse of this service please enter the text displayed in the image above:<span class="form-required"> *</span>
-      <input type="text" name="captcha" id="captcha" value="" size="6" />    </td>
-    <td>
-
-    </td>
-  </tr>
-</tbody></table>
-
-<br />
-
-<input type="submit" name="commit" value="Submit" />
-</form>
-
-<br/><br/>
-<span style="font-size: 11px; color: gray;">
-All submitted reviews/comments become the licensed property of VoIP Studio.
-</span>
-CONTENT
-
             , 'manual'        => <<<CONTENT
 <article class="main support-page">
   <div class="main-image support-image"></div>
@@ -1223,6 +1126,13 @@ CONTENT
   </section>
 </article>
 CONTENT
+            
+            , 'manual_chaoter'        => <<<CONTENT
+<h1>%MANUAL_NAME%</h1>
+
+%MANUAL_CONTENT%
+CONTENT
+            
         );
     }
 }

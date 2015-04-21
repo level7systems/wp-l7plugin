@@ -135,6 +135,11 @@ function l7p_get_countries()
     return l7p_get_settings('countries', array());
 }
 
+function l7p_get_states()
+{
+    return l7p_get_settings('states', array());
+}
+
 function l7p_get_country_code_from_query()
 {
     $country_name = l7p_get_country_name_from_query();
@@ -151,11 +156,34 @@ function l7p_get_country_name_from_query()
     return isset($wp_query->query_vars['country']) ? strtr($wp_query->query_vars['country'], array('+' => ' ')) : '';
 }
 
+function l7p_get_state_code_from_query()
+{
+    $state_name = l7p_get_state_name_from_query();
+    $states = l7p_get_states();
+    $state_code = strtolower(array_search($state_name, $states));
+
+    return strtoupper($state_code);
+}
+
+function l7p_get_state_name_from_query()
+{
+    global $wp_query;
+
+    return isset($wp_query->query_vars['state']) ? strtr($wp_query->query_vars['state'], array('+' => ' ')) : '';
+}
+
 function l7p_get_phone_name_from_query()
 {
     global $wp_query;
 
     return isset($wp_query->query_vars['model']) ? strtr($wp_query->query_vars['model'], array('+' => ' ')) : '';
+}
+
+function l7p_get_phone_group_name_from_query()
+{
+    global $wp_query;
+
+    return isset($wp_query->query_vars['group']) ? strtr($wp_query->query_vars['group'], array('+' => ' ')) : '';
 }
 
 function l7p_get_pricelist()
@@ -229,37 +257,61 @@ function l7p_get_ddi($type = 'free')
     if (in_array($type, array('free', 'paid'))) {
         $ddi = l7p_get_option('ddi', array());
         $currency = l7p_get_currency();
+        
         return isset($ddi[$type][$currency]) ? $ddi[$type][$currency] : array();
     }
     return array();
 }
 
-function l7p_get_country_ddi_data($country_code, $key = false)
+function l7p_get_ddi_country($country_code, $data, $key = false )
 {
     $currency = l7p_get_currency();
-    $ddi = l7p_get_ddi_countries();
     
-    if (!$key) {
-        return isset($ddi[$currency][$country_code]['ddi_data']) ? $ddi[$currency][$country_code]['ddi_data'] : array();
+    $state_code = l7p_get_state_code_from_query();
+
+    $ddi = l7p_get_ddi_countries();
+    $country_data = $ddi[$currency][$country_code];
+
+    if ($state_code) {
+        $country_data = $ddi[$currency][$country_code][$state_code];
     }
     
-    return isset($ddi[$currency][$country_code]['ddi_data'][$key]) ? $ddi[$currency][$country_code]['ddi_data'][$key] : array();
+    echo $country_code;
+    echo '<pre>';
+    print_r($ddi[$currency]['US']);
+    echo '</pre>';
+    
+    if (!$key) {
+        return isset($ddi[$currency][$country_code][$data]) ? $ddi[$currency][$country_code][$data] : array();
+    }
+    
+    return isset($ddi[$currency][$country_code][$data][$key]) ? $ddi[$currency][$country_code][$data][$key] : array();
 }
 
-function l7p_get_country_national($country_code)
+function l7p_get_phones()
 {
     $currency = l7p_get_currency();
-    $ddi = l7p_get_ddi_countries();
+    $locale = l7p_get_locale();
+    $group = l7p_get_phone_group_name_from_query();
+    $phones =  l7p_get_option('phones', array());
     
-    return isset($ddi[$currency][$country_code]['national']) ? $ddi[$currency][$country_code]['national'] : array();
+    if ($group) {
+        return isset($phones[$locale][$currency][$group]) ? $phones[$locale][$currency][$group] : array();
+    }
+    
+    return isset($phones[$locale][$currency]) ? $phones[$locale][$currency] : array();
 }
 
-function l7p_get_country_cities($country_code)
+function l7p_get_phone($attr)
 {
-    $currency = l7p_get_currency();
-    $ddi = l7p_get_ddi_countries();
+    $phones = l7p_get_phones();
+    $name = l7p_get_phone_name_from_query();
     
-    return isset($ddi[$currency][$country_code]['cities']) ? $ddi[$currency][$country_code]['cities'] : array();
+//    echo '<pre>';
+//    print_r($phones);
+//    echo '</pre>';
+    
+    return $phones[$name][$attr];
 }
 
 function l7p_url_for($route, $params)
@@ -276,8 +328,8 @@ function l7p_url_for($route, $params)
     $routes = array(
         '@country_rates'    => '/:permalink_rates/:country',
         '@numbers'          => '/:permalink_telephone_numbers/:country',
-        '@numbers_state'    => '/:permalink_telephone_numbers/:state',
-        '@phone_page'       => '/:permalink_hardware/:group:/model',
+        '@numbers_state'    => '/:permalink_telephone_numbers/United-States/:state',
+        '@phone_page'       => '/:permalink_hardware/:group/:model',
         '@phones_group'     => '/:permalink_hardware/:group',
     );
     

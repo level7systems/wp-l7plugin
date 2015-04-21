@@ -19,8 +19,7 @@ class L7P_XmlRpc_Api
         'l7.setRoutes'      => 'setRoutes',
         'l7.setDdi'         => 'setDdi',
         'l7.setDdiCountries'=> 'setDdiCountries',
-        
-        'l7.setCharges'     => 'setCharges',
+        'l7.setPhones'      => 'setPhones',
     );
     
     public function __construct()
@@ -73,6 +72,13 @@ class L7P_XmlRpc_Api
     public function setDdiCountries($params)
     {
         l7p_update_option('ddi_countries', json_decode($params, true));
+        
+        return "OK";
+    }
+    
+    public function setPhones($params)
+    {
+        l7p_update_option('phones', json_decode($params, true));
         
         return "OK";
     }

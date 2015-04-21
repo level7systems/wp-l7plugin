@@ -61,10 +61,14 @@ class L7P_Query
 
             if (isset($query->query_vars['state'])) {
                 // phone number state
-                $page_name .= "_state";
+                $page_name .= "_country";
             } else if (isset($query->query_vars['country'])) {
                 // phone numbers country
-                $page_name .= "_country";
+                if (l7p_get_country_code_from_query() == 'US') {
+                    $page_name .= "_state";
+                } else {
+                    $page_name .= "_country";
+                }
             } else {
                 // errorr 404
                 return $this->error_404();
@@ -96,12 +100,15 @@ class L7P_Query
 
         if ($page_name) {
 
+            // TODO: refactor
+            $page = get_post(l7p_get_option(sprintf("%s_page_id", $page_name)));
+            
             // query for given post
             $query->is_page = true;
             $query->is_home = false;
             $query->is_singular = true;
             $query->set('post_type', 'level7platform_page');
-            $query->set('name', $page_name);
+            $query->set('name', $page->post_name);
         }
     }
 

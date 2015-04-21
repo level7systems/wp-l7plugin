@@ -149,13 +149,14 @@ function l7p_inline_ddi_country_code()
 // displays DDI country name
 function l7p_inline_ddi_country_name()
 {
-    return 'l7p_get_country_ddi_data(l7p_get_country_code_from_query(), \'country_name\'); ';
+    return 'isset($ddi_data[\'country_name\']) ? $ddi_data[\'country_name\'] : l7p_get_country_name_from_query()';
+    // return 'l7p_get_ddi_country(l7p_get_country_code_from_query(), \'ddi_data\', \'country_name\'); ';
 }
 
 // displays DDI country telephone code
 function l7p_inline_ddi_country_tel_code()
 {
-    return 'l7p_get_country_ddi_data(l7p_get_country_code_from_query(), \'country_tel_code\'); ';
+    return 'l7p_get_ddi_country(l7p_get_country_code_from_query(), \'ddi_data\', \'country_tel_code\'); ';
 }
 
 // displays DDI area code
@@ -278,91 +279,91 @@ function l7p_inline_phone_accessory_min_price()
 function l7p_inline_phone_group_name()
 {
     // TODO
-    return 'l7p_get_group_name_from_query()';
+    return 'l7p_get_phone_group_name_from_query()';
 }
 
 // Phone - URL to the current phone
 function l7p_inline_phone_url()
 {
-    return 'l7p_url_for(\'@phone_page\', array(\'group\' => l7p_get_group_name_from_query(), \'model\' => $phone_data[\'name\']))';
+    return 'l7p_url_for(\'@phone_page\', array(\'group\' => l7p_get_phone_group_name_from_query(), \'model\' => $phone_data[\'name\']))';
 }
 
 // Phone - name
 function l7p_inline_phone_name()
 {
-    return '"$phone_data[\'name\']';
+    return '"l7p_get_phone(\'name\')';
 }
 
 // Phone - manufacturer
 function l7p_inline_phone_manufacturer()
 {
-    return '$phone_data[\'manufacturer\']';
+    return 'l7p_get_phone(\'manufacturer\')';
 }
 
 //  Phone - model
 function l7p_inline_phone_model()
 {
-    return '$phone_data[\'model\']';
+    return 'l7p_get_phone(\'model\')';
 }
 
 // Phone - short description
 function l7p_inline_phone_short_description()
 {
-    return '$phone_data[\'short_description\']';
+    return 'l7p_get_phone(\'short_description\')';
 }
 
 // Phone - stock
 function l7p_inline_phone_stock()
 {
-    return '$phone_data[\'stock\']';
+    return 'l7p_get_phone(\'stock\')';
 }
 
 // Phone - price
 function l7p_inline_phone_price()
 {
-    return 'l7p_currency_symbol($phone_data[\'price\'])';
+    return 'l7p_currency_symbol(l7p_get_phone(\'price\'))';
 }
 
 // Phone - thumbnail image
 function l7p_inline_phone_thumb_img()
 {
-    return '$phone_data[\'thumb_img\']';
+    return 'l7p_get_phone(\'thumb_img\')';
 }
 
 // Phone - image
 function l7p_inline_phone_img()
 {
-    return '$phone_data[\'img\']';
+    return 'l7p_get_phone(\'img\')';
 }
 
 // Phone - group URL
 function l7p_inline_phone_group_url()
 {
-    return 'l7p_url_for(\'@phones_group\', array(\'group\' => l7p_get_group_name_from_query()))';
+    return 'l7p_url_for(\'@phones_group\', array(\'group\' => l7p_get_phone_group_name_from_query()))';
 }
 
 // Phone - reviews count
 function l7p_inline_phone_reviews_count()
 {
-    return '$phone_data[\'review_count\']';
+    return 'l7p_get_phone(\'review_count\')';
 }
 
 // Phone - ratings stars
 function l7p_inline_phone_rating()
 {
     // TODO
-    return 'get_rating($phone_data[\'rating\'])';
+    return 'get_rating(l7p_get_phone(\'rating\'])';
 }
 
 // Phone - reviews URL
 function l7p_inline_phone_reviews_url()
 {
     // TODO: verify
-    return 'l7p_url_for(\'@phone_reviews\', array(\'group\' => l7p_get_group_name_from_query(), \'model\' => $phone_data[\'name\']))';
+    return 'l7p_url_for(\'@phone_reviews\', array(\'group\' => l7p_get_phone_group_name_from_query(), \'model\' => $phone_data[\'name\']))';
 }
 
 // Phone - description
 function l7p_inline_phone_description()
 {
-    return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',convert_markdown_text($phone_data[\'description\']))';
+    return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',convert_markdown_text(l7p_get_phone(\'description\'())';
 }
