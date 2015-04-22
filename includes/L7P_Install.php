@@ -48,9 +48,6 @@ class L7P_Install
         
         // flush rules after install
         flush_rewrite_rules();
-        
-        // other settup
-        
     }
     
     public function uninstall()
@@ -62,7 +59,7 @@ class L7P_Install
         wp_delete_post(l7p_get_option('rates_page_id'));
         wp_delete_post(l7p_get_option('telephone_numbers_page_id'));
         wp_delete_post(l7p_get_option('hardware_page_id'));
-        wp_delete_post(l7p_get_option('manual_page_id'));
+        wp_delete_post(l7p_get_option('support_page_id'));
         
         // delete options
         $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'l7p_%';");
@@ -112,10 +109,10 @@ class L7P_Install
                 'content'   => $pages_contents['hardware'],
                 'post_type' => 'page',
             ),
-            'manual' => array(
-                'slug'      => 'manual',
-                'title'     => 'Manuals',
-                'content'   => $pages_contents['manual'],
+            'support' => array(
+                'slug'      => 'support',
+                'title'     => 'Support',
+                'content'   => $pages_contents['support'],
                 'post_type' => 'page',
             ),
             // templates for dynamic pages
@@ -1093,12 +1090,53 @@ CONTENT
 	</article>
 CONTENT
 
-            , 'manual'        => <<<CONTENT
+            ,'support'                => <<<CONTENT
+	<article class="main support-page">
+		<div class="main-image support-image"></div>
+		<header class="page-header dark-bg tr-d">
+			<div class="inner">
+				<h1>`VoIPstudio <span class="text-orange">Support</span></h1>
+				<p class="byline">`All <span class="text-grey">information </span> can be found in our user <span class="text-orange">manuals</span></p>
+			</div>
+		</header>
+		<section>
+			<div class="inner">
+				<div class="grid-row border-columns support-columns">
+					<div class="col-1-3 border-column">
+						<h3>`User Manual`</h3>
+						<a href="{MANUAL}?chapter=User_Introduction" class="button-b">`Read online`</a>
+						<a class="icon-pdf lonely-icon" title="Download PDF" href="http://repo.ssl7.net/downloads/manuals/VoIPStudio-User.pdf"></a>
+					</div>
+					<div class="col-1-3 border-column">
+						<h3>`Receptionist Manual`</h3>
+						<a href="{MANUAL}?chapter=Reception_Introduction" class="button-b">`Read online`</a>
+						<a class="icon-pdf lonely-icon" title="Download PDF" href="http://repo.ssl7.net/downloads/manuals/VoIPStudio-Reception.pdf"></a>
+					</div>
+					<div class="col-1-3 border-column">
+						<h3>`Administrator Manual`</h3>
+						<a href="{MANUAL}?chapter=Admin_Introduction" class="button-b">`Read online`</a>
+						<a class="icon-pdf lonely-icon" title="Download PDF" href="http://repo.ssl7.net/downloads/manuals/VoIPStudio-Admin.pdf"></a>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="dark-bg home-trial text-center">
+			<div class="inner">
+				<h3 class="h1"><span class="text-orange">`Support</span> Centre`</h3>
+				<p>`Access to the VoIPstudio Support Center is only granted to our customers.<br class="m-hidden">
+					Please login to Customer Portal to open a new support ticket.`</p>
+              <a class="button-b b-set button-b-white login-support">`Login`</a>
+			</div>
+		</section>
+	</article>
+CONTENT
+            
+            , 'manual_chapter'        => <<<CONTENT
 <article class="main support-page">
   <div class="main-image support-image"></div>
   <header class="page-header dark-bg tr-d">
     <div class="inner">
-      <h1>%MANUAL_NAME%<span class="byline"><span class="text-orange">%MANUAL_CHAPTER%</span></span></h1>
+      <h1>[MANUAL_NAME]<span class="byline"><span class="text-orange">[MANUAL_CHAPTER]</span></span></h1>
     </div>
   </header>
   <section>
@@ -1107,11 +1145,11 @@ CONTENT
         <div class="col-1-3">
           <h3 class="text-grey">`Choose a chapter`</h3>
           <div class="chapters">
-            %MANUAL_TOC%
+            [MANUAL_TOC]
           </div>
         </div>
         <div class="col-2-3 content-overwrite">
-          %MANUAL_CONTENT%
+          [MANUAL_CONTENT]
         </div>
       </div>
     </div>
@@ -1128,9 +1166,9 @@ CONTENT
 CONTENT
             
             , 'manual_chaoter'        => <<<CONTENT
-<h1>%MANUAL_NAME%</h1>
+<h1>[MANUAL_NAME]</h1>
 
-%MANUAL_CONTENT%
+[MANUAL_CONTENT]
 CONTENT
             
         );

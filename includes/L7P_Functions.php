@@ -186,6 +186,13 @@ function l7p_get_phone_group_name_from_query()
     return isset($wp_query->query_vars['group']) ? strtr($wp_query->query_vars['group'], array('+' => ' ')) : '';
 }
 
+function l7p_get_chapter_name_from_query()
+{
+    global $wp_query;
+
+    return isset($wp_query->query_vars['chapter']) ? strtr($wp_query->query_vars['chapter'], array('+' => ' ')) : '';
+}
+
 function l7p_get_pricelist()
 {
     return l7p_get_option('pricelist', array());
@@ -237,12 +244,12 @@ function l7p_get_pricelist_letters()
 function l7p_get_pricelist_country($country_code)
 {
     $currency = l7p_get_currency();
-    $routes = l7p_get_routes();
+    $routes = l7p_get_pricelist_routes();
 
     return isset($routes[$currency][$country_code]) ? $routes[$currency][$country_code] : array();
 }
 
-function l7p_get_routes()
+function l7p_get_pricelist_routes()
 {
     return l7p_get_option('routes', array());
 }
@@ -307,15 +314,56 @@ function l7p_get_phone($attr)
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
     
-//    echo '<pre>';
-//    print_r($phones);
-//    echo '</pre>';
-    
     return $phones[$name][$attr];
 }
 
-function l7p_url_for($route, $params)
+function l7p_get_chapters()
 {
+    // TODO
+    $locale = l7p_get_locale();
+    $chapters =  l7p_get_option('chapters', array());
+    
+    return isset($chapters) ? $chapters : array();
+}
+
+function l7p_get_chapter($attr)
+{
+    $chapters = l7p_get_chapters();
+    $name = l7p_get_chapter_name_from_query();
+    
+    $parts = explode("_", $name);
+    $manual_type = array_shift($parts);
+    $name = implode("_", $parts);
+    
+    if ($attr == 'manual_toc') {
+        return $chapters[$manual_type]['index'];
+    }
+    
+    return $chapters[$manual_type][$name][$attr];
+}
+
+function l7p_get_routes()
+{
+    return array(
+        'country_rates'    => '/:permalink_rates/:country',
+        'numbers'          => '/:permalink_telephone_numbers/:country',
+        'numbers_state'    => '/:permalink_telephone_numbers/United-States/:state',
+        'phone_page'       => '/:permalink_hardware/:group/:model',
+        'phones_group'     => '/:permalink_hardware/:group',
+        'manual'           => '/:permalink_manual/:chapter'
+    );
+}
+
+function l7p_has_route($route_name)
+{
+    $route_name = ltrim($route_name, '@');
+    $routes = l7p_get_routes();
+    return array_key_exists($route_name, $routes);
+}
+
+function l7p_url_for($route_name, $params)
+{
+    $route_name = ltrim($route_name, '@');
     $replace_pairs = array();
     foreach (l7p_get_permalinks() as $key => $permalink) {
         $replace_pairs[sprintf(':permalink_%s', $key)] = $permalink;
@@ -325,15 +373,9 @@ function l7p_url_for($route, $params)
         $replace_pairs[':' . $key] = strtr($param, array(' ' => '+'));
     }
 
-    $routes = array(
-        '@country_rates'    => '/:permalink_rates/:country',
-        '@numbers'          => '/:permalink_telephone_numbers/:country',
-        '@numbers_state'    => '/:permalink_telephone_numbers/United-States/:state',
-        '@phone_page'       => '/:permalink_hardware/:group/:model',
-        '@phones_group'     => '/:permalink_hardware/:group',
-    );
+    $routes = l7p_get_routes();
     
-    $url = strtr($routes[$route], $replace_pairs);
+    $url = strtr($routes[$route_name], $replace_pairs);
     
     // WPML integration
     if (function_exists('icl_get_current_language')) {

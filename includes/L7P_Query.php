@@ -87,8 +87,7 @@ class L7P_Query
             }
         } else if ($page_name == 'manual') {
 
-            $parts = array_filter(explode("/", $query_value));
-            if (count($parts) == 1) {
+            if (isset($query->query_vars['chapter'])) {
                 // manual chapter
                 $page_name .= "_chapter";
             } else {

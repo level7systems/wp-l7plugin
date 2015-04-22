@@ -367,3 +367,41 @@ function l7p_inline_phone_description()
 {
     return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',convert_markdown_text(l7p_get_phone(\'description\'())';
 }
+
+# Manual
+
+// Manual - name
+function l7p_inline_manual_name()
+{
+    return 'l7p_get_chapter(\'manual_name\');';
+}
+
+// Manual - full title
+function l7p_inline_manual_title()
+{
+    return 'l7p_get_chapter(\'manual_title\');';
+}
+
+// Manual - chapter short description
+function l7p_inline_manual_description()
+{
+    return 'l7p_get_chapter(\'manual_description\');';
+}
+
+// Manual - Table of Contents
+function l7p_inline_manual_toc()
+{
+    return 'l7p_get_chapter(\'manual_toc\');';
+}
+
+// Manual - chapter title
+function l7p_inline_manual_chapter()
+{
+    return 'l7p_get_chapter(\'manual_chapter\');';
+}
+
+// Manual - content
+function l7p_inline_manual_content()
+{
+    return 'l7p_get_chapter(\'manual_content\');';
+}

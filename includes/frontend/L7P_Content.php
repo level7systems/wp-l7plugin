@@ -58,8 +58,8 @@ class L7P_Content
 
         $content = preg_replace($regex, $replace, $content);
 
-// TODO: url
-// $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'url'), $content);
+// url
+        $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'url'), $content);
 // image
         $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array($this, 'image'), $content);
 // statements
@@ -148,29 +148,32 @@ class L7P_Content
             } else if ($route_name == "extjs_newticket") {
                 return 'href="<?php echo url_for("@extini?extini=newticket") ?>"';
             } else { // static page
-                if (!sfRouting::getInstance()->hasRouteName($route_name)) {
+                if (!l7p_has_route($route_name)) {
                     return 'href="' . $match[1] . '"';
                 }
 
                 if (isset($m[2])) {
-                    return 'href="<?php echo url_for(__("@' . $route_name . '")) ?>' . $m[2] . '"';
+                    print_r($m);
+                    
+                    return 'href="<?php echo l7p_url_for(__("@' . $route_name . '")) ?>' . $m[2] . '"';
                 } else {
-                    return 'href="<?php echo url_for(__("@' . $route_name . '")) ?>"';
+                    return 'href="<?php echo l7p_url_for(__("@' . $route_name . '")) ?>"';
                 }
             }
         } else if (preg_match('/^\{(.*)\}(\?(.*))?$/', $match[1], $m)) { // Static routes with param
             $route_name = strtolower($m[1]);
 
-            $param = $m[3];
+            parse_str($m[3], $params);
 
-            if (!sfRouting::getInstance()->hasRouteName($route_name)) {
+            if (!l7p_has_route($route_name)) {
                 return 'href="' . $match[1] . '"';
             }
 
-            return 'href="<?php echo url_for(__("@' . $route_name . '")."?' . $m[3] . '") ?>"';
+            $url = l7p_url_for($route_name, $params);
+            return "href=<?php echo '$url' ?>";
         } else { // CMS
             if ($match[1] == '/%CULTURE%/') {
-                return 'href="<?php echo url_for(__("@cms")."?url=") ?>"';
+                return 'href="<?php echo l7p_url_for(__("@cms")."?url=") ?>"';
             } else {
                 $parts = explode("/", ltrim($match[1], "/"), 2);
 
@@ -184,11 +187,11 @@ class L7P_Content
                     $route_name = 'cms_' . $parts[0];
                 }
 
-                if (!sfRouting::getInstance()->hasRouteName($route_name)) {
+                if (!l7p_has_route($route_name)) {
                     return 'href="' . $match[1] . '"';
                 }
 
-                return 'href="<?php echo url_for("@' . $route_name . '?url=' . $parts[1] . '") ?>"';
+                return 'href="<?php echo l7p_url_for("@' . $route_name . '?url=' . $parts[1] . '") ?>"';
             }
         }
     }
