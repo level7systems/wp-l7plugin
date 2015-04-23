@@ -291,49 +291,49 @@ function l7p_inline_phone_url()
 // Phone - name
 function l7p_inline_phone_name()
 {
-    return '"l7p_get_phone(\'name\')';
+    return 'isset($phone_data) ? $phone_data[\'name\'] : l7p_get_phone(\'name\')';
 }
 
 // Phone - manufacturer
 function l7p_inline_phone_manufacturer()
 {
-    return 'l7p_get_phone(\'manufacturer\')';
+    return 'isset($phone_data) ? $phone_data[\'manufacturer\'] : l7p_get_phone(\'manufacturer\')';
 }
 
 //  Phone - model
 function l7p_inline_phone_model()
 {
-    return 'l7p_get_phone(\'model\')';
+    return 'isset($phone_data) ? $phone_data[\'model\'] : l7p_get_phone(\'model\')';
 }
 
 // Phone - short description
 function l7p_inline_phone_short_description()
 {
-    return 'l7p_get_phone(\'short_description\')';
+    return 'isset($phone_data) ? $phone_data[\'short_description\'] : l7p_get_phone(\'short_description\')';
 }
 
 // Phone - stock
 function l7p_inline_phone_stock()
 {
-    return 'l7p_get_phone(\'stock\')';
+    return 'isset($phone_data) ? $phone_data[\'stock\'] : l7p_get_phone(\'stock\')';
 }
 
 // Phone - price
 function l7p_inline_phone_price()
 {
-    return 'l7p_currency_symbol(l7p_get_phone(\'price\'))';
+    return 'l7p_currency_symbol(isset($phone_data) ? $phone_data[\'price\'] : l7p_get_phone(\'price\'))';
 }
 
 // Phone - thumbnail image
 function l7p_inline_phone_thumb_img()
 {
-    return 'l7p_get_phone(\'thumb_img\')';
+    return 'isset($phone_data) ? $phone_data[\'thumb_img\'] : l7p_get_phone(\'thumb_img\')';
 }
 
 // Phone - image
 function l7p_inline_phone_img()
 {
-    return 'l7p_get_phone(\'img\')';
+    return 'isset($phone_data) ? $phone_data[\'img\'] : l7p_get_phone(\'img\')';
 }
 
 // Phone - group URL
@@ -345,14 +345,14 @@ function l7p_inline_phone_group_url()
 // Phone - reviews count
 function l7p_inline_phone_reviews_count()
 {
-    return 'l7p_get_phone(\'review_count\')';
+    return 'isset($phone_data) ? $phone_data[\'review_count\'] : l7p_get_phone(\'review_count\')';
 }
 
 // Phone - ratings stars
 function l7p_inline_phone_rating()
 {
     // TODO
-    return 'get_rating(l7p_get_phone(\'rating\'])';
+    return 'get_rating(isset($phone_data) ? $phone_data[\'rating\'] : l7p_get_phone(\'rating\'))';
 }
 
 // Phone - reviews URL
@@ -373,35 +373,35 @@ function l7p_inline_phone_description()
 // Manual - name
 function l7p_inline_manual_name()
 {
-    return 'l7p_get_chapter(\'manual_name\');';
+    return 'l7p_get_chapter(\'name\');';
 }
 
 // Manual - full title
 function l7p_inline_manual_title()
 {
-    return 'l7p_get_chapter(\'manual_title\');';
+    return 'l7p_get_chapter(\'title\');';
 }
 
 // Manual - chapter short description
 function l7p_inline_manual_description()
 {
-    return 'l7p_get_chapter(\'manual_description\');';
+    return 'l7p_get_chapter(\'description\');';
 }
 
 // Manual - Table of Contents
 function l7p_inline_manual_toc()
 {
-    return 'l7p_get_chapter(\'manual_toc\');';
+    return 'l7p_get_chapter(\'toc\');';
 }
 
 // Manual - chapter title
 function l7p_inline_manual_chapter()
 {
-    return 'l7p_get_chapter(\'manual_chapter\');';
+    return 'l7p_get_chapter(\'chapter\');';
 }
 
 // Manual - content
 function l7p_inline_manual_content()
 {
-    return 'l7p_get_chapter(\'manual_content\');';
+    return 'l7p_get_chapter(\'content\');';
 }

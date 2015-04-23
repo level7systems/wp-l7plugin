@@ -13,21 +13,7 @@ function l7p_block_currency_form() {
     $selected_currency = l7p_get_currency();
     $currencies = l7p_get_currencies();
     
-//    echo '<pre>';
 //    print_r(l7p_get_pricelist_letters());
-//    echo '</pre>';
-    
-    if (l7p_is_post_request() && array_key_exists('currency', $_POST)) {
-        
-        // verify allowed currencied
-        $selected_currency = $_POST['currency'];
-        if (in_array($selected_currency, $currencies)) {
-            echo $selected_currency;
-            l7p_update_session('currency', $selected_currency);
-        } else {
-            $selected_currency = l7p_get_currency();
-        }
-    }
     
     ob_start();
     ?>

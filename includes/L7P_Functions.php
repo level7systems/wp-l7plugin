@@ -135,6 +135,14 @@ function l7p_get_countries()
     return l7p_get_settings('countries', array());
 }
 
+function l7p_has_country($country_name)
+{
+    $country_name = strtr($country_name, ['+' => ' ']);
+    $countries = l7p_get_countries();
+    
+    return in_array($country_name, $countries);
+}
+
 function l7p_get_states()
 {
     return l7p_get_settings('states', array());
@@ -283,10 +291,7 @@ function l7p_get_ddi_country($country_code, $data, $key = false )
         $country_data = $ddi[$currency][$country_code][$state_code];
     }
     
-    echo $country_code;
-    echo '<pre>';
-    print_r($ddi[$currency]['US']);
-    echo '</pre>';
+//    l7p_pre($ddi[$currency]['US']);
     
     if (!$key) {
         return isset($ddi[$currency][$country_code][$data]) ? $ddi[$currency][$country_code][$data] : array();
@@ -335,7 +340,7 @@ function l7p_get_chapter($attr)
     $manual_type = array_shift($parts);
     $name = implode("_", $parts);
     
-    if ($attr == 'manual_toc') {
+    if ($attr == 'toc') {
         return $chapters[$manual_type]['index'];
     }
     
@@ -345,7 +350,7 @@ function l7p_get_chapter($attr)
 function l7p_get_routes()
 {
     return array(
-        'country_rates'    => '/:permalink_rates/:country',
+        'country_rates'    => '/:permalink_rates/:country/:currency',
         'numbers'          => '/:permalink_telephone_numbers/:country',
         'numbers_state'    => '/:permalink_telephone_numbers/United-States/:state',
         'phone_page'       => '/:permalink_hardware/:group/:model',
@@ -372,6 +377,9 @@ function l7p_url_for($route_name, $params)
     foreach ($params as $key => $param) {
         $replace_pairs[':' . $key] = strtr($param, array(' ' => '+'));
     }
+    
+    // add currency
+    $replace_pairs[':currency'] = strtolower(l7p_get_currency());
 
     $routes = l7p_get_routes();
     
@@ -384,4 +392,17 @@ function l7p_url_for($route_name, $params)
     }
 
     return $url;
+}
+
+function l7p_redirect($url, $permanent = false)
+{
+    header('Location: ' . $url, true, $permanent ? 301 : 302);
+    exit();
+}
+
+function l7p_pre(array $var)
+{
+    echo '<pre>';
+    print_r($var);
+    echo '</pre>';
 }
