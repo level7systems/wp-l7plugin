@@ -55,16 +55,27 @@ function l7p_update_session($key, $val)
     $_SESSION[$key] = $val;
 }
 
-function l7p_get_permalinks()
+function l7p_get_permalinks($culture = null)
 {
-    $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
-    
-    return array(
-        'rates' => isset($permalinks['rates']) ? $permalinks['rates'] : 'voip-call-rates',
-        'telephone_numbers' => isset($permalinks['telephone_numbers']) ? $permalinks['telephone_numbers'] : 'telephone-numbers',
-        'hardware' => isset($permalinks['hardware']) ? $permalinks['hardware'] : 'hardware',
-        'manual' => isset($permalinks['manual']) ? $permalinks['manual'] : 'manual',
+    $permalinks = l7p_get_option('permalinks');
+
+    $cultures = l7p_get_cultures();
+
+    $defaults = array(
+        'rates' => 'voip-call-rates',
+        'telephone_numbers' => 'telephone-numbers',
+        'hardware' => 'hardware',
+        'manual' => 'manual',
     );
+
+    $result = array();
+    foreach ($cultures as $culture) {
+        foreach ($defaults as $name => $permalink) {
+            $result[$culture][$name] = isset($permalinks[$culture . '_' . $name]) ? $permalinks[$culture . '_' . $name] : $defaults[$name];
+        }
+    }
+
+    return $result;
 }
 
 function l7p_get_currency_names()
@@ -88,7 +99,7 @@ function l7p_currency_symbol($value, $decimal = 2, $minor = false, $iso = null)
 
     $value = floatval($value);
     $decimal = intval($decimal);
-    
+
     $minors = array(
         'USD' => '¢',
         'GBP' => 'p.',
@@ -113,15 +124,9 @@ function l7p_currency_symbol($value, $decimal = 2, $minor = false, $iso = null)
     return $symbol . " " . number_format($value, $decimal);
 }
 
-function l7p_currency_name($currency_iso)
+function l7p_get_cultures()
 {
-    $names = l7p_get_currency_names();
-    return isset($names[$currency_iso]) ? $names[$currency_iso][1] : "";
-}
-
-function l7p_get_currency()
-{
-    return l7p_get_session('currency', 'USD');
+    return l7p_get_settings('cultures', array('en'));
 }
 
 // allowed currencies
@@ -129,14 +134,25 @@ function l7p_get_currencies()
 {
     return l7p_get_settings('currencies', array('EUR', 'USD', 'JPY', 'GBP', 'PLN'));
 }
+
+function l7p_get_currency()
+{
+    return l7p_get_session('currency', 'USD');
+}
+
+function l7p_currency_name($currency_iso)
+{
+    $names = l7p_get_currency_names();
+    return isset($names[$currency_iso]) ? $names[$currency_iso][1] : "";
+}
+
 function l7p_has_currency($currency_name)
 {
     $currency_name = strtolower($currency_name);
     $currencies = l7p_get_currencies();
-    
+
     return in_array($currency_name, $currencies);
 }
-
 
 function l7p_get_countries()
 {
@@ -147,7 +163,7 @@ function l7p_has_country($country_name)
 {
     $country_name = strtr($country_name, ['+' => ' ']);
     $countries = l7p_get_countries();
-    
+
     return in_array($country_name, $countries);
 }
 
@@ -280,16 +296,16 @@ function l7p_get_ddi($type = 'free')
     if (in_array($type, array('free', 'paid'))) {
         $ddi = l7p_get_option('ddi', array());
         $currency = l7p_get_currency();
-        
+
         return isset($ddi[$type][$currency]) ? $ddi[$type][$currency] : array();
     }
     return array();
 }
 
-function l7p_get_ddi_country($country_code, $data, $key = false )
+function l7p_get_ddi_country($country_code, $data, $key = false)
 {
     $currency = l7p_get_currency();
-    
+
     $state_code = l7p_get_state_code_from_query();
 
     $ddi = l7p_get_ddi_countries();
@@ -298,13 +314,13 @@ function l7p_get_ddi_country($country_code, $data, $key = false )
     if ($state_code) {
         $country_data = $ddi[$currency][$country_code][$state_code];
     }
-    
+
 //    l7p_pre($ddi[$currency]['US']);
-    
+
     if (!$key) {
         return isset($ddi[$currency][$country_code][$data]) ? $ddi[$currency][$country_code][$data] : array();
     }
-    
+
     return isset($ddi[$currency][$country_code][$data][$key]) ? $ddi[$currency][$country_code][$data][$key] : array();
 }
 
@@ -313,12 +329,12 @@ function l7p_get_phones()
     $currency = l7p_get_currency();
     $locale = l7p_get_locale();
     $group = l7p_get_phone_group_name_from_query();
-    $phones =  l7p_get_option('phones', array());
-    
+    $phones = l7p_get_option('phones', array());
+
     if ($group) {
         return isset($phones[$locale][$currency][$group]) ? $phones[$locale][$currency][$group] : array();
     }
-    
+
     return isset($phones[$locale][$currency]) ? $phones[$locale][$currency] : array();
 }
 
@@ -326,7 +342,7 @@ function l7p_get_phone($attr)
 {
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
-    
+
     return $phones[$name][$attr];
 }
 
@@ -334,8 +350,8 @@ function l7p_get_chapters()
 {
     // TODO
     $locale = l7p_get_locale();
-    $chapters =  l7p_get_option('chapters', array());
-    
+    $chapters = l7p_get_option('chapters', array());
+
     return isset($chapters) ? $chapters : array();
 }
 
@@ -343,27 +359,27 @@ function l7p_get_chapter($attr)
 {
     $chapters = l7p_get_chapters();
     $name = l7p_get_chapter_name_from_query();
-    
+
     $parts = explode("_", $name);
     $manual_type = array_shift($parts);
     $name = implode("_", $parts);
-    
+
     if ($attr == 'toc') {
         return isset($chapters[$manual_type]['index']) ? $chapters[$manual_type]['index'] : '';
     }
-    
+
     return isset($chapters[$manual_type][$name][$attr]) ? $chapters[$manual_type][$name][$attr] : '';
 }
 
 function l7p_get_routes()
 {
     return array(
-        'country_rates'    => '/:permalink_rates/:country/:currency',
-        'numbers'          => '/:permalink_telephone_numbers/:country/:currency',
-        'numbers_state'    => '/:permalink_telephone_numbers/United-States/:state/:currency',
-        'phone_page'       => '/:permalink_hardware/:group/:model/:currency',
-        'phones_group'     => '/:permalink_hardware/:group/:currency',
-        'manual'           => '/:permalink_manual/:chapter'
+        'country_rates' => '/:permalink_rates/:country/:currency',
+        'numbers' => '/:permalink_telephone_numbers/:country/:currency',
+        'numbers_state' => '/:permalink_telephone_numbers/United-States/:state/:currency',
+        'phone_page' => '/:permalink_hardware/:group/:model/:currency',
+        'phones_group' => '/:permalink_hardware/:group/:currency',
+        'manual' => '/:permalink_manual/:chapter'
     );
 }
 
@@ -376,23 +392,25 @@ function l7p_has_route($route_name)
 
 function l7p_url_for($route_name, $params)
 {
+    $permalinks = l7p_get_permalinks();
+    $locale = l7p_get_locale();
     $route_name = ltrim($route_name, '@');
     $replace_pairs = array();
-    foreach (l7p_get_permalinks() as $key => $permalink) {
+    foreach ($permalinks[$locale] as $key => $permalink) {
         $replace_pairs[sprintf(':permalink_%s', $key)] = $permalink;
     }
 
     foreach ($params as $key => $param) {
         $replace_pairs[':' . $key] = strtr($param, array(' ' => '+'));
     }
-    
+
     // add currency
     $replace_pairs[':currency'] = strtolower(l7p_get_currency());
 
     $routes = l7p_get_routes();
-    
+
     $url = strtr($routes[$route_name], $replace_pairs);
-    
+
     // WPML integration
     if (function_exists('icl_get_current_language')) {
         $lang = icl_get_current_language();
@@ -414,9 +432,28 @@ function l7p_get_page_by_pagename($pagename)
     return count($pages) > 0 ? $pages[0] : null;
 }
 
-function l7p_pre(array $var)
+function l7p_pre($var)
 {
     echo '<pre>';
     print_r($var);
     echo '</pre>';
+}
+
+function l7p_add_settings_field($id, $title, $callback, $page, $section = 'default', $args = array())
+{
+    $cultures = l7p_get_cultures();
+
+    foreach ($cultures as $i => $culture) {
+
+        $l7p_id = $culture . '_' . $id;
+        $name = $args['name'];
+        $l7p_title = !$i ? $title : '';
+        $l7p_args = $args;
+        $l7p_args['name'] = $culture . '_' . $name;
+        $l7p_args['pre'] = '/' . $culture . '/';
+        $l7p_args['value'] = isset($l7p_args['value'][$culture][$name]) ? $l7p_args['value'][$culture][$name] : '';
+        $l7p_args['help'] = !$i && isset($args['help']) ? $args['help'] : '';
+
+        add_settings_field($l7p_id, $l7p_title, $callback, $page, $section, $l7p_args);
+    }
 }

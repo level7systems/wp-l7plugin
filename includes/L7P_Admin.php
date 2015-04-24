@@ -30,7 +30,7 @@ class L7P_Admin
     public function settings_page()
     {
 
-        register_setting('level7platform_settings', Level7Platform::OPTION_PERMALINKS);
+        register_setting('level7platform_settings', 'l7p_permalinks');
 
         // Save settings if data has been posted
         if (!empty($_POST)) {
@@ -40,11 +40,13 @@ class L7P_Admin
         // Add a section to the permalinks page
         add_settings_section('level7platform_permalinks_section', __('Permalinks', 'level7platform'), array($this, 'permalinks_section_callback'), 'level7platform');
 
-        $permalinks = get_option(Level7Platform::OPTION_PERMALINKS);
+        $cultures = l7p_get_cultures();
+        $permalinks = l7p_get_permalinks();
+        $section_name = 'l7p_permalinks';
 
         // TODO: add support for defaults values from placeholders
         // rate page
-        add_settings_field(
+        l7p_add_settings_field(
             'rates', // id
             __('Country rates page', 'level7platform'), // setting label
             'text_input', // display callback
@@ -52,8 +54,8 @@ class L7P_Admin
             'level7platform_permalinks_section', // section
             array(
             'name' => 'rates',
-            'section' => Level7Platform::OPTION_PERMALINKS,
-            'value' => $permalinks['rates'],
+            'section' => $section_name,
+            'value' => $permalinks,
             'placeholder' => $this->get_field_default_value('rates'),
             'pre' => '/',
             'post' => '/:country',
@@ -61,7 +63,7 @@ class L7P_Admin
         );
 
         // virtual numbers page
-        add_settings_field(
+        l7p_add_settings_field(
             'telephone_numbers', // id
             __('Virtual numbers page', 'level7platform'), // setting label
             'text_input', // display callback
@@ -69,8 +71,8 @@ class L7P_Admin
             'level7platform_permalinks_section', // section
             array(
             'name' => 'telephone_numbers',
-            'section' => Level7Platform::OPTION_PERMALINKS,
-            'value' => $permalinks['telephone_numbers'],
+            'section' => $section_name,
+            'value' => $permalinks,
             'placeholder' => $this->get_field_default_value('telephone_numbers'),
             'pre' => '/',
             'post' => '/:country-or-state',
@@ -80,7 +82,7 @@ class L7P_Admin
 
         // TODO: check if has_shop option is enabled
         // hardware page
-        add_settings_field(
+        l7p_add_settings_field(
             'hardware', // id
             __('Hardware page', 'level7platform'), // setting label
             'text_input', // display callback
@@ -88,8 +90,8 @@ class L7P_Admin
             'level7platform_permalinks_section', // section
             array(
             'name' => 'hardware',
-            'section' => Level7Platform::OPTION_PERMALINKS,
-            'value' => $permalinks['hardware'],
+            'section' => $section_name,
+            'value' => $permalinks,
             'placeholder' => $this->get_field_default_value('hardware'),
             'pre' => '/',
             'post' => '/:category-or-phone',
@@ -97,7 +99,7 @@ class L7P_Admin
         );
 
         // manual page
-        add_settings_field(
+        l7p_add_settings_field(
             'manual', // id
             __('Manual page', 'level7platform'), // setting label
             'text_input', // display callback
@@ -105,8 +107,8 @@ class L7P_Admin
             'level7platform_permalinks_section', // section
             array(
             'name' => 'manual',
-            'section' => Level7Platform::OPTION_PERMALINKS,
-            'value' => $permalinks['manual'],
+            'section' => $section_name,
+            'value' => $permalinks,
             'placeholder' => $this->get_field_default_value('manual'),
             'pre' => '/',
             'post' => '/:chapter',
@@ -144,8 +146,8 @@ class L7P_Admin
             die(__('Action failed. Please refresh the page and retry.', 'level7platform'));
         }
 
-        $permalinks_data = $_POST[Level7Platform::OPTION_PERMALINKS];
-
+        $permalinks_data = $_POST['l7p_permalinks'];
+        
         // validation is not neccessary
         foreach ($permalinks_data as $key => $val) {
 
@@ -156,7 +158,7 @@ class L7P_Admin
         }
 
         // save data
-        update_option(Level7Platform::OPTION_PERMALINKS, $permalinks_data);
+        l7p_update_option('permalinks', $permalinks_data);
         
         // rewrite rules
         L7P()->query->add_rewrite_rules();

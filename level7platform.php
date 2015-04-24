@@ -19,13 +19,6 @@ class Level7Platform
     const VERSION = '0.1';
     
     /**
-     * Name of the option key that store permalinks settings
-     * 
-     * @var string
-     */
-    const OPTION_PERMALINKS = 'level7platform_permalinks';
-
-    /**
 	 * @var L7P_Query $query
 	 */
 	public $query = null;
