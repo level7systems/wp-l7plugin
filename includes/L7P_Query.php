@@ -28,8 +28,7 @@ class L7P_Query
 
             // verify allowed currencied
             $selected_currency = strtoupper($_POST['currency']);
-            $currencies = l7p_get_currencies();
-            if (in_array($selected_currency, $currencies)) {
+            if (l7p_has_currency($selected_currency)) {
                 l7p_update_session('currency', $selected_currency);
                 return L7P()->query->redirect_to_currency();
             }
@@ -40,9 +39,27 @@ class L7P_Query
     {
         global $wp_query;
         
-        // l7p_pre($wp_query->query_vars);
-        
-        // TODO: currency handling for pages
+        if (isset($wp_query->query_vars['pagename'])) {
+            
+            // TODO: needs caching
+            $currency_redirect_ids = l7p_get_option('currency_redirect_ids');
+            $page = l7p_get_page_by_pagename($wp_query->query_vars['pagename']);
+            
+            if (!$page) {
+                return ;
+            }
+            
+            $currency = strtolower(l7p_get_currency());
+            if (isset($wp_query->query_vars[$currency])) {
+                return ;
+            }
+            
+            if (!in_array($page->ID, $currency_redirect_ids)) {
+                return ;
+            }
+            
+            return $this->redirect_to_currency();
+        }
     }
 
     /**
@@ -82,7 +99,7 @@ class L7P_Query
             }
         }
 
-//        l7p_pre($query->query_vars);
+        // l7p_pre($query->query_vars);
 
         $page_name = $query->query_vars['name'];
 
@@ -104,6 +121,10 @@ class L7P_Query
             $page_name .= "_country";
         } else if ($page_name == 'telephone_numbers') {
 
+            if (!$query->query_vars['currency']) {
+                return $this->redirect_to_currency();
+            }
+            
             if (isset($query->query_vars['state'])) {
                 // phone number state
                 $page_name .= "_country";
@@ -193,21 +214,21 @@ class L7P_Query
         $currencies_rule = strtolower(implode("|", $currencies));
 
         // rates
-        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?(%s)?$", $permalink['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
-        // wirtual numbers
-        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink['telephone_numbers']), 'index.php?name=telephone_numbers&country=$matches[1]&lang=en', 'top');
-        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/([\w\-\+]+)/?$", $permalink['telephone_numbers']), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[1]&lang=en', 'top');
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
+        // virtual numbers
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
         // hardware
-        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
-        add_rewrite_rule(sprintf("%s/([\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
         // manual
         add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
 
-        // TODO: add endpoint for pages for each currency
+        // add endpoint for pages for each currency
         foreach ($currencies as $currency) {
             add_rewrite_endpoint(strtolower($currency), EP_PAGES);
         }
-
+        
         flush_rewrite_rules();
     }
 }

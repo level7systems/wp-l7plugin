@@ -154,16 +154,24 @@ class L7P_Install
             ),
         );
 
+        // pages that support currency redirects
+        $pages_with_currency_redirect_ids = array();
         foreach ($pages as $key => $page_data) {
             
-            $this->create_page(
+            $page_id = $this->create_page(
                 $key,
                 $page_data['slug'],
                 $page_data['title'],
                 $page_data['content'],
                 $page_data['post_type']
             );
+            
+            if (in_array($key, ['pricing', 'rates', 'telephone_numbers', 'hardware'])) {
+                $pages_with_currency_redirect_ids[] = $page_id;
+            }
         }
+        
+        l7p_update_option('currency_redirect_ids', $pages_with_currency_redirect_ids);
     }
     
     private function create_page($page_name, $page_slug, $page_title, $page_content, $post_type = 'page')

@@ -125,10 +125,18 @@ function l7p_get_currency()
 }
 
 // allowed currencies
-function l7p_get_currencies($culture = false)
+function l7p_get_currencies()
 {
     return l7p_get_settings('currencies', array('EUR', 'USD', 'JPY', 'GBP', 'PLN'));
 }
+function l7p_has_currency($currency_name)
+{
+    $currency_name = strtolower($currency_name);
+    $currencies = l7p_get_currencies();
+    
+    return in_array($currency_name, $currencies);
+}
+
 
 function l7p_get_countries()
 {
@@ -341,20 +349,20 @@ function l7p_get_chapter($attr)
     $name = implode("_", $parts);
     
     if ($attr == 'toc') {
-        return $chapters[$manual_type]['index'];
+        return isset($chapters[$manual_type]['index']) ? $chapters[$manual_type]['index'] : '';
     }
     
-    return $chapters[$manual_type][$name][$attr];
+    return isset($chapters[$manual_type][$name][$attr]) ? $chapters[$manual_type][$name][$attr] : '';
 }
 
 function l7p_get_routes()
 {
     return array(
         'country_rates'    => '/:permalink_rates/:country/:currency',
-        'numbers'          => '/:permalink_telephone_numbers/:country',
-        'numbers_state'    => '/:permalink_telephone_numbers/United-States/:state',
-        'phone_page'       => '/:permalink_hardware/:group/:model',
-        'phones_group'     => '/:permalink_hardware/:group',
+        'numbers'          => '/:permalink_telephone_numbers/:country/:currency',
+        'numbers_state'    => '/:permalink_telephone_numbers/United-States/:state/:currency',
+        'phone_page'       => '/:permalink_hardware/:group/:model/:currency',
+        'phones_group'     => '/:permalink_hardware/:group/:currency',
         'manual'           => '/:permalink_manual/:chapter'
     );
 }
@@ -398,6 +406,12 @@ function l7p_redirect($url, $permanent = false)
 {
     header('Location: ' . $url, true, $permanent ? 301 : 302);
     exit();
+}
+
+function l7p_get_page_by_pagename($pagename)
+{
+    $pages = get_posts(array('name' => $pagename, 'post_type' => 'page'));
+    return count($pages) > 0 ? $pages[0] : null;
 }
 
 function l7p_pre(array $var)
