@@ -28,6 +28,7 @@ class L7P_Query
 
             // verify allowed currencied
             $selected_currency = strtoupper($_POST['currency']);
+            
             if (l7p_has_currency($selected_currency)) {
                 l7p_update_session('currency', $selected_currency);
                 return L7P()->query->redirect_to_currency();
@@ -178,8 +179,19 @@ class L7P_Query
             // TODO: need to find out how to get/find translated page
             $page = get_post(l7p_get_option(sprintf("%s_page_id", $page_name)));
 
-            // TODO: level7platform templates for other languages
-            // 
+            // support for WPML plugin
+            if (function_exists('icl_object_id')) {
+                $translated_page_id = icl_object_id($page->ID, 'level7platform_page', false);
+                
+                // if translation does not exist
+                if (is_null($translated_page_id)) {
+                    // errorr 404
+                    return $this->error_404();
+                }
+                // translated page
+                $page = get_post($translated_page_id);
+            }
+            
             // query for given post
             $query->is_page = true;
             $query->is_home = false;

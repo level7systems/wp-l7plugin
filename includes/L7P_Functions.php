@@ -148,9 +148,9 @@ function l7p_currency_name($currency_iso)
 
 function l7p_has_currency($currency_name)
 {
-    $currency_name = strtolower($currency_name);
+    $currency_name = strtoupper($currency_name);
     $currencies = l7p_get_currencies();
-
+    
     return in_array($currency_name, $currencies);
 }
 
@@ -185,7 +185,15 @@ function l7p_get_country_name_from_query()
 {
     global $wp_query;
 
-    return isset($wp_query->query_vars['country']) ? strtr($wp_query->query_vars['country'], array('+' => ' ')) : '';
+    if (!isset($wp_query->query_vars['country'])) {
+        return '';
+    }
+    
+    if ($wp_query->query_vars['country'] == 'United-States') {
+        return 'United States';
+    }
+    
+    return strtr($wp_query->query_vars['country'], array('+' => ' '));
 }
 
 function l7p_get_state_code_from_query()
@@ -307,21 +315,19 @@ function l7p_get_ddi_country($country_code, $data, $key = false)
     $currency = l7p_get_currency();
 
     $state_code = l7p_get_state_code_from_query();
-
+    
     $ddi = l7p_get_ddi_countries();
     $country_data = $ddi[$currency][$country_code];
 
-    if ($state_code) {
-        $country_data = $ddi[$currency][$country_code][$state_code];
+    if ($state_code && $data != 'ddi_data') {
+        $country_data = $country_data[$state_code];
     }
-
-//    l7p_pre($ddi[$currency]['US']);
 
     if (!$key) {
-        return isset($ddi[$currency][$country_code][$data]) ? $ddi[$currency][$country_code][$data] : array();
+        return isset($country_data[$data]) ? $country_data[$data] : array();
     }
 
-    return isset($ddi[$currency][$country_code][$data][$key]) ? $ddi[$currency][$country_code][$data][$key] : array();
+    return isset($country_data[$data][$key]) ? $country_data[$data][$key] : array();
 }
 
 function l7p_get_phones()
