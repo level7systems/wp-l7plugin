@@ -149,8 +149,7 @@ function l7p_inline_ddi_country_code()
 // displays DDI country name
 function l7p_inline_ddi_country_name()
 {
-    return 'isset($ddi_data[\'country_name\']) ? $ddi_data[\'country_name\'] : l7p_get_country_name_from_query()';
-    // return 'l7p_get_ddi_country(l7p_get_country_code_from_query(), \'ddi_data\', \'country_name\'); ';
+    return 'isset($ddi_data[\'country_code\']) ? l7p_country_name($ddi_data[\'country_code\']) : l7p_get_country_name_from_query()';
 }
 
 // displays DDI country telephone code
@@ -174,7 +173,7 @@ function l7p_inline_ddi_city_name()
 // displays DDI country URL
 function l7p_inline_ddi_country_url()
 {
-    return 'l7p_url_for(\'@numbers\', array(\'country\' => $ddi_data[\'country_name\']))';
+    return 'l7p_url_for(\'@numbers\', array(\'country\' => l7p_country_name($ddi_data[\'country_code\'])))';
 }
 
 // displays DDI setup fee
@@ -198,13 +197,13 @@ function l7p_inline_ddi_min_rate()
 // displays buy DDI url
 function l7p_inline_ddi_buy_url()
 {
-    return '(isset($state)) ? l7p_url_for(\'@numbers_state\', array(\'state\' => $state)) : l7p_url_for(\'@numbers\', array(\'country\' => $ddi_data[\'country_name\']))';
+    return '(isset($state)) ? l7p_url_for(\'@numbers_state\', array(\'state\' => $state, \'country\' => l7p_get_country_name_from_query())) : l7p_url_for(\'@numbers\', array(\'country\' => $ddi_data[\'country_name\']))';
 }
 
 // displays buy DDI in selected U.S. state url
 function l7p_inline_ddi_state_url()
 {
-    return '(isset($state_data) && isset($state_data[\'state_name\'])) ? l7p_url_for(\'@numbers_state\', array(\'state\' => ucwords(strtolower($state_data[\'state_name\'])))) : \' \'';
+    return '(isset($state_data) && isset($state_data[\'state_name\'])) ? l7p_url_for(\'@numbers_state\', array(\'state\' => $state_data[\'state_name\'], \'country\' => l7p_get_country_name_from_query())) : \' \'';
 }
 
 // displays buy DDI in selected U.S. state url

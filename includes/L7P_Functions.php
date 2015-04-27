@@ -156,13 +156,47 @@ function l7p_has_currency($currency_name)
 
 function l7p_get_countries()
 {
-    return l7p_get_settings('countries', array());
+    $locale = l7p_get_locale();
+    
+    $countries = l7p_get_settings('countries', array());
+    if (!isset($countries[$locale])) {
+        return array();
+    }
+        
+    return $countries[$locale];
 }
 
-function l7p_has_country($country_name)
+function l7p_get_countries_urlized()
 {
-    $country_name = strtr($country_name, ['+' => ' ']);
     $countries = l7p_get_countries();
+    $countries_urlized = array();
+    foreach ($countries as $country_code => $country_name) {
+        $countries_urlized[$country_code] = l7p_urlize($country_name);
+    }
+        
+    return $countries_urlized;
+}
+
+function l7p_country_name($country_code)
+{
+    $countries = l7p_get_countries();
+    $country_code = strtoupper($country_code);
+    
+    if (!isset($countries[$country_code])) {
+        return null;
+    }
+    
+    return $countries[$country_code];
+}
+
+function l7p_has_country($country_name, $urlized = true)
+{
+    if ($urlized) {
+        $countries = l7p_get_countries_urlized();
+    } else {
+        $country_name = strtr($country_name, ['+' => ' ']);
+        $countries = l7p_get_countries();
+    }
 
     return in_array($country_name, $countries);
 }
@@ -175,8 +209,9 @@ function l7p_get_states()
 function l7p_get_country_code_from_query()
 {
     $country_name = l7p_get_country_name_from_query();
-    $countries = l7p_get_countries();
-    $country_code = strtolower(array_search($country_name, $countries));
+    $country_name_urlized = l7p_urlize($country_name);
+    $countries_urlized = l7p_get_countries_urlized();
+    $country_code = strtolower(array_search($country_name_urlized, $countries_urlized));
 
     return strtoupper($country_code);
 }
@@ -193,7 +228,11 @@ function l7p_get_country_name_from_query()
         return 'United States';
     }
     
-    return strtr($wp_query->query_vars['country'], array('+' => ' '));
+    $countries_urlized = l7p_get_countries_urlized();
+    $country_name_urlized = l7p_urlize($wp_query->query_vars['country']);
+    $country_code = array_search($country_name_urlized, $countries_urlized);
+    
+    return l7p_country_name($country_code);
 }
 
 function l7p_get_state_code_from_query()
@@ -285,7 +324,7 @@ function l7p_get_pricelist_country($country_code)
 {
     $currency = l7p_get_currency();
     $routes = l7p_get_pricelist_routes();
-
+    
     return isset($routes[$currency][$country_code]) ? $routes[$currency][$country_code] : array();
 }
 
@@ -382,7 +421,7 @@ function l7p_get_routes()
     return array(
         'country_rates' => '/:permalink_rates/:country/:currency',
         'numbers' => '/:permalink_telephone_numbers/:country/:currency',
-        'numbers_state' => '/:permalink_telephone_numbers/United-States/:state/:currency',
+        'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency',
         'phone_page' => '/:permalink_hardware/:group/:model/:currency',
         'phones_group' => '/:permalink_hardware/:group/:currency',
         'manual' => '/:permalink_manual/:chapter'
@@ -407,7 +446,9 @@ function l7p_url_for($route_name, $params)
     }
 
     foreach ($params as $key => $param) {
-        $replace_pairs[':' . $key] = strtr($param, array(' ' => '+'));
+        // urlize special characters
+        $param = l7p_urlize($param);
+        $replace_pairs[':' . $key] = $param;
     }
 
     // add currency
@@ -462,4 +503,15 @@ function l7p_add_settings_field($id, $title, $callback, $page, $section = 'defau
 
         add_settings_field($l7p_id, $l7p_title, $callback, $page, $section, $l7p_args);
     }
+}
+
+// TODO
+function l7p_urlize($text) {
+	
+    include_once('Transliterator.php');
+    
+    $text = Transliterator::urlize($text, '+');
+    $text = ucwords(strtr($text, array('+' => ' ')));
+    
+    return strtr($text, array(' ' => '+'));
 }
