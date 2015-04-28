@@ -10,10 +10,12 @@
 
 class L7P_Frontend
 {
+
     public function __construct()
     {
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
+
     }
 
     /**

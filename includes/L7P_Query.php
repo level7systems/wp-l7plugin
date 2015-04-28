@@ -28,7 +28,7 @@ class L7P_Query
 
             // verify allowed currencied
             $selected_currency = strtoupper($_POST['currency']);
-            
+
             if (l7p_has_currency($selected_currency)) {
                 l7p_update_session('currency', $selected_currency);
                 return L7P()->query->redirect_to_currency();
@@ -40,16 +40,39 @@ class L7P_Query
     {
         global $wp_query;
 
+        $page = null;
         if (isset($wp_query->query_vars['pagename'])) {
+
+            $page = l7p_get_page_by_pagename($wp_query->query_vars['pagename']);
+        }
+
+        // alternate for page_id
+        if (isset($wp_query->query_vars['page_id'])) {
+
+            $page = get_post($wp_query->query_vars['page_id']);
+            
+            // TODO: to be refactored
+            // get original page
+            // support for WPML plugin
+            if (function_exists('icl_object_id')) {
+
+                global $sitepress;
+
+                // if default lang is different than current lang
+                if ($sitepress->get_default_language() != l7p_get_locale()) {
+
+                    $original_page_id = icl_object_id($page->ID, 'page', false, $sitepress->get_default_language());
+                    // translated page
+                    $page = get_post($original_page_id);
+                }
+            }
+        }
+
+        if ($page) {
 
             // TODO: needs caching
             $currency_redirect_ids = l7p_get_option('currency_redirect_ids');
-            $page = l7p_get_page_by_pagename($wp_query->query_vars['pagename']);
-
-            if (!$page) {
-                return;
-            }
-
+            
             $currency = strtolower(l7p_get_currency());
             if (isset($wp_query->query_vars[$currency])) {
                 return;
@@ -101,7 +124,7 @@ class L7P_Query
         }
 
 //        l7p_pre($query->query_vars);
-        
+
         $page_name = $query->query_vars['name'];
 
         if ($page_name == "rates") {
@@ -144,7 +167,6 @@ class L7P_Query
                 // errorr 404
                 return $this->error_404();
             }
-            
         } else if ($page_name == 'hardware') {
 
             if (!$query->query_vars['currency']) {
@@ -178,19 +200,27 @@ class L7P_Query
             // TODO: refactor
             $page = get_post(l7p_get_option(sprintf("%s_page_id", $page_name)));
 
+            // TODO: to be refactored
             // support for WPML plugin
             if (function_exists('icl_object_id')) {
-                $translated_page_id = icl_object_id($page->ID, 'l7p_page', false);
-                
-                // if translation does not exist
-                if (is_null($translated_page_id)) {
-                    // errorr 404
-                    return $this->error_404();
+
+                global $sitepress;
+
+                // if default lang is different than current lang
+                if ($sitepress->get_default_language() != l7p_get_locale()) {
+
+                    $translated_page_id = icl_object_id($page->ID, 'l7p_page', false);
+
+                    // if translation does not exist
+                    if (is_null($translated_page_id)) {
+                        // errorr 404
+                        return $this->error_404();
+                    }
+                    // translated page
+                    $page = get_post($translated_page_id);
                 }
-                // translated page
-                $page = get_post($translated_page_id);
             }
-            
+
             // query for given post
             $query->is_page = true;
             $query->is_home = false;

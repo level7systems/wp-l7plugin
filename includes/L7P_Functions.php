@@ -129,6 +129,14 @@ function l7p_get_cultures()
     return l7p_get_settings('cultures', array('en'));
 }
 
+function l7p_has_culture($culture_name)
+{
+    $culture_name = strtolower($culture_name);
+    $cultures = l7p_get_cultures();
+    
+    return in_array($culture_name, $cultures);
+}
+
 // allowed currencies
 function l7p_get_currencies()
 {
@@ -154,9 +162,15 @@ function l7p_has_currency($currency_name)
     return in_array($currency_name, $currencies);
 }
 
-function l7p_get_countries()
+function l7p_get_countries($locale = null)
 {
-    $locale = l7p_get_locale();
+    if ($locale === null) {
+        $locale = l7p_get_locale();
+    }
+    
+    if (!l7p_has_culture($locale)) {
+        throw new Exception(sprintf("Locale: %s does not supported.", $locale));
+    }
     
     $countries = l7p_get_settings('countries', array());
     if (!isset($countries[$locale])) {
@@ -363,7 +377,7 @@ function l7p_get_ddi_country($country_code, $data, $key = false)
     $country_data = $ddi[$currency][$country_code];
 
     if ($state_code && $data != 'ddi_data') {
-        $country_data = $country_data[$state_code];
+        $country_data =  isset($country_data[$state_code]) ? $country_data[$state_code] : array();
     }
 
     if (!$key) {
@@ -392,6 +406,7 @@ function l7p_get_phone($attr)
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
 
+    // TODO; verify phones Cisco
     return $phones[$name][$attr];
 }
 
@@ -439,10 +454,12 @@ function l7p_has_route($route_name)
     return array_key_exists($route_name, $routes);
 }
 
-function l7p_url_for($route_name, $params)
+function l7p_url_for($route_name, $params, $absolute = false)
 {
+    $routes = l7p_get_routes();
     $permalinks = l7p_get_permalinks();
-    $locale = l7p_get_locale();
+    // locale
+    $locale = isset($params['locale']) ? $params['locale'] : l7p_get_locale();
     $route_name = ltrim($route_name, '@');
     $replace_pairs = array();
     foreach ($permalinks[$locale] as $key => $permalink) {
@@ -455,17 +472,23 @@ function l7p_url_for($route_name, $params)
         $replace_pairs[':' . $key] = $param;
     }
 
-    // add currency
-    $replace_pairs[':currency'] = strtolower(l7p_get_currency());
-
-    $routes = l7p_get_routes();
-
+    // add currency id not set
+    if (!isset($replace_pairs[':currency'])) {
+        $replace_pairs[':currency'] = strtolower(l7p_get_currency());
+    }
+        
     $url = strtr($routes[$route_name], $replace_pairs);
 
     // WPML integration
     if (function_exists('icl_get_current_language')) {
         $lang = icl_get_current_language();
         $url = '/' . $lang . $url;
+    }
+    
+    // absolute url
+    if ($absolute) {
+        $base_url = network_site_url();
+        $url = $base_url . $url;
     }
 
     return $url;

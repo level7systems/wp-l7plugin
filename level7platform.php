@@ -110,6 +110,8 @@ class Level7Platform
 
         // installer
         include_once('includes/L7P_Install.php');
+        // sitemap
+        include_once('includes/L7P_Sitemap.php');
 
         if (is_admin()) {
             include_once('includes/admin/L7P_Functions.php');

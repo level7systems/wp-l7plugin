@@ -546,20 +546,21 @@ class Transliterator
      */
     private static function postProcessText($text, $separator)
     {
-        if (function_exists('mb_strtolower')) {
-            $text = mb_strtolower($text);
-        } else {
-            $text = strtolower($text);
-        }
+        // we don't nedd it
+//        if (function_exists('mb_strtolower')) {
+//            $text = mb_strtolower($text);
+//        } else {
+//            $text = strtolower($text);
+//        }
 
         // Remove all none word characters
         $text = preg_replace('/\W/', ' ', $text);
 
         // More stripping. Replace spaces with dashes
-        $text = strtolower(preg_replace('/[^A-Za-z0-9\/]+/', $separator,
+        $text = preg_replace('/[^A-Za-z0-9\/\_]+/', $separator,
             preg_replace('/([a-z\d])([A-Z])/', '\1_\2',
                 preg_replace('/([A-Z]+)([A-Z][a-z])/', '\1_\2',
-                    preg_replace('/::/', '/', $text)))));
+                    preg_replace('/::/', '/', $text))));
 
         return trim($text, $separator);
     }
