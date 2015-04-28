@@ -283,6 +283,10 @@ function l7p_get_pricelist_letters()
     $currency = l7p_get_currency();
     $countries = l7p_get_countries();
     $pricelist = l7p_get_pricelist();
+    
+    if (!isset($pricelist['rates'])) {
+        return array();
+    }
     $rates = $pricelist['rates'];
     $package_routes = $pricelist['package_routes'];
 

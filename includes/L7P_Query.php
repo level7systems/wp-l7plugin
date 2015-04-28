@@ -176,12 +176,11 @@ class L7P_Query
         if ($page_name) {
 
             // TODO: refactor
-            // TODO: need to find out how to get/find translated page
             $page = get_post(l7p_get_option(sprintf("%s_page_id", $page_name)));
 
             // support for WPML plugin
             if (function_exists('icl_object_id')) {
-                $translated_page_id = icl_object_id($page->ID, 'level7platform_page', false);
+                $translated_page_id = icl_object_id($page->ID, 'l7p_page', false);
                 
                 // if translation does not exist
                 if (is_null($translated_page_id)) {
@@ -196,7 +195,7 @@ class L7P_Query
             $query->is_page = true;
             $query->is_home = false;
             $query->is_singular = true;
-            $query->set('post_type', 'level7platform_page');
+            $query->set('post_type', 'l7p_page');
             $query->set('name', $page->post_name);
         }
     }
