@@ -38,37 +38,34 @@ class L7P_Post_Types
         }
 
         register_post_type('l7p_page', array(
-            'label' => __("Level7 templates", 'level7platform'),
+            'label' => __("Dynamic page templates", 'level7platform'),
             'description' => __('This is where you can manage Level7 platform page templates.', 'level7platform'),
             'labels' => array(
+                'name'               => __( 'Dynamic page templates', 'level7platform' ),
+                'singular_name'      => __( 'Dynamic page template', 'level7platform' ),
+                'menu_name'          => _x( 'Page templates', 'Admin menu name', 'level7platform' ),
+                'edit'               => __( 'Edit', 'level7platform' ),
+                'edit_item'          => __( 'Edit dynamic page template', 'level7platform' ),
+                'view'               => __( 'View template', 'level7platform' ),
+                'view_item'          => __( 'View template', 'level7platform' ),
+                'search_items'       => __( 'Search templates', 'level7platform' ),
+                'not_found'          => __( 'No dynamic page templates found', 'level7platform' ),
+                'not_found_in_trash' => __( 'No dynamic page templates found in trash', 'level7platform' )
             ),
             'public' => true,
             'description' => __('This is where you can manage Level7 platform page templates.', 'level7platform'),
             'show_in_menu' => 'l7-settings',
             'capability_type' => 'page',
             'map_meta_cap' => true,
-            // TODO: implement as in product
-            // TODO: implement custom capabilities 
-            // TODO: this cause translation problem
             'capabilities' => array(
-                // TODO: block preview
-                'show_posts' => false,
-                // TODO: this cause creating translation pages
+                // this need to be enabled for creating translation for templates
                 'create_posts' => true,
-                'edit_posts' => true,
                 'delete_posts' => false,
                 'delete_published_posts' => false,
             ),
-            'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'custom-fields', 'page-attributes'),
+            'supports' => array('title', 'editor'),
             'rewrite' => false,
-            'query_var' => true,
-            // 'rewrite'             => $product_permalink ? array( 'slug' => untrailingslashit( $product_permalink ), 'with_front' => false, 'feeds' => true ) : false,
-            /*
-              'rewrite'               => array(
-              'slug'       => 'l7p_page',
-              'with_front' => false
-              ),
-             */
+            'query_var' => false
             )
         );
     }
