@@ -59,6 +59,9 @@ class Level7Platform
 
         // WP hooks
         add_action('init', array($this, 'init'), 0);
+        
+        // integration with other plugins
+        add_action('plugins_loaded', array('L7P_PluginIntegration', 'setup'), 10);
 
         // Loaded action
         do_action('level7platform_loaded');
@@ -110,8 +113,9 @@ class Level7Platform
 
         // installer
         include_once('includes/L7P_Install.php');
-        // sitemap
-        include_once('includes/L7P_Sitemap.php');
+        // integrations
+        include_once('includes/L7P_PluginIntegration.php');
+        
 
         if (is_admin()) {
             include_once('includes/admin/L7P_Functions.php');
