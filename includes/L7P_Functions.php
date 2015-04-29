@@ -405,8 +405,7 @@ function l7p_get_phone($attr)
 {
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
-
-    // TODO; verify phones Cisco
+    
     return $phones[$name][$attr];
 }
 

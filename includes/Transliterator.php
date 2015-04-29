@@ -558,7 +558,7 @@ class Transliterator
 
         // More stripping. Replace spaces with dashes
         $text = preg_replace('/[^A-Za-z0-9\/\_]+/', $separator,
-            preg_replace('/([a-z\d])([A-Z])/', '\1_\2',
+            preg_replace('/([a-z\d])([A-Z])/', '\1\2',
                 preg_replace('/([A-Z]+)([A-Z][a-z])/', '\1_\2',
                     preg_replace('/::/', '/', $text))));
 
