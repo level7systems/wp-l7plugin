@@ -145,6 +145,19 @@ function l7p_get_currencies()
 
 function l7p_get_currency()
 {
+    // if geoip module enabled
+    if (function_exists('geoip_country_code_by_name')) {
+        // get remote address
+        $remote_addr = $_SERVER['REMOTE_ADDR'];
+        // try go country by addr
+        $country_code = @geoip_country_code_by_name($remote_addr);
+        $country_code = strtolower($country_code);
+        $currencies = l7p_get_currencies();
+        if ($country_code && array_key_exists($country_code, $currencies)) {
+            return $currencies[$country_code];
+        }
+    }
+    
     return l7p_get_session('currency', 'USD');
 }
 
