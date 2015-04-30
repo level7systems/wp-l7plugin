@@ -22,6 +22,16 @@ function l7p_get_settings($option, $default = null)
     return isset($setttings[$option]) ? $setttings[$option] : $default;
 }
 
+function l7p_get_web_product_settings($option, $default = null)
+{
+    $setttings = l7p_get_option('settings');
+    if (!isset($setttings['web_product'][$option])) {
+        return false;
+    }
+    
+    return $setttings['web_product'][$option];
+}
+
 function l7p_update_option($option, $value)
 {
     $option = "l7p_" . $option;
@@ -64,9 +74,13 @@ function l7p_get_permalinks($culture = null)
     $defaults = array(
         'rates' => 'voip-call-rates',
         'telephone_numbers' => 'telephone-numbers',
-        'hardware' => 'hardware',
         'manual' => 'manual',
     );
+    
+    // if web product has shop enabled
+    if (l7p_get_web_product_settings('has_shop')) {
+        $defaults['hardware'] = 'hardware';
+    }
 
     $result = array();
     foreach ($cultures as $culture) {

@@ -20,11 +20,11 @@ class L7P_Admin
     {
         add_action('admin_menu', array($this, 'menu'), 5);
         add_action('admin_head', array($this, 'head'), 5);
-        
+
         add_filter('post_row_actions', array($this, 'post_row_actions'), 10, 2);
         add_filter('bulk_actions-edit-l7p_page', array($this, 'bulk_actions'));
-        
-        add_action( 'add_meta_boxes', array( $this, 'remove_meta_boxes' ), 10 );
+
+        add_action('add_meta_boxes', array($this, 'remove_meta_boxes'), 10);
     }
 
     public function menu()
@@ -46,33 +46,33 @@ class L7P_Admin
             // hide translation options
             . 'div#icl_div_config {display: none;}'
             . '</style>';
-        
+
         echo $style;
     }
-    
+
     public function post_row_actions($actions, $post)
     {
         if ($post->post_type != 'l7p_page') {
-			return $actions;
+            return $actions;
         }
-        
+
         // remove quick edit action
         unset($actions['inline hide-if-no-js']);
         // remove view action
         unset($actions['view']);
-        
+
         return $actions;
     }
-    
+
     public function bulk_actions($actions)
     {
         // remove all bulk actions
         return array();
     }
-    
+
     public function remove_meta_boxes()
     {
-        remove_meta_box( 'slugdiv', 'l7p_page' , 'normal' );
+        remove_meta_box('slugdiv', 'l7p_page', 'normal');
     }
 
     public function settings_page()
@@ -127,24 +127,28 @@ class L7P_Admin
             )
         );
 
-        // TODO: check if has_shop option is enabled
-        // hardware page
-        l7p_add_settings_field(
-            'hardware', // id
-            __('Hardware page', 'level7platform'), // setting label
-            'text_input', // display callback
-            'level7platform', // settings page
-            'level7platform_permalinks_section', // section
-            array(
-            'name' => 'hardware',
-            'section' => $section_name,
-            'value' => $permalinks,
-            'placeholder' => $this->get_field_default_value('hardware'),
-            'pre' => '/',
-            'post' => '/:category-or-phone',
-            )
-        );
+        // check if has_shop option is enabled for this web_product
+        if (l7p_get_web_product_settings('has_shop')) {
 
+            // hardware page
+            l7p_add_settings_field(
+                'hardware', // id
+                __('Hardware page', 'level7platform'), // setting label
+                'text_input', // display callback
+                'level7platform', // settings page
+                'level7platform_permalinks_section', // section
+                array(
+                'name' => 'hardware',
+                'section' => $section_name,
+                'value' => $permalinks,
+                'placeholder' => $this->get_field_default_value('hardware'),
+                'pre' => '/',
+                'post' => '/:category-or-phone',
+                )
+            );
+
+        }
+        
         // manual page
         l7p_add_settings_field(
             'manual', // id

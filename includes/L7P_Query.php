@@ -50,7 +50,7 @@ class L7P_Query
         if (isset($wp_query->query_vars['page_id'])) {
 
             $page = get_post($wp_query->query_vars['page_id']);
-            
+
             // TODO: to be refactored
             // get original page
             // support for WPML plugin
@@ -72,7 +72,7 @@ class L7P_Query
 
             // TODO: needs caching
             $currency_redirect_ids = l7p_get_option('currency_redirect_ids');
-            
+
             $currency = strtolower(l7p_get_currency());
             if (isset($wp_query->query_vars[$currency])) {
                 return;
@@ -168,6 +168,11 @@ class L7P_Query
                 return $this->error_404();
             }
         } else if ($page_name == 'hardware') {
+
+            // skip web_product has disabled shop option
+            if (!l7p_get_web_product_settings('has_shop')) {
+                return;
+            }
 
             if (!$query->query_vars['currency']) {
                 return $this->redirect_to_currency();
@@ -266,9 +271,14 @@ class L7P_Query
             // virtual numbers
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
-            // hardware
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
+
+            // if web_product has shop enabled
+            if (l7p_get_web_product_settings('has_shop')) {
+                // hardware
+                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
+                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
+            }
+            
             // manual
             add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         }

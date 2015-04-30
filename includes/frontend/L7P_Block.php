@@ -31,4 +31,11 @@ function l7p_block_currency_form() {
     return $content;
 }
 
+function l7p_block_login_form() {
+    // TODO
+}
+
+function l7p_block_registration_form() {
+    // TODO
+}
 
