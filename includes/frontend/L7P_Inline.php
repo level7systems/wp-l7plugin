@@ -11,37 +11,37 @@
 // displays charge for a SMS message
 function l7p_inline_sms_charge()
 {
-    return 'l7p_currency_symbol(l7p_inline_charge(\'sms\'), 0, true)';
+    return 'l7p_currency_symbol(l7p_inline_charge(\'sms\'))';
 }
 
 // displays monthly charge for a User account
 function l7p_inline_user_charge()
 {
-    return 'l7p_currency_symbol(l7p_inline_charge(\'user\'), 0, true)';
+    return 'l7p_currency_symbol(l7p_inline_charge(\'user\'))';
 }
 
 // displays monthly charge for a Unlimited plan
 function l7p_inline_user_unlimited()
 {
-    return 'l7p_currency_symbol(l7p_inline_charge(\'user-S\'), 0, true)';
+    return 'l7p_currency_symbol(l7p_inline_charge(\'user-S\'))';
 }
 
 // displays monthly charge for a Unlimited International plan
 function l7p_inline_user_unlimited_int()
 {
-    return 'l7p_currency_symbol(l7p_inline_charge(\'user-A\'), 0, true)';
+    return 'l7p_currency_symbol(l7p_inline_charge(\'user-A\'))';
 }
 
 function l7p_inline_charge($service)
 {
     if (!$currency = l7p_get_session('currency')) {
-        $currency = l7p_get_option('currency', 'USD');
+        $currency = l7p_get_currency();
     }
-
-    $charges = l7p_get_option('charges', array());
-    $charge = array_key_exists($service, $charges) ? $charges[$service][$currency] : 0;
-
-    return l7p_currency_symbol($charge, $currency);
+    
+    $currency = strtoupper($currency);
+    $charges = l7p_get_settings('charges', array());
+    
+    return isset($charges[$currency][$service]) ? $charges[$currency][$service] : 0;
 }
 
 // Termination

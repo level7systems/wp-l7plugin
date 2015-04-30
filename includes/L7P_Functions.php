@@ -157,10 +157,12 @@ function l7p_get_currencies()
     return l7p_get_settings('currencies', array('EUR', 'USD', 'JPY', 'GBP', 'PLN'));
 }
 
-function l7p_get_currency()
+function l7p_get_currency($auto_discover = false)
 {
+    $currency = l7p_get_session('currency', false);
+    
     // if geoip module enabled
-    if (function_exists('geoip_country_code_by_name')) {
+    if (!$currency && function_exists('geoip_country_code_by_name')) {
         // get remote address
         $remote_addr = $_SERVER['REMOTE_ADDR'];
         // try go country by addr
@@ -168,11 +170,11 @@ function l7p_get_currency()
         $country_code = strtolower($country_code);
         $currencies = l7p_get_currencies();
         if ($country_code && array_key_exists($country_code, $currencies)) {
-            return $currencies[$country_code];
+            $currency = $currencies[$country_code];
         }
     }
     
-    return l7p_get_session('currency', 'USD');
+    return $currency ?: 'USD';
 }
 
 function l7p_currency_name($currency_iso)

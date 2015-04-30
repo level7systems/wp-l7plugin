@@ -83,6 +83,8 @@ class L7P_Install
         
         $pages_contents = $this->get_pages_contents();
         
+        // TODO: add login and register pages
+        
         // 5 standard pages
         $pages = array(
             'pricing' => array(
