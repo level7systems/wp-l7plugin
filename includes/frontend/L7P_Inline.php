@@ -49,6 +49,9 @@ function l7p_inline_charge($service)
 // displays fixed line termination cost for the current user
 function l7p_inline_term_local_fixed()
 {
+    $pricelist = l7p_get_pricelist();
+    // l7p_pre($pricelist['domestic']);
+    
     return '(isset($domestic) && isset($domestic[\'fixed\'])) ? (($domestic[\'fixed\'] * 100) <= 100) ? l7p_currency_symbol($domestic[\'fixed\'],1,true) : l7p_currency_symbol($domestic[\'fixed\']) : \'<!-- TERM_LOCAL_FIXED not defined -->\'';
 }
 

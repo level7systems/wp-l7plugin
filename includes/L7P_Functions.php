@@ -65,6 +65,12 @@ function l7p_update_session($key, $val)
     $_SESSION[$key] = $val;
 }
 
+function l7p_get_config()
+{
+    // TODO
+    return array();
+}
+
 function l7p_get_permalinks($culture = null)
 {
     $permalinks = l7p_get_option('permalinks');
@@ -318,6 +324,15 @@ function l7p_get_chapter_name_from_query()
 function l7p_get_pricelist()
 {
     return l7p_get_option('pricelist', array());
+}
+
+function l7p_get_pricelist_domestic()
+{
+    $pricelist = l7p_get_pricelist();
+    $pricelist['domestic'];
+    $currency = l7p_get_currency();
+    
+    // TODO
 }
 
 function l7p_get_pricelist_letters()

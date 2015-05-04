@@ -35,6 +35,10 @@ class L7P_Admin
 
     public function head()
     {
+        if (get_post_type() != 'l7p_page') {
+            return ;
+        }
+        
         // hook for not displaying some UI elements
         $style = '<style type="text/css">'
             // hid add new button
@@ -77,6 +81,7 @@ class L7P_Admin
 
     public function settings_page()
     {
+        register_setting('level7platform_settings', 'l7p_config');
         register_setting('level7platform_settings', 'l7p_permalinks');
 
         // Save settings if data has been posted
@@ -84,14 +89,29 @@ class L7P_Admin
             $this->save();
         }
 
+        add_settings_section('level7platform_config_section', __('Config', 'level7platform'), array($this, 'config_section_callback'), 'level7platform');
         // Add a section to the permalinks page
         add_settings_section('level7platform_permalinks_section', __('Permalinks', 'level7platform'), array($this, 'permalinks_section_callback'), 'level7platform');
 
         $cultures = l7p_get_cultures();
+        $config = l7p_get_config();
         $permalinks = l7p_get_permalinks();
         $section_name = 'l7p_permalinks';
 
-        // TODO: add support for defaults values from placeholders
+        // WP API key
+        add_settings_field(
+            'api_key', // id
+            __('API key', 'level7platform'), // setting label
+            'text_input', // display callback
+            'level7platform', // settings page
+            'level7platform_config_section', // section
+            array(
+            'name' => 'api_key',
+            'section' => 'l7p_config',
+            'value' => $config['api_key'],
+            )
+        );
+        
         // rate page
         l7p_add_settings_field(
             'rates', // id
@@ -184,6 +204,11 @@ class L7P_Admin
         </div>
 
         <?php
+    }
+    
+    public function config_section_callback()
+    {
+        echo wpautop(__('These settings control the config used for Level7 integration plugin.', 'level7platform'));
     }
 
     public function permalinks_section_callback()
