@@ -37,56 +37,91 @@ class L7P_XmlRpc_Api
         return $methods;
     }
     
+    /**
+     * @param type $params
+     * 
+     * @return string
+     */
     public function setSettings($params)
     {
-        // TODO: add additional checks
-        l7p_update_option('settings', json_decode($params, true));
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        l7p_update_option('settings', json_decode($params[1], true));
         
         return "OK";
     }
     
     public function setPricelist($params)
     {
-        // returning errors to client
-        // return new IXR_Error(500, "Some error");
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
         
-        // TODO: add additional checks
-        l7p_update_option('pricelist', json_decode($params, true));
+        l7p_update_option('pricelist', json_decode($params[1], true));
         
         return "OK";
     }
     
     public function setRoutes($params)
     {
-        l7p_update_option('routes', json_decode($params, true));
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        l7p_update_option('routes', json_decode($params[1], true));
         
         return "OK";
     }
     
     public function setDdi($params)
     {
-        l7p_update_option('ddi', json_decode($params, true));
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        l7p_update_option('ddi', json_decode($params[1], true));
         
         return "OK";
     }
     
     public function setDdiCountries($params)
     {
-        l7p_update_option('ddi_countries', json_decode($params, true));
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        l7p_update_option('ddi_countries', json_decode($params[1], true));
         
         return "OK";
     }
     
     public function setPhones($params)
     {
-        l7p_update_option('phones', json_decode($params, true));
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        l7p_update_option('phones', json_decode($params[1], true));
         
         return "OK";
     }
     
     public function setChapters($params)
     {
-        l7p_update_option('chapters', json_decode($params, true));
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        l7p_update_option('chapters', json_decode($params[1], true));
         
         return "OK";
     }
@@ -94,6 +129,22 @@ class L7P_XmlRpc_Api
     public function ping()
     {
         return "OK";
+    }
+    
+    private function authorize($token)
+    {
+        if (empty($token)) {
+            $this->error = new IXR_Error(401, __('Empty API token provided.'));
+            return false;
+        }
+        
+        $api_token = l7p_get_api_token();
+        if ($api_token != $token) {
+            $this->error = new IXR_Error(401, __('Incorrect API token provided.'));
+            return false;
+        }
+        
+        return true;
     }
     
 }

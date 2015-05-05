@@ -28,7 +28,7 @@ function l7p_get_web_product_settings($option, $default = null)
     if (!isset($setttings['web_product'][$option])) {
         return false;
     }
-    
+
     return $setttings['web_product'][$option];
 }
 
@@ -67,8 +67,13 @@ function l7p_update_session($key, $val)
 
 function l7p_get_config()
 {
-    // TODO
-    return array();
+    return l7p_get_option('config', array());
+}
+
+function l7p_get_api_token()
+{
+    $config = l7p_get_config();
+    return isset($config['api_key']) ? $config['api_key'] : '';
 }
 
 function l7p_get_permalinks($culture = null)
@@ -82,7 +87,7 @@ function l7p_get_permalinks($culture = null)
         'telephone_numbers' => 'telephone-numbers',
         'manual' => 'manual',
     );
-    
+
     // if web product has shop enabled
     if (l7p_get_web_product_settings('has_shop')) {
         $defaults['hardware'] = 'hardware';
@@ -153,8 +158,13 @@ function l7p_has_culture($culture_name)
 {
     $culture_name = strtolower($culture_name);
     $cultures = l7p_get_cultures();
-    
+
     return in_array($culture_name, $cultures);
+}
+
+function l7p_get_culture()
+{
+    return l7p_get_locale();
 }
 
 // allowed currencies
@@ -166,21 +176,19 @@ function l7p_get_currencies()
 function l7p_get_currency($auto_discover = false)
 {
     $currency = l7p_get_session('currency', false);
-    
+
     // if geoip module enabled
     if (!$currency && function_exists('geoip_country_code_by_name')) {
-        // get remote address
-        $remote_addr = $_SERVER['REMOTE_ADDR'];
         // try go country by addr
-        $country_code = @geoip_country_code_by_name($remote_addr);
+        $country_code = l7p_get_geo();
         $country_code = strtolower($country_code);
         $currencies = l7p_get_currencies();
         if ($country_code && array_key_exists($country_code, $currencies)) {
             $currency = $currencies[$country_code];
         }
     }
-    
-    return $currency ?: 'USD';
+
+    return $currency ? : 'USD';
 }
 
 function l7p_currency_name($currency_iso)
@@ -193,25 +201,49 @@ function l7p_has_currency($currency_name)
 {
     $currency_name = strtoupper($currency_name);
     $currencies = l7p_get_currencies();
-    
+
     return in_array($currency_name, $currencies);
 }
+
+// return country code
+function l7p_get_geo()
+{
+    // get remote address
+    $remote_addr = $_SERVER['REMOTE_ADDR'];
+    // try go country by addr
+    if (!$country_code = @geoip_country_code_by_name($remote_addr)) {
+        $country_code = 'US';
+    }
+    
+    return $country_code;
+}
+
+function l7p_get_geo_state()
+{
+    // get remote address
+    $remote_addr = $_SERVER['REMOTE_ADDR'];
+    $geoip = @geoip_record_by_name(MyTools::getRemoteAddress());
+
+    return (isset($geoip['region']) && $geoip['region']) ? $geoip['region'] : 'AL';
+}
+
+
 
 function l7p_get_countries($locale = null)
 {
     if ($locale === null) {
         $locale = l7p_get_locale();
     }
-    
+
     if (!l7p_has_culture($locale)) {
         throw new Exception(sprintf("Locale: %s does not supported.", $locale));
     }
-    
+
     $countries = l7p_get_settings('countries', array());
     if (!isset($countries[$locale])) {
         return array();
     }
-        
+
     return $countries[$locale];
 }
 
@@ -222,7 +254,7 @@ function l7p_get_countries_urlized()
     foreach ($countries as $country_code => $country_name) {
         $countries_urlized[$country_code] = l7p_urlize($country_name);
     }
-        
+
     return $countries_urlized;
 }
 
@@ -230,11 +262,11 @@ function l7p_country_name($country_code)
 {
     $countries = l7p_get_countries();
     $country_code = strtoupper($country_code);
-    
+
     if (!isset($countries[$country_code])) {
         return null;
     }
-    
+
     return $countries[$country_code];
 }
 
@@ -272,15 +304,15 @@ function l7p_get_country_name_from_query()
     if (!isset($wp_query->query_vars['country'])) {
         return '';
     }
-    
+
     if ($wp_query->query_vars['country'] == 'United-States') {
         return 'United States';
     }
-    
+
     $countries_urlized = l7p_get_countries_urlized();
     $country_name_urlized = l7p_urlize($wp_query->query_vars['country']);
     $country_code = array_search($country_name_urlized, $countries_urlized);
-    
+
     return l7p_country_name($country_code);
 }
 
@@ -321,18 +353,33 @@ function l7p_get_chapter_name_from_query()
     return isset($wp_query->query_vars['chapter']) ? strtr($wp_query->query_vars['chapter'], array('+' => ' ')) : '';
 }
 
-function l7p_get_pricelist()
+function l7p_get_pricelist($key = false)
 {
-    return l7p_get_option('pricelist', array());
+    $pricelist = l7p_get_option('pricelist', array());
+    
+    if ($key) {
+        return isset($pricelist[$key]) ? $pricelist[$key] : array();
+    }
+    
+    return $pricelist;
 }
 
-function l7p_get_pricelist_domestic()
+function l7p_get_pricelist_domestic($key = false)
 {
     $pricelist = l7p_get_pricelist();
-    $pricelist['domestic'];
     $currency = l7p_get_currency();
+    $country_code = l7p_get_geo();
     
-    // TODO
+    $domestic = 0;
+    if (isset($pricelist['domestic'][$currency][$country_code])) {
+        $domestic = $pricelist['domestic'][$currency][$country_code];
+    }
+
+    if ($key && isset($domestic[$key])) {
+        return $domestic[$key];
+    }
+    
+    return $domestic;
 }
 
 function l7p_get_pricelist_letters()
@@ -341,7 +388,7 @@ function l7p_get_pricelist_letters()
     $currency = l7p_get_currency();
     $countries = l7p_get_countries();
     $pricelist = l7p_get_pricelist();
-    
+
     if (!isset($pricelist['rates'])) {
         return array();
     }
@@ -386,7 +433,7 @@ function l7p_get_pricelist_country($country_code)
 {
     $currency = l7p_get_currency();
     $routes = l7p_get_pricelist_routes();
-    
+
     return isset($routes[$currency][$country_code]) ? $routes[$currency][$country_code] : array();
 }
 
@@ -416,12 +463,12 @@ function l7p_get_ddi_country($country_code, $data, $key = false)
     $currency = l7p_get_currency();
 
     $state_code = l7p_get_state_code_from_query();
-    
+
     $ddi = l7p_get_ddi_countries();
     $country_data = $ddi[$currency][$country_code];
 
     if ($state_code && $data != 'ddi_data') {
-        $country_data =  isset($country_data[$state_code]) ? $country_data[$state_code] : array();
+        $country_data = isset($country_data[$state_code]) ? $country_data[$state_code] : array();
     }
 
     if (!$key) {
@@ -449,8 +496,28 @@ function l7p_get_phone($attr)
 {
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
-    
+
     return $phones[$name][$attr];
+}
+
+function l7p_get_min_price($group_name)
+{
+    $phones = l7p_get_option('phones', array());
+    $currency = l7p_get_currency();
+    $locale = l7p_get_locale();
+    
+    $min_price = 0;
+    if (!isset($phones[$locale][$currency][$group_name])) {
+        return $min_price;
+    }
+    
+    foreach ($phones[$locale][$currency][$group_name] as $phone) {
+        if ($phone['price'] < $min_price || !$min_price) {
+            $min_price = $phone['price'];
+        }
+    }
+    
+    return $min_price;
 }
 
 function l7p_get_chapters()
@@ -519,7 +586,7 @@ function l7p_url_for($route_name, $params, $absolute = false)
     if (!isset($replace_pairs[':currency'])) {
         $replace_pairs[':currency'] = strtolower(l7p_get_currency());
     }
-        
+
     $url = strtr($routes[$route_name], $replace_pairs);
 
     // WPML integration
@@ -527,7 +594,7 @@ function l7p_url_for($route_name, $params, $absolute = false)
         $lang = icl_get_current_language();
         $url = '/' . $lang . $url;
     }
-    
+
     // absolute url
     if ($absolute) {
         $base_url = network_site_url();
@@ -576,12 +643,13 @@ function l7p_add_settings_field($id, $title, $callback, $page, $section = 'defau
 }
 
 // TODO
-function l7p_urlize($text) {
-	
+function l7p_urlize($text)
+{
+
     include_once('Transliterator.php');
-    
+
     $text = Transliterator::urlize($text, '+');
     $text = ucwords(strtr($text, array('+' => ' ')));
-    
+
     return strtr($text, array(' ' => '+'));
 }

@@ -89,7 +89,7 @@ class L7P_Admin
             $this->save();
         }
 
-        add_settings_section('level7platform_config_section', __('Config', 'level7platform'), array($this, 'config_section_callback'), 'level7platform');
+        add_settings_section('level7platform_config_section', __('General', 'level7platform'), array($this, 'config_section_callback'), 'level7platform');
         // Add a section to the permalinks page
         add_settings_section('level7platform_permalinks_section', __('Permalinks', 'level7platform'), array($this, 'permalinks_section_callback'), 'level7platform');
 
@@ -108,7 +108,8 @@ class L7P_Admin
             array(
             'name' => 'api_key',
             'section' => 'l7p_config',
-            'value' => $config['api_key'],
+            'value' => isset($config['api_key']) ? $config['api_key'] : '',
+            'help'  => __('This need to be filled with WP API Key from Level7 App to enable communication.', 'level7platform'),
             )
         );
         
@@ -208,7 +209,7 @@ class L7P_Admin
     
     public function config_section_callback()
     {
-        echo wpautop(__('These settings control the config used for Level7 integration plugin.', 'level7platform'));
+        echo wpautop(__('General settings used for Level7 integration plugin.', 'level7platform'));
     }
 
     public function permalinks_section_callback()
@@ -221,8 +222,12 @@ class L7P_Admin
         if (empty($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'level7platform_settings-options')) {
             die(__('Action failed. Please refresh the page and retry.', 'level7platform'));
         }
-
+        
+        $config_data = $_POST['l7p_config'];
         $permalinks_data = $_POST['l7p_permalinks'];
+        
+        // save config data
+        l7p_update_option('config', $config_data);
 
         // validation is not neccessary
         foreach ($permalinks_data as $key => $val) {
@@ -233,7 +238,7 @@ class L7P_Admin
             $permalinks_data[$key] = sanitize_title($val);
         }
 
-        // save data
+        // save permalinks data
         l7p_update_option('permalinks', $permalinks_data);
 
         // rewrite rules
