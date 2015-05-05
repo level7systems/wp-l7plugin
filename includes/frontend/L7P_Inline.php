@@ -8,6 +8,36 @@
  * file that was distributed with this source code.
  */
 
+// get two letter code for the current language
+function l7p_inline_culture()
+{
+    return 'l7p_get_';
+}
+
+// get three letter currency code
+function l7p_inline_currency()
+{
+    return 'l7p_get_currency()';
+}
+
+// get two letter country code for the current user.
+function l7p_inline_get_geo()
+{
+    return 'l7p_get_geo()';
+}
+
+// get country name for the current user.
+function l7p_inline_country_name()
+{
+    return 'l7p_country_name(l7p_get_geo())';
+}
+
+// get two letter state code for the current user.
+function l7p_inline_state()
+{
+    return 'l7p_get_geo_state()';
+}
+
 // displays charge for a SMS message
 function l7p_inline_sms_charge()
 {
@@ -49,16 +79,13 @@ function l7p_inline_charge($service)
 // displays fixed line termination cost for the current user
 function l7p_inline_term_local_fixed()
 {
-    $pricelist = l7p_get_pricelist();
-    // l7p_pre($pricelist['domestic']);
-    
-    return '(isset($domestic) && isset($domestic[\'fixed\'])) ? (($domestic[\'fixed\'] * 100) <= 100) ? l7p_currency_symbol($domestic[\'fixed\'],1,true) : l7p_currency_symbol($domestic[\'fixed\']) : \'<!-- TERM_LOCAL_FIXED not defined -->\'';
+    return '($fixed = l7p_get_pricelist_domestic(\'fixed\')) ? (($fixed * 100) <= 100) ? l7p_currency_symbol($fixed,1,true) : l7p_currency_symbol($fixed) : \'<!-- TERM_LOCAL_FIXED not defined -->\'';
 }
 
 // displays fixed line termination cost for the current user
 function l7p_inline_term_local_mobile()
 {
-    return '(isset($domestic) && isset($domestic[\'mobile\'])) ? (($domestic[\'mobile\'] * 100) <= 100) ? l7p_currency_symbol($domestic[\'mobile\'],1,true) : l7p_currency_symbol($domestic[\'mobile\']) : \'<!-- TERM_LOCAL_MOBILE not defined -->\'';
+    return '($mobile = l7p_get_pricelist_domestic(\'mobile\')) ? (($mobile * 100) <= 100) ? l7p_currency_symbol($mobile,1,true) : l7p_currency_symbol($mobile) : \'<!-- TERM_LOCAL_MOBILE not defined -->\'';
 }
 
 // displays termination name rate
@@ -226,7 +253,7 @@ function l7p_inline_phone_desk_url()
 // Phone - desk min. price
 function l7p_inline_phone_desk_min_price()
 {
-    return '(isset($min_price)) ? l7p_currency_symbol($min_price[\'Desk Phones\']) : \'<!-- PHONE_DESK_MIN_PRICE not defined -->\'';
+    return '($min_price = l7p_get_min_price(\'Desk Phones\')) ? l7p_currency_symbol($min_price) : \'<!-- PHONE_DESK_MIN_PRICE not defined -->\'';
 }
 
 // Phone - DECT category page URL
@@ -238,7 +265,7 @@ function l7p_inline_phone_dect_url()
 // Phone - DECT min. price
 function l7p_inline_phone_dect_min_price()
 {
-    return 'isset($min_price) ? l7p_currency_symbol($min_price[\'DECT Phones\']) : \'<!-- PHONE_DECT_MIN_PRICE not defined -->\'';
+    return '($min_price = l7p_get_min_price(\'DECT Phones\')) ? l7p_currency_symbol($min_price) : \'<!-- PHONE_DECT_MIN_PRICE not defined -->\'';
 }
 
 // Phone - conference category page URL
@@ -250,7 +277,7 @@ function l7p_inline_phone_conf_url()
 // Phone - conference min. price
 function l7p_inline_phone_conf_min_price()
 {
-    return 'isset($min_price) ? l7p_currency_symbol($min_price[\'Conference Phones\']) : \'<!-- PHONE_CONF_MIN_PRICE not defined -->\'';
+    return '($min_price = l7p_get_min_price(\'Conference Phones\')) ? l7p_currency_symbol($min_price) : \'<!-- PHONE_CONF_MIN_PRICE not defined -->\'';
 }
 
 // Phone - adaptors category page URL
@@ -262,7 +289,7 @@ function l7p_inline_phone_adaptor_url()
 // Phone - adaptors min. price
 function l7p_inline_phone_adaptor_min_price()
 {
-    return 'isset($min_price) ? l7p_currency_symbol($min_price[\'VoIP Adaptors\']) : \'<!-- PHONE_ADAPTOR_MIN_PRICE not defined -->\'';
+    return '($min_price = l7p_get_min_price(\'VoIP Adaptors\')) ? l7p_currency_symbol($min_price) : \'<!-- PHONE_ADAPTOR_MIN_PRICE not defined -->\'';
 }
 
 // Phone - accessories category page URL
@@ -274,7 +301,7 @@ function l7p_inline_phone_accessory_url()
 // Phone - accessories min. price
 function l7p_inline_phone_accessory_min_price()
 {
-    return 'l7p_currency_symbol($min_price[\'Accessories\'])';
+    return '($min_price = l7p_get_min_price(\'Accessories\'])) ? l7p_currency_symbol($min_price) : \'<!-- PHONE_ACCESSORY_MIN_PRICE not defined -->\'';
 }
 
 // Phone - current group name

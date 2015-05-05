@@ -227,34 +227,44 @@ class L7P_Content
 
 // Termination
             case 'term_has_local':
-                return '<?php if (isset($domestic) && isset($domestic["fixed"]) && isset($domestic["mobile"])) : ?>';
-                break;
+                return '<?php '
+                    . '$domestic = l7p_get_pricelist_domestic(); '
+                    . 'if (isset($domestic["fixed"]) && isset($domestic["mobile"])): '
+                    . '?>';
+                
             case 'term_unlimited_local':
-                return '<?php if (isset($package_routes) && (in_array(get_geo()."-L",$package_routes) || in_array(get_geo()."-M",$package_routes))) : ?>';
-                break;
+                return '<?php '
+                    . '$package_routes = l7p_get_pricelist(\'package_routes\'); '
+                    . 'if (isset($package_routes) && (in_array(l7p_get_geo()."-L", $package_routes) || in_array(l7p_get_geo()."-M", $package_routes))): '
+                    . '?>';
+                
             case 'term_local_mobile_free':
-                return '<?php if (isset($package_routes) && in_array(get_geo()."-M",$package_routes)) : ?>';
-                break;
+                return '<?php '
+                    . '$package_routes = l7p_get_pricelist(\'package_routes\'); '
+                    . 'if (in_array(l7p_get_geo()."-M", $package_routes)): '
+                    . '?>';
+                
             case 'term_local_fixed_free':
-                return '<?php if (isset($package_routes) && in_array(get_geo()."-L",$package_routes)) : ?>';
-                break;
+                return '<?php '
+                    . '$package_routes = l7p_get_pricelist(\'package_routes\'); '
+                    . 'if (in_array(l7p_get_geo()."-L",$package_routes)): '
+                    . '?>';
+                
             case 'term_is_unlimited':
                 return '<?php if (isset($term_data) && $term_data["fixed-package"]) : ?>';
-                break;
+                
             case 'term_route_unlimited':
                 return '<?php if (isset($term_data) && $term_data["package"]) : ?>';
-                break;
+                
             case 'term_route_conn_fee':
                 return '<?php if (isset($term_data) && $term_data["connection"]) : ?>';
-                break;
+                
             case 'term_next_letter':
                 return '<?php if ($letter_changed) :;$letter_changed = false ?>';
-                break;
 
 // Fax
             case 'fax_next_letter':
                 return '<?php if ($fax_letter_changed) :;$fax_letter_changed = false ?>';
-                break;
 
 // DDIs
             case 'ddi_free':
