@@ -60,6 +60,8 @@ class L7P_Install
         wp_delete_post(l7p_get_option('telephone_numbers_page_id'));
         wp_delete_post(l7p_get_option('hardware_page_id'));
         wp_delete_post(l7p_get_option('support_page_id'));
+        wp_delete_post(l7p_get_option('login_page_id'));
+        wp_delete_post(l7p_get_option('register_page_id'));
         
         // delete options
         $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'l7p_%';");
@@ -82,8 +84,6 @@ class L7P_Install
         global $wpdb;
         
         $pages_contents = $this->get_pages_contents();
-        
-        // TODO: add login and register pages
         
         // 5 standard pages
         $pages = array(
@@ -115,6 +115,18 @@ class L7P_Install
                 'slug'      => 'support',
                 'title'     => 'Support',
                 'content'   => $pages_contents['support'],
+                'post_type' => 'page',
+            ),
+            'login' => array(
+                'slug'      => 'login',
+                'title'     => 'Login',
+                'content'   => $pages_contents['login'],
+                'post_type' => 'page',
+            ),
+            'register' => array(
+                'slug'      => 'register',
+                'title'     => 'Registration',
+                'content'   => $pages_contents['register'],
                 'post_type' => 'page',
             ),
             // templates for dynamic pages
@@ -1052,6 +1064,28 @@ CONTENT
   <a>`Login`</a>
 </div>
 	
+CONTENT
+       
+            ,'login'                => <<<CONTENT
+<div>
+    <h1>Login</h1>
+</div>
+            
+<div>
+      [block login_form]
+</div>
+            	
+CONTENT
+            
+            ,'register'                => <<<CONTENT
+<div>
+    <h1>Registration</h1>
+</div>
+            
+<div>
+      [block register_form]
+</div>
+            	
 CONTENT
             
             , 'manual_chapter'        => <<<CONTENT
