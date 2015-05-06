@@ -17,12 +17,12 @@ class Level7Platform
 {
 
     const VERSION = '0.1';
-    
+
     /**
-	 * @var L7P_Query $query
-	 */
-	public $query = null;
-    
+     * @var L7P_Query $query
+     */
+    public $query = null;
+
     /**
      * @var WooCommerce The single instance of the class
      * @since 2.1
@@ -59,7 +59,7 @@ class Level7Platform
 
         // WP hooks
         add_action('init', array($this, 'init'), 0);
-        
+
         // integration with other plugins
         add_action('plugins_loaded', array('L7P_PluginIntegration', 'setup'), 10);
 
@@ -110,26 +110,27 @@ class Level7Platform
     {
         // common functions
         include_once('includes/L7P_Functions.php');
+        include_once('includes/L7P_Form.php');
+        include_once('includes/L7P_Block.php');
 
         // installer
         include_once('includes/L7P_Install.php');
         // integrations
         include_once('includes/L7P_PluginIntegration.php');
-        
 
         if (is_admin()) {
+            // ajax hooks needs to be loaded here
+            include_once('includes/L7P_Ajax.php');
             include_once('includes/admin/L7P_Functions.php');
-            include_once('includes/admin/L7P_Form.php');
             include_once('includes/L7P_Admin.php');
         } else { // Frontend
             include_once('includes/frontend/L7P_Content.php');
-            include_once('includes/frontend/L7P_Block.php');
             include_once('includes/frontend/L7P_Inline.php');
             include_once('includes/L7P_Frontend.php');
         }
-        
+
         // Query class
-		$this->query = include( 'includes/L7P_Query.php' );  
+        $this->query = include( 'includes/L7P_Query.php' );
 
         // Post Types
         include_once('includes/L7P_Post_Types.php');

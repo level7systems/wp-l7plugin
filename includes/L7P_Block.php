@@ -10,7 +10,6 @@
 
 function l7p_block_currency_form()
 {
-
     $selected_currency = l7p_get_currency();
     $currencies = l7p_get_currencies();
 
@@ -32,12 +31,11 @@ function l7p_block_currency_form()
 
 function l7p_block_login_form()
 {
-
     ob_start();
 
     ?>
 
-    <form id="login-form">
+    <form id="login-form" class="login-form">
         <p class="errors"></p>
 
         <fieldset>
@@ -60,14 +58,13 @@ function l7p_block_login_form()
     return $content;
 }
 
-function l7p_block_registration_form()
+function l7p_block_register_form()
 {
-    // TODO
     ob_start();
 
     ?>
 
-    <form id="login-form">
+    <form id="register-form" class="register-form">
         <fieldset>
             <label for="firstname">First Name</label>
             <input id="firstname" type="text" required="" placeholder="First Name" name="firstname" />
@@ -75,11 +72,11 @@ function l7p_block_registration_form()
             <label for="lastname">Last Name</label>
             <input id="lastname" type="text" required="" placeholder="Last Name" name="lastname" />
 
-            <label for="password">Password</label>
-            <input id="password" type="password" required="" placeholder="Password" name="password" />
+            <label for="regpass">Password</label>
+            <input id="regpass" type="password" required="" placeholder="Password" name="regpass" />
 
-            <label for="password2">Confirm Password</label>
-            <input id="password2" type="password" required="" placeholder="Password" name="password2" />
+            <label for="regpass2">Confirm Password</label>
+            <input id="regpass2" type="password" required="" placeholder="Password" name="regpass2" />
 
             <label for="email">E-mail</label>
             <input id="email" type="text" required="" placeholder="E-mail" name="email" />

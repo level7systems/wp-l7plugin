@@ -24,7 +24,7 @@ class L7P_Frontend
     public function styles()
     {
         wp_enqueue_style(
-            'level7-login', plugins_url('/assets/css/level7-login.css', L7P_PLUGIN_FILE)
+            'level7-forms', plugins_url('/assets/css/frontend/forms.css', L7P_PLUGIN_FILE)
         );
 
         wp_enqueue_style(
@@ -38,7 +38,7 @@ class L7P_Frontend
     public function scripts()
     {
         wp_enqueue_script(
-            'level7-login', plugins_url('/assets/js/level7-login.js', L7P_PLUGIN_FILE), array('jquery', 'jquery-ui-dialog')
+            'level7-forms', plugins_url('/assets/js/frontend/forms.js', L7P_PLUGIN_FILE), array('jquery', 'jquery-ui-dialog')
         );
     }
 
