@@ -15,7 +15,6 @@ class L7P_Frontend
     {
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
-
     }
 
     /**

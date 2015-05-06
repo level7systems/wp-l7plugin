@@ -653,3 +653,32 @@ function l7p_urlize($text)
 
     return strtr($text, array(' ' => '+'));
 }
+
+function l7p_get_symfony_attributes()
+{
+    $symfony_atrribute = 'symfony/user/sfUser/attributes';
+    
+    if (!isset($_SESSION[$symfony_atrribute])) {
+        $_SESSION[$symfony_atrribute] = array(
+            $symfony_atrribute => array()
+        );
+    }
+    
+    return $_SESSION[$symfony_atrribute][$symfony_atrribute];
+}
+
+function l7p_set_symfony_attributes($attributes)
+{
+    $symfony_atrribute = 'symfony/user/sfUser/attributes';
+    
+    $_SESSION[$symfony_atrribute][$symfony_atrribute] = $attributes;
+}
+
+function l7p_set_symfony_attribute($key, $value)
+{
+    $attributes = l7p_get_symfony_attributes();
+    $attributes[$key] = $value;
+    l7p_set_symfony_attributes($attributes);
+    
+    return $attributes;
+}

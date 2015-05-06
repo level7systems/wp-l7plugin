@@ -54,11 +54,11 @@ class Level7Platform
         // constants
         $this->define_constants();
 
+        // session initialization
+        $this->init_session();
+        
         // include required files
         $this->includes();
-
-        // WP hooks
-        add_action('init', array($this, 'init'), 0);
 
         // integration with other plugins
         add_action('plugins_loaded', array('L7P_PluginIntegration', 'setup'), 10);
@@ -136,14 +136,6 @@ class Level7Platform
         include_once('includes/L7P_Post_Types.php');
         // XmlRpc Api
         include_once('includes/L7P_XmlRpc_Api.php');
-    }
-
-    // init
-    public function init()
-    {
-        // TODO
-        // session initialization
-        $this->init_session();
     }
 
     public function plugin_url()
