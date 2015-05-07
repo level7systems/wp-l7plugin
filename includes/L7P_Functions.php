@@ -75,10 +75,19 @@ function l7p_get_download_url($os)
 {
     $downloads = l7p_get_download();
     
-    // x64
-    if (preg_match('/x86_64/i', $_SERVER['HTTP_USER_AGENT']) || $os == 'mac') {
+    if ($os == 'mac') {
         return $downloads[$os]['x64'];
-    }    
+    }
+    
+    // linux
+    if ($os == 'linux' && preg_match('/x86_64/i',$_SERVER['HTTP_USER_AGENT'])) {
+        return $downloads[$os]['x64'];
+    }
+    
+    // win
+    if ($os == 'win' && preg_match('/WOW64|Win64/i',$_SERVER['HTTP_USER_AGENT'])) {
+        return $downloads[$os]['x64'];
+    }
     
     // x86
     return $downloads[$os]['x86'];
