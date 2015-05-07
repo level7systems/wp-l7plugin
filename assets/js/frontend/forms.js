@@ -44,6 +44,14 @@
             });
         });
 
+        $('select#package_type').on('change', function() {
+            console.log($(this).val());
+            if(this.value == "S") {
+                $('#package_route_id').show();
+            } else {
+                $('#package_route_id').hide();
+            }
+        });
 
         // REGISTER
         $(document).on('click tap', '#register-button', function (e) {
@@ -115,55 +123,6 @@
                     }
                 }
             });
-        });
-
-
-        // old version with 
-        var $login_link = jQuery('a').filter(function (index) {
-            return jQuery(this).text() == "Login";
-        });
-
-        $login_link.click(function () {
-
-            $.get(
-                "/wp-admin/admin-ajax.php",
-                { action: 'login_form' },
-                function (data) {
-                    
-                    dialog = jQuery(data).dialog({
-                        title: 'Login',
-                        autoOpen: true,
-                        resize: "auto",
-                        modal: true
-                    });
-                }
-            );
-            
-            return false;
-        });
-        
-        // old version with 
-        var $register_link = jQuery('a').filter(function (index) {
-            return $(this).text() == "Register" || $(this).text() == "Free Trial";
-        });
-
-        $register_link.click(function () {
-
-            $.get(
-                "/wp-admin/admin-ajax.php",
-                { action: 'register_form' },
-                function (data) {
-                    
-                    dialog = jQuery(data).dialog({
-                        title: 'Registration',
-                        autoOpen: true,
-                        resize: "auto",
-                        modal: true
-                    });
-                }
-            );
-            
-            return false;
         });
 
     });

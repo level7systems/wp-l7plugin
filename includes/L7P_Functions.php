@@ -654,7 +654,7 @@ function l7p_pre($var)
 function l7p_add_settings_field($id, $title, $callback, $page, $section = 'default', $args = array())
 {
     $cultures = l7p_get_cultures();
-
+    
     foreach ($cultures as $i => $culture) {
 
         $l7p_id = $culture . '_' . $id;

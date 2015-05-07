@@ -61,33 +61,41 @@ function l7p_block_login_form()
 function l7p_block_register_form()
 {
     ob_start();
-
+    
+    $currency = l7p_get_currency();
+    $register_settings = l7p_get_settings('register');
+    
+    $package_types = isset($register_settings['package_types'][$currency]) ? $register_settings['package_types'][$currency] : array();
+    $term_routes = isset($register_settings['routes']) ? $register_settings['routes'] : array();
+    
+    $routes = array();
+    foreach ($term_routes as $id => $country_code) {
+        $routes[$id] = l7p_country_name($country_code);
+    }
     ?>
 
     <form id="register-form" class="register-form">
         <fieldset>
-            <label for="firstname">First Name</label>
-            <input id="firstname" type="text" required="" placeholder="First Name" name="firstname" />
+            <?php echo L7P_Form::label(array('id' => 'firstname', 'label' => 'First Name')) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'firstname', 'placeholder' => 'First Name')) ?>
 
-            <label for="lastname">Last Name</label>
-            <input id="lastname" type="text" required="" placeholder="Last Name" name="lastname" />
+            <?php echo L7P_Form::label(array('id' => 'lastname', 'label' => 'Last Name')) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'lastname', 'placeholder' => 'Last Name')) ?>
 
-            <label for="regpass">Password</label>
-            <input id="regpass" type="password" required="" placeholder="Password" name="regpass" />
+            <?php echo L7P_Form::label(array('id' => 'regpass', 'label' => 'Password')) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'regpass', 'placeholder' => 'Password')) ?>
 
-            <label for="regpass2">Confirm Password</label>
-            <input id="regpass2" type="password" required="" placeholder="Password" name="regpass2" />
+            <?php echo L7P_Form::label(array('id' => 'regpass2', 'label' => 'Confirm Password')) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'regpass2', 'placeholder' => 'Confirm Password')) ?>
+            
+            <?php echo L7P_Form::label(array('id' => 'email', 'label' => 'E-mail')) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => 'E-mail')) ?>
+            
+            <?php echo L7P_Form::label(array('id' => 'package_type', 'label' => __('Choose prefered Price Plan (you can change it later if needed).'))) ?>
+            <?php echo L7P_Form::select(array('name' => 'package_type', 'choices' => $package_types)) ?>
 
-            <label for="email">E-mail</label>
-            <input id="email" type="text" required="" placeholder="E-mail" name="email" />
-
-            <label for="package_type">Package</label>
-            <select id="package_type" name="package_type">
-                <option selected="selected" value="P">Pay As You Go</option>
-                <option value="S">Unlimited Domestic</option>
-                <option value="A">Unlimited International</option>
-            </select>
-
+            <?php echo L7P_Form::select(array('name' => 'package_route_id', 'choices' => $routes, 'style' => 'display: none;')) ?>
+            
             <label for="tc">
                 <input id="tc" type="checkbox" value="1" name="tc">
                 I have read and agree to the
