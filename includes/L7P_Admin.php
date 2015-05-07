@@ -102,7 +102,7 @@ class L7P_Admin
         add_settings_field(
             'api_key', // id
             __('API key', 'level7platform'), // setting label
-            'text_input', // display callback
+            array('L7P_Form', 'text_input'), // display callback
             'level7platform', // settings page
             'level7platform_config_section', // section
             array(
@@ -117,7 +117,7 @@ class L7P_Admin
         l7p_add_settings_field(
             'rates', // id
             __('Country rates page', 'level7platform'), // setting label
-            'text_input', // display callback
+            array('L7P_Form', 'text_input'), // display callback
             'level7platform', // settings page
             'level7platform_permalinks_section', // section
             array(
@@ -134,7 +134,7 @@ class L7P_Admin
         l7p_add_settings_field(
             'telephone_numbers', // id
             __('Virtual numbers page', 'level7platform'), // setting label
-            'text_input', // display callback
+            array('L7P_Form', 'text_input'), // display callback
             'level7platform', // settings page
             'level7platform_permalinks_section', // section
             array(
@@ -155,7 +155,7 @@ class L7P_Admin
             l7p_add_settings_field(
                 'hardware', // id
                 __('Hardware page', 'level7platform'), // setting label
-                'text_input', // display callback
+                array('L7P_Form', 'text_input'), // display callback
                 'level7platform', // settings page
                 'level7platform_permalinks_section', // section
                 array(
@@ -174,7 +174,7 @@ class L7P_Admin
         l7p_add_settings_field(
             'manual', // id
             __('Manual page', 'level7platform'), // setting label
-            'text_input', // display callback
+            array('L7P_Form', 'text_input'), // display callback
             'level7platform', // settings page
             'level7platform_permalinks_section', // section
             array(
