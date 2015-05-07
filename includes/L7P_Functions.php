@@ -65,6 +65,25 @@ function l7p_update_session($key, $val)
     $_SESSION[$key] = $val;
 }
 
+// downloads
+function l7p_get_download()
+{
+    return l7p_get_settings('download', array());
+}
+
+function l7p_get_download_url($os)
+{
+    $downloads = l7p_get_download();
+    
+    // x64
+    if (preg_match('/x86_64/i', $_SERVER['HTTP_USER_AGENT']) || $os == 'mac') {
+        return $downloads[$os]['x64'];
+    }    
+    
+    // x86
+    return $downloads[$os]['x86'];
+}
+
 function l7p_get_config()
 {
     return l7p_get_option('config', array());
@@ -652,33 +671,4 @@ function l7p_urlize($text)
     $text = ucwords(strtr($text, array('+' => ' ')));
 
     return strtr($text, array(' ' => '+'));
-}
-
-function l7p_get_symfony_attributes()
-{
-    $symfony_atrribute = 'symfony/user/sfUser/attributes';
-    
-    if (!isset($_SESSION[$symfony_atrribute])) {
-        $_SESSION[$symfony_atrribute] = array(
-            $symfony_atrribute => array()
-        );
-    }
-    
-    return $_SESSION[$symfony_atrribute][$symfony_atrribute];
-}
-
-function l7p_set_symfony_attributes($attributes)
-{
-    $symfony_atrribute = 'symfony/user/sfUser/attributes';
-    
-    $_SESSION[$symfony_atrribute][$symfony_atrribute] = $attributes;
-}
-
-function l7p_set_symfony_attribute($key, $value)
-{
-    $attributes = l7p_get_symfony_attributes();
-    $attributes[$key] = $value;
-    l7p_set_symfony_attributes($attributes);
-    
-    return $attributes;
 }

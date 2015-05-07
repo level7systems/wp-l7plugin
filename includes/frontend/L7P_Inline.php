@@ -67,15 +67,14 @@ function l7p_inline_charge($service)
     if (!$currency = l7p_get_session('currency')) {
         $currency = l7p_get_currency();
     }
-    
+
     $currency = strtoupper($currency);
     $charges = l7p_get_settings('charges', array());
-    
+
     return isset($charges[$currency][$service]) ? $charges[$currency][$service] : 0;
 }
 
 // Termination
-
 // displays fixed line termination cost for the current user
 function l7p_inline_term_local_fixed()
 {
@@ -165,11 +164,7 @@ function l7p_inline_term_route_url()
 {
     return 'l7p_url_for(\'@country_rates\', array(\'country\' => $country_name))';
 }
-
 # DDIs
-
-// TODO: those functions need heavy refactoring!
-
 // displays DDI country two letter code
 function l7p_inline_ddi_country_code()
 {
@@ -241,9 +236,7 @@ function l7p_inline_ddi_state_name()
 {
     return '(isset($state_data) && isset($state_data[\'state_name\'])) ? $state_data[\'state_name\'] : \' \'';
 }
-
 # Phones
-
 // Phone - desk category page URL
 function l7p_inline_phone_desk_url()
 {
@@ -396,9 +389,7 @@ function l7p_inline_phone_description()
 {
     return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',convert_markdown_text(l7p_get_phone(\'description\'())';
 }
-
 # Manual
-
 // Manual - name
 function l7p_inline_manual_name()
 {
@@ -433,4 +424,19 @@ function l7p_inline_manual_chapter()
 function l7p_inline_manual_content()
 {
     return 'l7p_get_chapter(\'content\');';
+}
+
+function l7p_inline_download_for_windows_url()
+{
+    return 'l7p_get_download_url(\'win\')';
+}
+
+function l7p_inline_download_for_mac_url()
+{
+    return 'l7p_get_download_url(\'mac\')';
+}
+
+function l7p_inline_download_for_linux_url()
+{
+    return 'l7p_get_download_url(\'linux\')';
 }
