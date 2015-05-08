@@ -236,10 +236,15 @@ function l7p_has_currency($currency_name)
 // return country code
 function l7p_get_geo()
 {
+    $country_code = '';
     // get remote address
     $remote_addr = $_SERVER['REMOTE_ADDR'];
-    // try go country by addr
-    if (!$country_code = @geoip_country_code_by_name($remote_addr)) {
+    // try to get country by addr
+    if (function_exists('geoip_country_code_by_name')) {
+        $country_code = @geoip_country_code_by_name($remote_addr);
+    }
+    
+    if (!$country_code) {
         $country_code = 'US';
     }
     
@@ -529,6 +534,14 @@ function l7p_get_phone($attr = null)
         return isset($phones[$name]) ? $phones[$name] : array();
     }
     return isset($phones[$name][$attr]) ? $phones[$name][$attr] : array();
+}
+
+function l7p_has_phone($phone_name)
+{
+    $phones = l7p_get_phones();
+    $phone_name = strtr($phone_name, ['+' => ' ']);
+    
+    return isset($phones[$phone_name]);
 }
 
 function l7p_get_min_price($group_name)

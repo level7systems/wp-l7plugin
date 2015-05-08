@@ -179,6 +179,11 @@ class L7P_Query
             }
 
             if (isset($query->query_vars['model'])) {
+                
+                if (!l7p_has_phone($query->query_vars['model'])) {
+                    return $this->error_404();
+                }
+                
                 // hardware model
                 $page_name .= "_model";
             } else if (isset($query->query_vars['group'])) {
