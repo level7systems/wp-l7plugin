@@ -103,15 +103,6 @@
                         return false;
                     } else {
 
-                        // google conversion
-                        var google_conversion_id = 1006351132;
-                        var google_conversion_language = "en";
-                        var google_conversion_format = "3";
-                        var google_conversion_color = "ffffff";
-                        var google_conversion_label = "b4RZCLyz3gcQnObu3wM";
-                        var google_remarketing_only = false;
-                        $.getScript('https://www.googleadservices.com/pagead/conversion.js');
-
                         $('#block-register-form').html('<p class="big center text-center">Thank You for registering.</p>'
                                 + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="/en/login">Login</a>.</p>');
                     }
