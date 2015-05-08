@@ -41,7 +41,7 @@ class L7P_Form
             echo $pre;
         }
 
-        echo "<input type='text' id='$id' name='$name' value='$value' placeholder='$placeholder' $style />";
+        echo "<input type='$type' id='$id' name='$name' value='$value' placeholder='$placeholder' $style />";
 
         // post field
         if ($post) {

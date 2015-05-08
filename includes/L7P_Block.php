@@ -16,7 +16,7 @@ function l7p_block_currency_form()
     ob_start();
 
     ?>
-    <form method="post" action="" class="currency-form">
+    <form id="block-currency-form" method="post" action="" class="block-currency-form">
         <select name="currency" id="currency" onchange="this.form.submit()">
             <?php foreach ($currencies as $currency_iso): ?>
                 <option value="<?php echo $currency_iso ?>"<?php if ($selected_currency == $currency_iso): ?>selected="selected"<?php endif; ?>><?php echo l7p_currency_name($currency_iso) ?></option>
@@ -35,19 +35,21 @@ function l7p_block_login_form()
 
     ?>
 
-    <form id="login-form" class="login-form">
+    <form id="block-login-form" method="post" class="block-login-form">
         <p class="errors"></p>
 
         <fieldset>
-            <label for="name">E-mail</label>
-            <input type="email" name="username" id="username" placeholder="E-mail address" class="text ui-widget-content ui-corner-all" required>
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" placeholder="Password" class="text ui-widget-content ui-corner-all" required>
+            <?php echo L7P_Form::label(array('id' => 'username', 'label' => 'E-mail')) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'username', 'placeholder' => 'E-mail address')) ?>
+            
+            <?php echo L7P_Form::label(array('id' => 'password', 'label' => 'Password')) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => 'Password')) ?>
+            
             <label for="remember">
                 <input id="remember" type="checkbox" name="remember" />
                 Remember Me
             </label>
-            <button id="login-button">Login</button>
+            <button id="block-login-button">Login</button>
         </fieldset>
 
     </form>
@@ -74,7 +76,7 @@ function l7p_block_register_form()
     }
     ?>
 
-    <form id="register-form" class="register-form">
+    <form id="block-register-form" method="post" class="block-register-form">
         <fieldset>
             <?php echo L7P_Form::label(array('id' => 'firstname', 'label' => 'First Name')) ?>
             <?php echo L7P_Form::text_input(array('name' => 'firstname', 'placeholder' => 'First Name')) ?>
@@ -82,11 +84,11 @@ function l7p_block_register_form()
             <?php echo L7P_Form::label(array('id' => 'lastname', 'label' => 'Last Name')) ?>
             <?php echo L7P_Form::text_input(array('name' => 'lastname', 'placeholder' => 'Last Name')) ?>
 
-            <?php echo L7P_Form::label(array('id' => 'regpass', 'label' => 'Password')) ?>
-            <?php echo L7P_Form::password_input(array('name' => 'regpass', 'placeholder' => 'Password')) ?>
+            <?php echo L7P_Form::label(array('id' => 'password', 'label' => 'Password')) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => 'Password')) ?>
 
-            <?php echo L7P_Form::label(array('id' => 'regpass2', 'label' => 'Confirm Password')) ?>
-            <?php echo L7P_Form::password_input(array('name' => 'regpass2', 'placeholder' => 'Confirm Password')) ?>
+            <?php echo L7P_Form::label(array('id' => 'password2', 'label' => 'Confirm Password')) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password2', 'placeholder' => 'Confirm Password')) ?>
             
             <?php echo L7P_Form::label(array('id' => 'email', 'label' => 'E-mail')) ?>
             <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => 'E-mail')) ?>
@@ -102,7 +104,7 @@ function l7p_block_register_form()
                 <a href="/voipdito.dev/en/terms-and-conditions" target="_blank">Terms and Conditions</a>
             </label>
 
-            <button id="register-button">Create an account</button>
+            <button id="block-register-button">Create an account</button>
         </fieldset>
     </form>
 
