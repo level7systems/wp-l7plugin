@@ -520,12 +520,15 @@ function l7p_get_phones()
     return isset($phones[$locale][$currency]) ? $phones[$locale][$currency] : array();
 }
 
-function l7p_get_phone($attr)
+function l7p_get_phone($attr = null)
 {
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
     
-    return $phones[$name][$attr];
+    if (is_null($attr)) {
+        return isset($phones[$name]) ? $phones[$name] : array();
+    }
+    return isset($phones[$name][$attr]) ? $phones[$name][$attr] : array();
 }
 
 function l7p_get_min_price($group_name)
