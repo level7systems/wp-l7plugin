@@ -363,7 +363,7 @@ function l7p_get_state_name_from_query()
 function l7p_get_phone_name_from_query()
 {
     global $wp_query;
-
+    
     return isset($wp_query->query_vars['model']) ? strtr($wp_query->query_vars['model'], array('+' => ' ')) : '';
 }
 
@@ -524,7 +524,7 @@ function l7p_get_phone($attr)
 {
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
-
+    
     return $phones[$name][$attr];
 }
 
@@ -676,8 +676,5 @@ function l7p_urlize($text)
 
     include_once('Transliterator.php');
 
-    $text = Transliterator::urlize($text, '+');
-    $text = ucwords(strtr($text, array('+' => ' ')));
-
-    return strtr($text, array(' ' => '+'));
+    return Transliterator::urlize($text, '+');
 }
