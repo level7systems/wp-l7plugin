@@ -47,9 +47,9 @@ function l7p_block_login_form()
             
             <label for="remember">
                 <input id="remember" type="checkbox" name="remember" />
-                Remember Me
+                <?php echo __('Remember Me', 'level7platform') ?>
             </label>
-            <button id="block-login-button">Login</button>
+            <button id="block-login-button"><?php echo __('Login', 'level7platform') ?></button>
         </fieldset>
 
     </form>
@@ -78,20 +78,20 @@ function l7p_block_register_form()
 
     <form id="block-register-form" method="post" class="block-register-form">
         <fieldset>
-            <?php echo L7P_Form::label(array('id' => 'firstname', 'label' => 'First Name')) ?>
-            <?php echo L7P_Form::text_input(array('name' => 'firstname', 'placeholder' => 'First Name')) ?>
+            <?php echo L7P_Form::label(array('id' => 'firstname', 'label' => __('First Name', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'firstname', 'placeholder' => __('First Name', 'level7platform'))) ?>
 
-            <?php echo L7P_Form::label(array('id' => 'lastname', 'label' => 'Last Name')) ?>
-            <?php echo L7P_Form::text_input(array('name' => 'lastname', 'placeholder' => 'Last Name')) ?>
+            <?php echo L7P_Form::label(array('id' => 'lastname', 'label' => __('Last Name', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'lastname', 'placeholder' => __('Last Name', 'level7platform'))) ?>
 
-            <?php echo L7P_Form::label(array('id' => 'password', 'label' => 'Password')) ?>
-            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => 'Password')) ?>
+            <?php echo L7P_Form::label(array('id' => 'password', 'label' => __('Password', 'level7platform'))) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => __('Password', 'level7platform'))) ?>
 
-            <?php echo L7P_Form::label(array('id' => 'password2', 'label' => 'Confirm Password')) ?>
-            <?php echo L7P_Form::password_input(array('name' => 'password2', 'placeholder' => 'Confirm Password')) ?>
+            <?php echo L7P_Form::label(array('id' => 'password2', 'label' => __('Confirm Password', 'level7platform'))) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password2', 'placeholder' => __('Confirm Password', 'level7platform'))) ?>
             
-            <?php echo L7P_Form::label(array('id' => 'email', 'label' => 'E-mail')) ?>
-            <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => 'E-mail')) ?>
+            <?php echo L7P_Form::label(array('id' => 'email', 'label' => __('E-mail', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => __('E-mail', 'level7platform'))) ?>
             
             <?php echo L7P_Form::label(array('id' => 'package_type', 'label' => __('Choose prefered Price Plan (you can change it later if needed).'))) ?>
             <?php echo L7P_Form::select(array('name' => 'package_type', 'choices' => $package_types)) ?>
@@ -100,11 +100,13 @@ function l7p_block_register_form()
             
             <label for="tc">
                 <input id="tc" type="checkbox" value="1" name="tc">
-                I have read and agree to the
-                <a href="<?php echo l7p_url_for('@terms') ?>" target="_blank">Terms and Conditions</a>
+                <?php echo strtr(__('I have read and agree to the [a]Terms and Conditions[/a]', 'level7platform'), array(
+                    '[a]'   => '<a href="' . l7p_url_for('@terms') . '" target="_blank">',
+                    '[/a]'  => '</a>'
+                )); ?>
             </label>
 
-            <button id="block-register-button">Create an account</button>
+            <button id="block-register-button"><?php echo __('Create an account', 'level7platform') ?></button>
         </fieldset>
     </form>
 

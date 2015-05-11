@@ -16,16 +16,7 @@ class L7P_Post_Types
      */
     public static function init()
     {
-        // add_action( 'init', array( __CLASS__, 'register_taxonomies' ), 5 );
         add_action('init', array(__CLASS__, 'register_post_types'), 5);
-    }
-
-    /**
-     * Register taxonomies.
-     */
-    public static function register_taxonomies()
-    {
-        
     }
 
     /**

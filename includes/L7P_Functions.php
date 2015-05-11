@@ -688,10 +688,8 @@ function l7p_add_settings_field($id, $title, $callback, $page, $section = 'defau
     }
 }
 
-// TODO
 function l7p_urlize($text)
 {
-
     include_once('Transliterator.php');
 
     return Transliterator::urlize($text, '+');
