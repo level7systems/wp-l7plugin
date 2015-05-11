@@ -148,8 +148,6 @@ class Level7Platform
 
     public function load_plugin_textdomain()
     {
-        echo "Load text domain from: " . $this->plugin_path() . '/i18n';
-        
         load_plugin_textdomain('level7platform', false, dirname(plugin_basename(__FILE__)) . '/i18n');
     }
 
