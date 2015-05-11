@@ -330,7 +330,7 @@ class L7P_Content
                 
             case 'phone_in_stock':
                 return '<?php '
-                    . '$phone_data = l7p_get_phone(); '
+                    . '$phone_data = isset($phone_data) ? $phone_data : l7p_get_phone(); '
                     . 'if (isset($phone_data["stock"]) && $phone_data["stock"] > 0):'
                     . ' ?>';
                 

@@ -7,9 +7,9 @@
     $(function () {
 
 //        var url = 'https://ssl.l7dev.co.cc/voipstudio.dev/api';
-//        var url = 'https://l7dev.co.cc/voipstudio.dev',
+        var url = 'https://l7dev.co.cc/voipstudio.dev',
         // TODO: sandbox 
-       var url = 'https://l7sandbox.net/voipstudio.l7sandbox.net',
+//       var url = 'https://l7sandbox.net/voipstudio.l7sandbox.net',
                 api_url = url + '/api';
 
         // LOGIN
@@ -38,8 +38,13 @@
                         return false;
                     }
 
+                    var redirection = res.info;
+                    if ($('form#block-login-form #extini').val()) {
+                        redirection += '?extini=' + $('form#block-login-form #extini').val();
+                    }
+                    
                     // redirect user to their application url
-                    window.location.href = url + '/login?username=' + $('form#block-login-form #username').val() + '&password=' + $('form#block-login-form #password').val();
+                    window.location.href = redirection;
                 }
             });
         });

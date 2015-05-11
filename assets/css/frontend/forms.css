@@ -14,3 +14,6 @@ p.errors {
     margin: 0px;
     font-size: 12px; 
 }
+p[class*="error-"] {
+    color: red;
+}

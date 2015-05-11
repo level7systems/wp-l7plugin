@@ -596,8 +596,10 @@ function l7p_get_routes()
         'country_rates' => '/:permalink_rates/:country/:currency',
         'numbers' => '/:permalink_telephone_numbers/:country/:currency',
         'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency',
+        'number_buy' => '/:permalink_telephone_numbers/:country/:currency/buy',
         'phone_page' => '/:permalink_hardware/:group/:model/:currency',
         'phones_group' => '/:permalink_hardware/:group/:currency',
+        'phone_buy' => '/:permalink_hardware/:group/:model/:currency/buy',
         'manual' => '/:permalink_manual/:chapter',
         'terms' => '/:permalink_terms'
     );
@@ -660,6 +662,11 @@ function l7p_get_page_by_pagename($pagename)
 {
     $pages = get_posts(array('name' => $pagename, 'post_type' => 'page'));
     return count($pages) > 0 ? $pages[0] : null;
+}
+
+function l7p_get_page()
+{
+    // TODO: shortcut method for retrieving L7P pages
 }
 
 function l7p_pre($var)

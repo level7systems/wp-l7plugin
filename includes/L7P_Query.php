@@ -8,7 +8,7 @@
 class L7P_Query
 {
 
-    public $query_vars = array('currency', 'country', 'state', 'group', 'model', 'chapter');
+    public $query_vars = array('currency', 'country', 'state', 'group', 'model', 'chapter', 'buy');
 
     public function __construct()
     {
@@ -184,6 +184,15 @@ class L7P_Query
                     return $this->error_404();
                 }
                 
+                // buying phone
+                if (isset($query->query_vars['buy'])) {
+                    
+                    $phone = l7p_get_phone();
+                    l7p_update_session('extini', 'PhonesGridWindow(); PhoneBuyWindowInit("' . $phone['pricelist_item_id'] . '");');
+                    
+                    return $this->redirect_to_login();
+                }
+                
                 // hardware model
                 $page_name .= "_model";
             } else if (isset($query->query_vars['group'])) {
@@ -258,6 +267,16 @@ class L7P_Query
 
         return l7p_redirect(sprintf("http://%s/%s", $uri, strtolower(l7p_get_currency())));
     }
+    
+    public function redirect_to_login()
+    {
+        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $page = get_post(l7p_get_option('login_page_id'));
+
+        // TODO: to be verified after reinstall
+        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), 'login'));
+        // return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+    }
 
     /**
      * Add endpoints for query vars
@@ -276,12 +295,16 @@ class L7P_Query
             // virtual numbers
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
+            // TODO: buy virtual number 
+            
 
             // if web_product has shop enabled
             if (l7p_get_web_product_settings('has_shop')) {
                 // hardware
                 add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
                 add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
+                // buy phone
+                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/(%s)/buy$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]&buy=1', 'top');
             }
             
             // manual

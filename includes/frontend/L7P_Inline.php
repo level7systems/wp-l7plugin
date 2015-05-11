@@ -222,6 +222,7 @@ function l7p_inline_ddi_min_rate()
 // displays buy DDI url
 function l7p_inline_ddi_buy_url()
 {
+    // TODO
     return '(isset($state)) ? l7p_url_for(\'@numbers_state\', array(\'state\' => $state, \'country\' => l7p_get_country_name_from_query())) : l7p_url_for(\'@numbers\', array(\'country\' => $ddi_data[\'country_name\']))';
 }
 
@@ -308,6 +309,12 @@ function l7p_inline_phone_group_name()
 function l7p_inline_phone_url()
 {
     return 'l7p_url_for(\'@phone_page\', array(\'group\' => l7p_get_phone_group_name_from_query(), \'model\' => $phone_data[\'name\']))';
+}
+
+// Phone - URL for buying current phone
+function l7p_inline_phone_buy_url()
+{
+    return 'l7p_url_for(\'@phone_buy\', array(\'group\' => l7p_get_phone_group_name_from_query(), \'model\' => isset($phone_data) ? $phone_data[\'name\'] : l7p_get_phone(\'name\')))';
 }
 
 // Phone - name

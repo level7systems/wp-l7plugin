@@ -39,6 +39,9 @@ function l7p_block_login_form()
         <p class="errors"></p>
 
         <fieldset>
+            
+            <?php echo L7P_Form::hidden_input(array('name' => 'extini', 'value' => l7p_get_session('extini'))) ?>
+            
             <?php echo L7P_Form::label(array('id' => 'username', 'label' => 'E-mail')) ?>
             <?php echo L7P_Form::text_input(array('name' => 'username', 'placeholder' => 'E-mail address')) ?>
             

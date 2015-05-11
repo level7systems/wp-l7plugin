@@ -53,7 +53,12 @@ class L7P_Form
         }
     }
 
-
+    public static function hidden_input($args)
+    {
+        $args['type'] = 'hidden';
+        return self::input($args);
+    }
+    
     public static function text_input($args)
     {
         $args['type'] = 'text';
