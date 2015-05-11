@@ -1,0 +1,172 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Level7 Integration Plugin\n"
+"POT-Creation-Date: 2015-05-11 10:23-0000\n"
+"PO-Revision-Date: 2015-05-11 10:56-0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.6\n"
+"X-Poedit-Basepath: ../\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/L7P_Admin.php:92
+msgid "General"
+msgstr "Ogólne"
+
+#: includes/L7P_Admin.php:94
+msgid "Permalinks"
+msgstr ""
+
+#: includes/L7P_Admin.php:104
+msgid "API key"
+msgstr ""
+
+#: includes/L7P_Admin.php:112
+msgid ""
+"This need to be filled with WP API Key from Level7 App to enable "
+"communication."
+msgstr ""
+
+#: includes/L7P_Admin.php:119
+msgid "Country rates page"
+msgstr ""
+
+#: includes/L7P_Admin.php:136
+msgid "Virtual numbers page"
+msgstr ""
+
+#: includes/L7P_Admin.php:157
+msgid "Hardware page"
+msgstr ""
+
+#: includes/L7P_Admin.php:176
+msgid "Manual page"
+msgstr ""
+
+#: includes/L7P_Admin.php:193
+msgid "Terms and Conditions"
+msgstr ""
+
+#: includes/L7P_Admin.php:203
+msgid "Links that will be generated for registration form."
+msgstr ""
+
+#: includes/L7P_Admin.php:228
+msgid "General settings used for Level7 integration plugin."
+msgstr ""
+
+#: includes/L7P_Admin.php:233
+msgid ""
+"These settings control the permalinks used for pages. These settings only "
+"apply when <strong>not using \"default\" permalinks below</strong>."
+msgstr ""
+
+#: includes/L7P_Admin.php:239
+msgid "Action failed. Please refresh the page and retry."
+msgstr ""
+
+#: includes/L7P_Admin.php:266
+msgid "Settings saved."
+msgstr "Ustawienia zostały zapisane."
+
+#: includes/L7P_Block.php:50
+msgid "Remember Me"
+msgstr "Zapamiętaj mnie"
+
+#: includes/L7P_Block.php:52
+msgid "Login"
+msgstr ""
+
+#: includes/L7P_Block.php:81 includes/L7P_Block.php:82
+msgid "First Name"
+msgstr "Imię"
+
+#: includes/L7P_Block.php:84 includes/L7P_Block.php:85
+msgid "Last Name"
+msgstr "Nazwisko"
+
+#: includes/L7P_Block.php:87 includes/L7P_Block.php:88
+msgid "Password"
+msgstr "Hasło"
+
+#: includes/L7P_Block.php:90 includes/L7P_Block.php:91
+msgid "Confirm Password"
+msgstr "Potwierdź hasło"
+
+#: includes/L7P_Block.php:93 includes/L7P_Block.php:94
+msgid "E-mail"
+msgstr ""
+
+#: includes/L7P_Block.php:96
+msgid "Choose prefered Price Plan (you can change it later if needed)."
+msgstr ""
+"Wybierz odpowiedni plan taryfowy (możesz zmienić go później w razie "
+"potrzeby)."
+
+#: includes/L7P_Block.php:103
+msgid "I have read and agree to the [a]Terms and Conditions[/a]"
+msgstr "Przeczytałem i akceptuję [a]Warunki [/a]"
+
+#: includes/L7P_Block.php:109
+msgid "Create an account"
+msgstr "Utwórz konto"
+
+#: includes/L7P_Install.php:27
+msgid "View Level7 platform settings"
+msgstr ""
+
+#: includes/L7P_Install.php:28
+msgid "Settings"
+msgstr "Ustawienia"
+
+#: includes/L7P_Post_Types.php:32 includes/L7P_Post_Types.php:35
+msgid "Dynamic page templates"
+msgstr "Szablony dla dynamicznych stron"
+
+#: includes/L7P_Post_Types.php:33 includes/L7P_Post_Types.php:47
+msgid "This is where you can manage Level7 platform page templates."
+msgstr ""
+
+#: includes/L7P_Post_Types.php:36
+msgid "Dynamic page template"
+msgstr ""
+
+#: includes/L7P_Post_Types.php:38
+msgid "Edit"
+msgstr ""
+
+#: includes/L7P_Post_Types.php:39
+msgid "Edit dynamic page template"
+msgstr ""
+
+#: includes/L7P_Post_Types.php:40 includes/L7P_Post_Types.php:41
+msgid "View template"
+msgstr ""
+
+#: includes/L7P_Post_Types.php:42
+msgid "Search templates"
+msgstr ""
+
+#: includes/L7P_Post_Types.php:43
+msgid "No dynamic page templates found"
+msgstr ""
+
+#: includes/L7P_Post_Types.php:44
+msgid "No dynamic page templates found in trash"
+msgstr ""
+
+#: includes/L7P_XmlRpc_Api.php:137
+msgid "Empty API token provided."
+msgstr ""
+
+#: includes/L7P_XmlRpc_Api.php:143
+msgid "Incorrect API token provided."
+msgstr ""

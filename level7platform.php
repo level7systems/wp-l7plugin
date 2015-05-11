@@ -56,12 +56,14 @@ class Level7Platform
 
         // session initialization
         $this->init_session();
-        
+
         // include required files
         $this->includes();
 
         // integration with other plugins
         add_action('plugins_loaded', array('L7P_PluginIntegration', 'setup'), 10);
+
+        add_action('init', array($this, 'init'), 0);
 
         // Loaded action
         do_action('level7platform_loaded');
@@ -90,6 +92,12 @@ class Level7Platform
             include_once( $path . $file );
             return;
         }
+    }
+
+    public function init()
+    {
+        // Set up localisation
+        $this->load_plugin_textdomain();
     }
 
     private function define_constants()
@@ -136,6 +144,13 @@ class Level7Platform
         include_once('includes/L7P_Post_Types.php');
         // XmlRpc Api
         include_once('includes/L7P_XmlRpc_Api.php');
+    }
+
+    public function load_plugin_textdomain()
+    {
+        echo "Load text domain from: " . $this->plugin_path() . '/i18n';
+        
+        load_plugin_textdomain('level7platform', false, dirname(plugin_basename(__FILE__)) . '/i18n');
     }
 
     public function plugin_url()

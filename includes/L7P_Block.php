@@ -93,7 +93,7 @@ function l7p_block_register_form()
             <?php echo L7P_Form::label(array('id' => 'email', 'label' => __('E-mail', 'level7platform'))) ?>
             <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => __('E-mail', 'level7platform'))) ?>
             
-            <?php echo L7P_Form::label(array('id' => 'package_type', 'label' => __('Choose prefered Price Plan (you can change it later if needed).'))) ?>
+            <?php echo L7P_Form::label(array('id' => 'package_type', 'label' => __('Choose prefered Price Plan (you can change it later if needed).', 'level7platform'))) ?>
             <?php echo L7P_Form::select(array('name' => 'package_type', 'choices' => $package_types)) ?>
 
             <?php echo L7P_Form::select(array('name' => 'package_route_id', 'choices' => $routes, 'style' => 'display: none;')) ?>
