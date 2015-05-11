@@ -187,6 +187,22 @@ class L7P_Admin
             )
         );
 
+        // terms and  page
+        l7p_add_settings_field(
+            'manual', // id
+            __('Terms and Conditions', 'level7platform'), // setting label
+            array('L7P_Form', 'text_input'), // display callback
+            'level7platform', // settings page
+            'level7platform_permalinks_section', // section
+            array(
+            'name' => 'terms',
+            'section' => $section_name,
+            'value' => $permalinks,
+            'placeholder' => $this->get_field_default_value('terms'),
+            'pre' => '/',
+            'help'  => __('Links that will be generated for registration form.', 'level7platform'),
+            )
+        );
         ?>
 
         <div class="wrap">

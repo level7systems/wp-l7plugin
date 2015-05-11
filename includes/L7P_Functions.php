@@ -114,6 +114,7 @@ function l7p_get_permalinks($culture = null)
         'rates' => 'voip-call-rates',
         'telephone_numbers' => 'telephone-numbers',
         'manual' => 'manual',
+        'terms' => 'terms-and-conditions'
     );
 
     // if web product has shop enabled
@@ -597,7 +598,8 @@ function l7p_get_routes()
         'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency',
         'phone_page' => '/:permalink_hardware/:group/:model/:currency',
         'phones_group' => '/:permalink_hardware/:group/:currency',
-        'manual' => '/:permalink_manual/:chapter'
+        'manual' => '/:permalink_manual/:chapter',
+        'terms' => '/:permalink_terms'
     );
 }
 
@@ -608,7 +610,7 @@ function l7p_has_route($route_name)
     return array_key_exists($route_name, $routes);
 }
 
-function l7p_url_for($route_name, $params, $absolute = false)
+function l7p_url_for($route_name, $params = array(), $absolute = false)
 {
     $routes = l7p_get_routes();
     $permalinks = l7p_get_permalinks();

@@ -101,7 +101,7 @@ function l7p_block_register_form()
             <label for="tc">
                 <input id="tc" type="checkbox" value="1" name="tc">
                 I have read and agree to the
-                <a href="/voipdito.dev/en/terms-and-conditions" target="_blank">Terms and Conditions</a>
+                <a href="<?php echo l7p_url_for('@terms') ?>" target="_blank">Terms and Conditions</a>
             </label>
 
             <button id="block-register-button">Create an account</button>

@@ -54,7 +54,7 @@ class L7P_Query
             // TODO: to be refactored
             // get original page
             // support for WPML plugin
-            if (function_exists('icl_object_id')) {
+            if (function_exists('icl_object_id') && $page) {
 
                 global $sitepress;
 
