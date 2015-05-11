@@ -8,7 +8,7 @@
 class L7P_Query
 {
 
-    public $query_vars = array('currency', 'country', 'state', 'group', 'model', 'chapter', 'buy');
+    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy');
 
     public function __construct()
     {
@@ -149,6 +149,21 @@ class L7P_Query
                 return $this->redirect_to_currency();
             }
 
+            if (isset($query->query_vars['city'])) {
+
+                // buying phone number for city
+                if (isset($query->query_vars['buy'])) {
+
+                    $country_code = l7p_get_country_code_from_query();
+                    $city = l7p_get_city_name_from_query();
+                    // TODO
+                    $city = strtoupper($city);
+                    l7p_update_session('extini',  'DdiAddWindow("' . $country_code . '","' . $city . '");');
+
+                    return $this->redirect_to_login();
+                }
+            }
+
             if (isset($query->query_vars['state'])) {
                 // phone number state
                 $page_name .= "_country";
@@ -179,20 +194,20 @@ class L7P_Query
             }
 
             if (isset($query->query_vars['model'])) {
-                
+
                 if (!l7p_has_phone($query->query_vars['model'])) {
                     return $this->error_404();
                 }
-                
+
                 // buying phone
                 if (isset($query->query_vars['buy'])) {
-                    
+
                     $phone = l7p_get_phone();
                     l7p_update_session('extini', 'PhonesGridWindow(); PhoneBuyWindowInit("' . $phone['pricelist_item_id'] . '");');
-                    
+
                     return $this->redirect_to_login();
                 }
-                
+
                 // hardware model
                 $page_name .= "_model";
             } else if (isset($query->query_vars['group'])) {
@@ -267,7 +282,7 @@ class L7P_Query
 
         return l7p_redirect(sprintf("http://%s/%s", $uri, strtolower(l7p_get_currency())));
     }
-    
+
     public function redirect_to_login()
     {
         $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -295,18 +310,18 @@ class L7P_Query
             // virtual numbers
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
-            // TODO: buy virtual number 
+            // buy virtual number /:permalink/:country/:city/:currency/buy
+            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/(%s)/buy$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
             
-
             // if web_product has shop enabled
             if (l7p_get_web_product_settings('has_shop')) {
                 // hardware
                 add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
                 add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
-                // buy phone
+                // buy phone /:permalink/:group/:model/:currency/buy
                 add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/(%s)/buy$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]&buy=1', 'top');
             }
-            
+
             // manual
             add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         }

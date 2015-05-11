@@ -222,8 +222,7 @@ function l7p_inline_ddi_min_rate()
 // displays buy DDI url
 function l7p_inline_ddi_buy_url()
 {
-    // TODO
-    return '(isset($state)) ? l7p_url_for(\'@numbers_state\', array(\'state\' => $state, \'country\' => l7p_get_country_name_from_query())) : l7p_url_for(\'@numbers\', array(\'country\' => $ddi_data[\'country_name\']))';
+    return 'l7p_url_for(\'@number_buy\', array(\'country\' => l7p_get_country_name_from_query(), \'city\' => $ddi_data[\'city\']))';
 }
 
 // displays buy DDI in selected U.S. state url

@@ -693,7 +693,7 @@ CONTENT
                 <td>([DDI_AREA_CODE])</td>
                 <td>[DDI_SETUP_FEE]</td>
                 <td>[DDI_MONTHLY_FEE]</td>
-                <td><button onclick="buy('[DDI_BUY_URL]');">Buy</button></td>
+                <td><a href="[DDI_BUY_URL]" title="">Buy</a></td>
               </tr>
             [/foreach]
 
@@ -727,7 +727,7 @@ CONTENT
                     </td>
                     <td>[DDI_SETUP_FEE]</td>
                     <td>[DDI_MONTHLY_FEE]</td>
-                    <td><button onclick="buy('[DDI_BUY_URL]');">Buy</button></td>
+                    <td><a href="[DDI_BUY_URL]" title="">Buy</a></td>
                 </tr>
             </tbody>
         [/foreach]
@@ -767,7 +767,7 @@ CONTENT
             <td>[DDI_SETUP_FEE]</td>
             <td>[DDI_MONTHLY_FEE]</td>
             <td>[DDI_MIN_RATE]</td>
-            <td><button onclick="buy('[DDI_BUY_URL]');">Buy</button></td>
+            <td><a href="[DDI_BUY_URL]" title="">Buy</a></td>
           </tr>
         </tbody>
       [/foreach]

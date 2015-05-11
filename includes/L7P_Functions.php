@@ -321,6 +321,17 @@ function l7p_get_states()
     return l7p_get_settings('states', array());
 }
 
+function l7p_get_city_name_from_query()
+{
+    global $wp_query;
+
+    if (!isset($wp_query->query_vars['city'])) {
+        return '';
+    }
+    
+    return $wp_query->query_vars['city'];
+}
+
 function l7p_get_country_code_from_query()
 {
     $country_name = l7p_get_country_name_from_query();
@@ -596,7 +607,7 @@ function l7p_get_routes()
         'country_rates' => '/:permalink_rates/:country/:currency',
         'numbers' => '/:permalink_telephone_numbers/:country/:currency',
         'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency',
-        'number_buy' => '/:permalink_telephone_numbers/:country/:currency/buy',
+        'number_buy' => '/:permalink_telephone_numbers/:country/:city/:currency/buy',
         'phone_page' => '/:permalink_hardware/:group/:model/:currency',
         'phones_group' => '/:permalink_hardware/:group/:currency',
         'phone_buy' => '/:permalink_hardware/:group/:model/:currency/buy',
