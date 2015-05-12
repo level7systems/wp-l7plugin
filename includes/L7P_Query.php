@@ -8,7 +8,7 @@
 class L7P_Query
 {
 
-    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free');
+    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free', 'os');
 
     public function __construct()
     {
@@ -228,13 +228,24 @@ class L7P_Query
             } else {
                 return $this->error_404();
             }
+        } else if ($page_name == 'download') {
+            
+            if (isset($query->query_vars['os'])) {
+                // download os
+                $url = l7p_get_download_url($query->query_vars['os']);
+                
+                return l7p_redirect($url);
+                
+            } else {
+                return $this->error_404();
+            }
+            
         } else {
             $page_name = null;
         }
 
         if ($page_name) {
 
-            // TODO: refactor
             $page = get_post(l7p_get_option(sprintf("%s_page_id", $page_name)));
 
             // TODO: to be refactored
@@ -308,6 +319,8 @@ class L7P_Query
 
         foreach ($cultures as $culture) {
 
+            // downloads
+            add_rewrite_rule("download-for-(windows|osx|linux)/?$", 'index.php?name=download&os=$matches[1]', 'top');
             // rates
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
             // virtual numbers
@@ -336,6 +349,7 @@ class L7P_Query
             add_rewrite_endpoint(strtolower($currency), EP_PAGES);
         }
 
+        // TODO: to be roemoved
         flush_rewrite_rules();
     }
 }

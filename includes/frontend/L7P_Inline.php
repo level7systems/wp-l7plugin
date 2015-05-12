@@ -440,15 +440,15 @@ function l7p_inline_manual_content()
 
 function l7p_inline_download_for_windows_url()
 {
-    return 'l7p_get_download_url(\'win\')';
+    return 'l7p_url_for(\'download\', array(\'os\' => \'windows\'))';
 }
 
 function l7p_inline_download_for_mac_url()
 {
-    return 'l7p_get_download_url(\'mac\')';
+    return 'l7p_url_for(\'download\', array(\'os\' => \'osx\'))';
 }
 
 function l7p_inline_download_for_linux_url()
 {
-    return 'l7p_get_download_url(\'linux\')';
+    return 'l7p_url_for(\'download\', array(\'os\' => \'linux\'))';
 }

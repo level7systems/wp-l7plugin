@@ -75,7 +75,7 @@ function l7p_get_download_url($os)
 {
     $downloads = l7p_get_download();
     
-    if ($os == 'mac') {
+    if ($os == 'osx') {
         return $downloads[$os]['x64'];
     }
     
@@ -85,7 +85,7 @@ function l7p_get_download_url($os)
     }
     
     // win
-    if ($os == 'win' && preg_match('/WOW64|Win64/i',$_SERVER['HTTP_USER_AGENT'])) {
+    if ($os == 'windows' && preg_match('/WOW64|Win64/i',$_SERVER['HTTP_USER_AGENT'])) {
         return $downloads[$os]['x64'];
     }
     
@@ -613,7 +613,8 @@ function l7p_get_routes()
         'phones_group' => '/:permalink_hardware/:group/:currency',
         'phone_buy' => '/:permalink_hardware/:group/:model/:currency/buy',
         'manual' => '/:permalink_manual/:chapter',
-        'terms' => '/:permalink_terms'
+        'terms' => '/:permalink_terms',
+        'download' => '/download-for-:os'
     );
 }
 
