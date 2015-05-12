@@ -767,7 +767,7 @@ CONTENT
             <td>[DDI_SETUP_FEE]</td>
             <td>[DDI_MONTHLY_FEE]</td>
             <td>[DDI_MIN_RATE]</td>
-            <td><a href="[DDI_BUY_URL]" title="">Buy</a></td>
+            <td><a href="[DDI_TOLL_FREE_BUY_URL]" title="">Buy</a></td>
           </tr>
         </tbody>
       [/foreach]
@@ -833,7 +833,7 @@ CONTENT
                 <td>[DDI_SETUP_FEE]</td>
                 <td>[DDI_MONTHLY_FEE]</td>
                 <td>[DDI_MIN_RATE]</td>
-                <td><button onclick="buy('[DDI_BUY_URL]','Toll+Free');">Buy</button></td>
+                <td><a href="[DDI_TOLL_FREE_BUY_URL]">Buy</a></td>
               </tr>
             [/foreach]
         </tbody>

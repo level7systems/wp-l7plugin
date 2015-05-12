@@ -8,7 +8,7 @@
 class L7P_Query
 {
 
-    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy');
+    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free');
 
     public function __construct()
     {
@@ -153,13 +153,16 @@ class L7P_Query
 
                 // buying phone number for city
                 if (isset($query->query_vars['buy'])) {
-
+                    
                     $country_code = l7p_get_country_code_from_query();
                     $city = l7p_get_city_name_from_query();
-                    // TODO
-                    $city = strtoupper($city);
-                    l7p_update_session('extini',  'DdiAddWindow("' . $country_code . '","' . $city . '");');
-
+                    
+                    if (isset($query->query_vars['toll_free'])) {
+                        $country_code .= '-Toll-Free';
+                    }
+                    
+                    l7p_update_session('extini',  'DdiAddWindow("' . $country_code . '","' . ucwords($city) . '");');
+                    
                     return $this->redirect_to_login();
                 }
             }
@@ -312,6 +315,8 @@ class L7P_Query
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
             // buy virtual number /:permalink/:country/:city/:currency/buy
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/(%s)/buy$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
+            // buy virtual number /:permalink/:country/toll-free/:city/:currency/buy
+            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/toll-free/([0-9]{3,4})/(%s)/buy$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1&toll_free=1', 'top');
             
             // if web_product has shop enabled
             if (l7p_get_web_product_settings('has_shop')) {

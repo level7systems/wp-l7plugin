@@ -225,6 +225,12 @@ function l7p_inline_ddi_buy_url()
     return 'l7p_url_for(\'@number_buy\', array(\'country\' => l7p_get_country_name_from_query(), \'city\' => $ddi_data[\'city\']))';
 }
 
+// displays buy DDI url
+function l7p_inline_ddi_toll_free_buy_url()
+{
+    return 'l7p_url_for(\'@number_buy_toll_free\', array(\'country\' => l7p_get_country_name_from_query(), \'city\' => $ddi_data[\'area_code\']))';
+}
+
 // displays buy DDI in selected U.S. state url
 function l7p_inline_ddi_state_url()
 {
