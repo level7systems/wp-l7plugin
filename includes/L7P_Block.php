@@ -31,10 +31,6 @@ function l7p_block_currency_form()
 
 function l7p_block_login_form()
 {
-    $extini = l7p_get_session('extini');
-    // clear ext ini?
-    l7p_update_session('extini', '');
-    
     ob_start();
 
     ?>
@@ -44,7 +40,7 @@ function l7p_block_login_form()
 
         <fieldset>
             
-            <?php echo L7P_Form::hidden_input(array('name' => 'extini', 'value' => $extini)) ?>
+            <?php echo L7P_Form::hidden_input(array('name' => 'extini', 'value' => l7p_get_session('extini'))) ?>
             
             <?php echo L7P_Form::label(array('id' => 'username', 'label' => 'E-mail')) ?>
             <?php echo L7P_Form::text_input(array('name' => 'username', 'placeholder' => 'E-mail address')) ?>
@@ -64,6 +60,9 @@ function l7p_block_login_form()
     <?php
     $content = ob_get_clean();
 
+    // clear ext ini?
+//    l7p_update_session('extini', '');
+    
     return $content;
 }
 

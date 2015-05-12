@@ -7,9 +7,9 @@
     $(function () {
 
 //        var url = 'https://ssl.l7dev.co.cc/voipstudio.dev/api';
-        var url = 'https://l7dev.co.cc/voipstudio.dev',
+//        var url = 'https://l7dev.co.cc/voipstudio.dev',
         // TODO: sandbox 
-//       var url = 'https://l7sandbox.net/voipstudio.l7sandbox.net',
+        var url = 'https://l7sandbox.net/voipstudio.l7sandbox.net',
                 api_url = url + '/api';
 
         // LOGIN

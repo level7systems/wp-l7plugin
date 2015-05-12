@@ -963,8 +963,8 @@ CONTENT
             <p>[PHONE_SHORT_DESCRIPTION]... <a href="[PHONE_URL]">Read more.</a></p>
             <p>
               [if phone_in_stock]
-                <span>[PHONE_STOCK] in stock</span> <a href="#" onclick="buy('[PHONE_URL]');">Buy</a>	
-              [else]
+                <span>[PHONE_STOCK] in stock</span> <a href="[PHONE_BUY_URL]" title="">Buy</a>
+	              [else]
                 <span>Out of stock</span>
               [/if]
             </div>
@@ -1010,7 +1010,7 @@ CONTENT
                     <img src="[PHONE_IMG]">
             </figure>
             [if phone_in_stock]
-                <button onclick="buy('[PHONE_URL]');">Buy This</button>
+                <a href="[PHONE_BUY_URL]" title="">Buy This</a>
                 <p>[PHONE_STOCK] in stock</p>
             [else]
             <p>Out of stock</p>
