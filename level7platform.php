@@ -40,9 +40,9 @@ class Level7Platform
 
     public function __construct()
     {
-        // TODO: only for develop purpose
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
+        // only for develop purpose
+        // error_reporting(E_ALL);
+        //ini_set('display_errors', 1);
 
         // Auto-load classes on demand
         if (function_exists("__autoload")) {
