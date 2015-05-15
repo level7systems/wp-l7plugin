@@ -110,6 +110,7 @@ class L7P_Admin
             'section' => 'l7p_config',
             'value' => isset($config['api_key']) ? $config['api_key'] : '',
             'help'  => __('This need to be filled with WP API Key from Level7 App to enable communication.', 'level7platform'),
+            'placeholder' => 'WP API KEY'
             )
         );
         

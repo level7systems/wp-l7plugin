@@ -48,6 +48,14 @@
                 }
             });
         });
+        
+        if ($('form#block-register-form select#package_type')) {
+            
+            var hash = window.location.hash.substring(1);
+            if ($.inArray(hash, ['P', 'S', 'A']) !== -1) {
+                $('form#block-register-form select#package_type').val(hash);
+            }
+        }
 
         $('form#block-register-form select#package_type').on('change', function() {
             
