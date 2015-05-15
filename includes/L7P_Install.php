@@ -244,12 +244,7 @@ class L7P_Install
             <li>Free inbound calls</li>
             <li>Free inbound numbers: 0845/0560 and <a href="http://www.inum.net">iNum</a></li>
          </ul>
-          [if is_auth]
-           <a href="https://ssl7.net/voipstudio.com/u/app" >Buy Plan Now</a>
-          [else]
-           <a href="/register#P">Free Trial</a>
-          [/if]
-        
+           <a href="/en/register#P">Free Trial</a>
         </div>
     </div>	
     <div>
@@ -271,11 +266,7 @@ class L7P_Install
                                         Russia, Singapore, South Korea, Spain, Sweden, Switzerland, Taiwan, Turkey, U.S. Virgin Islands, 
                                         United Kingdom, United States, Vatican, Venezuela">chosen country</a></li>
           </ul>
-          [if is_auth]
-          <a href="https://ssl7.net/voipstudio.com/u/app">Buy Plan Now</a>
-          [else]
-          <a href="/register#S" >Free Trial</a>
-          [/if]
+          <a href="/en/register#S" >Free Trial</a>
         </div>
     </div>		
     <div>
@@ -297,11 +288,7 @@ class L7P_Install
                                         United Kingdom, United States, Vatican, Venezuela">listed countries </a>
               and to mobile phones in <a title="Canada, China, Hong Kong S.A.R., China, Puerto Rico, United States">these countries</a></li>
           </ul>
-          [if is_auth]
-          <a href="https://ssl7.net/voipstudio.com/u/app">Buy Plan Now</a>
-          [else]
           <a href="/register#A">Free Trial</a>
-          [/if]
         </div>
     </div>	
 </div>
