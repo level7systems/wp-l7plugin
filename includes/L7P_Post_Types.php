@@ -44,6 +44,7 @@ class L7P_Post_Types
                 'not_found_in_trash' => __( 'No dynamic page templates found in trash', 'level7platform' )
             ),
             'public' => true,
+            'exclude_from_search' => true,
             'description' => __('This is where you can manage Level7 platform page templates.', 'level7platform'),
             'show_in_menu' => 'l7-settings',
             'capability_type' => 'page',
@@ -54,7 +55,7 @@ class L7P_Post_Types
                 'delete_posts' => false,
                 'delete_published_posts' => false,
             ),
-            'supports' => array('title', 'editor'),
+            'supports' => array('title', 'editor', 'excerpt'),
             'rewrite' => false,
             'query_var' => false
             )
