@@ -47,7 +47,7 @@ class L7P_Query
         }
 
         // alternate for page_id
-        if (isset($wp_query->query_vars['page_id'])) {
+        if (isset($wp_query->query_vars['page_id']) && $wp_query->query_vars['page_id']) {
 
             $page = get_post($wp_query->query_vars['page_id']);
 
