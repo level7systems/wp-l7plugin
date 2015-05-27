@@ -13,15 +13,13 @@ class L7P_Content
 
     public function __construct()
     {
-// TODO
-        $user_webproduct_code = l7p_get_option('user_webproduct', 'v');
-
+        add_filter('the_excerpt', array($this, 'parse_content'), 20);
         add_filter('the_content', array($this, 'parse_content'), 20);
     }
 
     public function parse_content($content)
     {
-        if (is_single() || is_page()) {
+        if (is_single() || is_page() || is_search()) {
 // parse for extra syntax
 // strip PHP tags to avoid injcections
             $content = preg_replace("#<\?.*?(\?>|$)#s", "", $content);
