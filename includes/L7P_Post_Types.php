@@ -55,7 +55,7 @@ class L7P_Post_Types
                 'delete_posts' => false,
                 'delete_published_posts' => false,
             ),
-            'supports' => array('title', 'editor', 'excerpt'),
+            'supports' => array('title', 'editor', 'excerpt', 'thumbnail'),
             'rewrite' => false,
             'query_var' => false
             )
