@@ -1059,7 +1059,27 @@ CONTENT
 </div>
             
 <div>
-      [block login_form]
+    <form class="l7p-login-form" method="post" id="l7p-login-form">
+
+        [FORM_SECURITY_TOKEN]
+        
+        <div class="form-row">
+            <label for="username">E-mail</label>
+            <input type="text" placeholder="E-mail address" value="" name="username" id="username">
+        </div>
+        
+        <div class="form-row">
+            <label for="password">Password</label>
+            <input type="password" placeholder="Password" value="" name="password" id="password">
+        </div>
+        
+        <label for="remember">
+            <input type="checkbox" name="remember" id="remember">
+            Remember Me
+        </label>
+        <button id="l7p-login-button">Login</button>
+
+    </form>
 </div>
             	
 CONTENT
@@ -1070,7 +1090,52 @@ CONTENT
 </div>
             
 <div>
-      [block register_form]
+    <form class="l7p-register-form" method="post" id="l7p-register-form">
+
+        [FORM_SECURITY_TOKEN]
+
+        <div class="form-row">
+            <label for="firstname">First Name</label>
+            <input type="text" placeholder="First Name" value="" name="firstname" id="firstname">
+        </div>
+        <div class="form-row">
+            <label for="lastname">Last Name</label>
+            <input type="text" placeholder="Last Name" value="" name="lastname" id="lastname">
+        </div>
+        <div class="form-row">
+            <label for="password">Password</label>
+            <input type="password" placeholder="Password" value="" name="password" id="password">
+        </div>
+        <div class="form-row">
+            <label for="password2">Confirm Password</label>
+            <input type="password" placeholder="Confirm Password" value="" name="password2" id="password2">
+        </div>
+        <div class="form-row">
+            <label for="email">E-mail</label>
+            <input type="text" placeholder="E-mail" value="" name="email" id="email">
+        </div>
+        <div class="form-row">
+            <label for="package_type">Choose prefered Price Plan (you can change it later if needed).</label>
+            <select name="package_type" id="package_type">
+                [foreach package_type_options]
+                    <option value="[PACKAGE_TYPE_VALUE]">[PACKAGE_TYPE_LABEL]</option>
+                [/foreach]
+            </select>
+        </div>
+        <div class="form-row">
+            <select style="display: none;" name="package_route_id" id="package_route_id">
+                [foreach package_route_options]
+                    <option value="[PACKAGE_ROUTE_VALUE]">[PACKAGE_ROUTE_LABEL]</option>
+                [/foreach]
+            </select>
+            <label for="tc">
+                <input type="checkbox" name="tc" value="1" id="tc">
+                I have read and agree to the <a target="_blank" href="/en/terms-and-conditions">Terms and Conditions</a>
+            </label>
+
+            <button id="l7p-register-button">Create an account</button>
+        </div>
+    </form>
 </div>
             	
 CONTENT

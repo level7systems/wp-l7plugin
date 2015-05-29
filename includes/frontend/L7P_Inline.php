@@ -166,6 +166,7 @@ function l7p_inline_term_route_url()
 }
 # DDIs
 // displays DDI country two letter code
+
 function l7p_inline_ddi_country_code()
 {
     return 'strtolower($ddi_data[\'country_code\'])';
@@ -244,6 +245,7 @@ function l7p_inline_ddi_state_name()
 }
 # Phones
 // Phone - desk category page URL
+
 function l7p_inline_phone_desk_url()
 {
     return 'l7p_url_for(\'@phones_group\', array(\'group\' => \'Desk Phones\'))';
@@ -403,6 +405,7 @@ function l7p_inline_phone_description()
 }
 # Manual
 // Manual - name
+
 function l7p_inline_manual_name()
 {
     return 'l7p_get_chapter(\'name\');';
@@ -451,4 +454,29 @@ function l7p_inline_download_for_mac_url()
 function l7p_inline_download_for_linux_url()
 {
     return 'l7p_url_for(\'download\', array(\'os\' => \'linux\'))';
+}
+
+function l7p_inline_form_security_token()
+{
+    return 'L7P_Form::hidden_input(array(\'name\' => \'extini\', \'value\' => l7p_get_session(\'extini\')))';
+}
+
+function l7p_inline_package_type_value()
+{
+    return 'isset($package_type_value) ? $package_type_value : \'<!-- PACKAGE_TYPE_VALUE not defined -->\'';
+}
+
+function l7p_inline_package_type_label()
+{
+    return 'isset($package_type_label) ? $package_type_label : \'<!-- PACKAGE_TYPE_LABEL not defined -->\'';
+}
+
+function l7p_inline_package_route_value()
+{
+    return 'isset($package_route_value) ? $package_route_value : \'<!-- PACKAGE_ROUTE_VALUE not defined -->\'';
+}
+
+function l7p_inline_package_route_label()
+{
+    return 'isset($package_route_label) ? $package_route_label : \'<!-- PACKAGE_ROUTE_LABEL not defined -->\'';
 }

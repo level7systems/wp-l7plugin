@@ -391,6 +391,23 @@ class L7P_Content
     public static function foreach_statement($m)
     {
         switch ($m[1]) {
+// forms
+            case 'package_route_options':
+                return '<?php '
+                    . '$register_settings = l7p_get_settings(\'register\');'
+                    . '$term_routes = isset($register_settings[\'routes\']) ? $register_settings[\'routes\'] : array();'
+                    . '$package_routes = array();'
+                    . 'foreach ($term_routes as $id => $country_code) { $package_routes[$id] = l7p_country_name($country_code);} '
+                    . 'foreach ($package_routes as $package_route_value => $package_route_label):'
+                    . ' ?>';
+                
+            case 'package_type_options':
+                return '<?php '
+                    . '$currency = l7p_get_currency();'
+                    . '$register_settings = l7p_get_settings(\'register\');'
+                    . '$package_types = isset($register_settings[\'package_types\'][$currency]) ? $register_settings[\'package_types\'][$currency] : array();'
+                    . 'foreach ($package_types as $package_type_value => $package_type_label):'
+                    . ' ?>';
 // Termination
             case 'term_letters':
                 return '<?php '
