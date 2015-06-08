@@ -13,17 +13,17 @@ class L7P_Content
 
     public function __construct()
     {
-        add_filter('the_excerpt', array($this, 'parse_content'), 20);
-        add_filter('the_content', array($this, 'parse_content'), 20);
+        add_filter('the_excerpt', array('L7P_Content', 'parse_content'), 20);
+        add_filter('the_content', array('L7P_Content', 'parse_content'), 20);
     }
 
-    public function parse_content($content)
+    public static function parse_content($content)
     {
         if (is_single() || is_page() || is_search()) {
 // parse for extra syntax
 // strip PHP tags to avoid injcections
             $content = preg_replace("#<\?.*?(\?>|$)#s", "", $content);
-            $content = $this->apply_callbacks($content);
+            $content = L7P_Content::apply_callbacks($content);
 
 // execute PHP functions
             ob_start();
@@ -34,7 +34,7 @@ class L7P_Content
         return $content;
     }
 
-    private function apply_callbacks($content)
+    private static function apply_callbacks($content)
     {
 // static tags and blocks
         $regex = array(
@@ -56,16 +56,16 @@ class L7P_Content
         $content = preg_replace($regex, $replace, $content);
 
 // url
-        $content = preg_replace_callback('/href="(.*)"/mU', array($this, 'url'), $content);
+        $content = preg_replace_callback('/href="(.*)"/mU', array('L7P_Content', 'url'), $content);
 // image
-        $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array($this, 'image'), $content);
+        $content = preg_replace_callback('/\(([a-z,0-9,\%,\/,\.,\-,\_]+\|.*)\)/imU', array('L7P_Content', 'image'), $content);
 // statements
-        $content = preg_replace_callback('/\[if (.*)\]/mU', array($this, 'if_statement'), $content);
-        $content = preg_replace_callback('/\[foreach (.*)\]/mU', array($this, 'foreach_statement'), $content);
+        $content = preg_replace_callback('/\[if (.*)\]/mU', array('L7P_Content', 'if_statement'), $content);
+        $content = preg_replace_callback('/\[foreach (.*)\]/mU', array('L7P_Content', 'foreach_statement'), $content);
 // blocks
-        $content = preg_replace_callback('/\[block (.*)\]/imU', array($this, 'block'), $content);
+        $content = preg_replace_callback('/\[block (.*)\]/imU', array('L7P_Content', 'block'), $content);
 // inlines
-        $content = preg_replace_callback('/\[([A-Z,_]+)\]/imU', array($this, 'inline'), $content);
+        $content = preg_replace_callback('/\[([A-Z,_]+)\]/imU', array('L7P_Content', 'inline'), $content);
 
         return $content;
     }
@@ -74,7 +74,7 @@ class L7P_Content
     /**
      * Renders %INLINE_TAGS%
      */
-    public function inline($m)
+    public static function inline($m)
     {
         $tag = $m[1];
         $inline = "l7p_inline_" . $tag;
@@ -85,7 +85,7 @@ class L7P_Content
         return '<?php echo ' . call_user_func($inline) . '; ?>';
     }
 
-    public function block($m)
+    public static function block($m)
     {
         $tag = $m[1];
         $block = "l7p_block_" . $tag;
@@ -96,9 +96,6 @@ class L7P_Content
         return sprintf("<?php echo call_user_func('%s') ?>", $block);
     }
 
-    /**
-     * TODO
-     */
     public static function image($m, $with_php_tag = true)
     {
         $temp = array();
@@ -126,9 +123,6 @@ class L7P_Content
         return "image_tag('" . $src_img . "','alt=\"" . $temp[1] . "\"" . $options . "')";
     }
 
-    /**
-     * TODO
-     */
     public static function url($match)
     {
         $m = array();
@@ -344,40 +338,6 @@ class L7P_Content
                     . '(isset($phone_data["review_count"]) && $phone_data["review_count"] > 0):'
                     . ' ?>';
 
-# Blog
-// TODO: to be removed
-            case 'blog_has_tag':
-                return '<?php if (isset($tag) && $tag) : ?>';
-                break;
-            case 'blog_has_posts':
-                return '<?php if (isset($pager) && $pager->getResults()) : ?>';
-                break;
-
-            case 'blog_post_has_comments':
-                return '<?php if (isset($post) && $post->countPublishedComments() > 0) : ?>';
-                break;
-            case 'blog_has_to_paginate':
-                return '<?php if (isset($pager) && $pager->haveToPaginate()) : ?>';
-                break;
-            case 'blog_pager_first_page':
-                return '<?php if (isset($pager) && $pager->getPage() == 1) : ?>';
-                break;
-            case 'blog_pager_current_page':
-                return '<?php if (isset($pager) && isset($page_no) && $page_no == $pager->getPage()) : ?>';
-                break;
-            case 'blog_pager_not_last':
-                return '<?php if (isset($pager) && isset($page_no) && $page_no != $pager->getCurrentMaxLink()) : ?>';
-                break;
-            case 'blog_pager_last':
-                return '<?php if (isset($pager) && $pager->getPage() == $pager->getCurrentMaxLink()) : ?>';
-                break;
-            case 'blog_recent':
-                return '<?php if (isset($recent) && $recent) : ?>';
-                break;
-            case 'blog_tags':
-                return '<?php if (isset($tags) && $tags) : ?>';
-                break;
-
             default:
                 return '<!-- unknown condition ' . $m[1] . ' --> <?php if (false) : ?>';
         }
@@ -484,29 +444,6 @@ class L7P_Content
                     . '$phones = l7p_get_phones();'
                     . 'foreach ((isset($phones) ? $phones : array()) as $phone_data):'
                     . ' ?>';
-
-# Blog
-            case 'blog_posts':
-                return '<?php foreach ($pager->getResults() as $post) : ?>';
-                break;
-            case 'blog_pager':
-                return '<?php foreach ($pager->getLinks() as $page_no) : ?>';
-                break;
-            case 'blog_recent':
-                return '<?php foreach ((isset($recent) ? $recent : array()) as $post) : ?>';
-                break;
-            case 'blog_tags':
-                return '<?php foreach ((isset($tags) ? $tags : array()) as $tag) : ?>';
-                break;
-            case 'post_tags':
-                return '<?php foreach ((isset($post) ? $post->getPostHasTags() : array()) as $post_has_tag) : ?>';
-                break;
-
-// Sitemap
-            case 'sitemap':
-                return '<?php foreach ((isset($sitemap) ? $sitemap : array()) as $sitemap_data) : ?>';
-                break;
-
 
             default:
                 return '<!-- failed to parse foreach ' . $m[1] . ' --> <?php foreach (array() as $val) : ?>';

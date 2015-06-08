@@ -42,7 +42,6 @@ class L7P_Query
 
         $page = null;
         if (isset($wp_query->query_vars['pagename'])) {
-
             $page = l7p_get_page_by_pagename($wp_query->query_vars['pagename']);
         }
 

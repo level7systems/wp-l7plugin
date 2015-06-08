@@ -714,3 +714,8 @@ function l7p_urlize($text)
 
     return Transliterator::urlize($text, '+');
 }
+
+function l7p_do_shortcode($content)
+{
+    return L7P_Content::parse_content($content);
+}
