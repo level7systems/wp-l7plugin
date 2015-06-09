@@ -1059,7 +1059,7 @@ CONTENT
 </div>
             
 <div>
-    <p id="l7p-login-form-global-errors"></p>
+    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
             
     <form class="l7p-login-form" method="post" id="l7p-login-form">
 
@@ -1093,7 +1093,7 @@ CONTENT
             
 <div>
             
-    <p id="l7p-register-form-global-errors"></p>
+    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
             
     <form class="l7p-register-form" method="post" id="l7p-register-form">
 
