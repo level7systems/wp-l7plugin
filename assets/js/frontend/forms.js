@@ -1,6 +1,7 @@
 (function ($, window, document) {
 
     function clearErrors(selector) {
+        $(selector + '-global-errors').html("");
         $(selector + ' [class*="error-"]').remove();
     }
 
@@ -13,7 +14,7 @@
                 api_url = url + '/api';
 
         // LOGIN
-        $(document).on('click tap', '#l7p-login-button', function (e) {
+        $(document).on('submit', 'form#l7p-login-form', function (e) {
 
             clearErrors('#l7p-login-form');
 
@@ -34,7 +35,7 @@
                         if (res.errors.password)
                             $('form#l7p-login-form #password').after('<p class="small error-password">' + res.errors.password + '</p>')
                         if (res.errors.email)
-                            $('form#l7p-login-form #l7p-login-button').before('<p class="small error-email">' + res.errors.email + '</p>')
+                            $('#l7p-login-form-global-errors').html(res.errors.email);
                         return false;
                     }
 
@@ -67,7 +68,7 @@
         });
 
         // REGISTER
-        $(document).on('click tap', '#l7p-register-button', function (e) {
+        $(document).on('submit', 'form#l7p-register-form', function (e) {
 
             clearErrors('#l7p-register-form');
 
@@ -113,7 +114,7 @@
                         if (res.errors.password2)
                             $('form#l7p-register-form #password2').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
                         if (res.errors.tc)
-                            $('form#l7p-register-form #tc').parents('label:first').after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+                            $('form#l7p-register-form #tc').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
 
                         return false;
                     } else {
