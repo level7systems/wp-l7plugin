@@ -494,11 +494,29 @@ function l7p_get_ddi_countries()
 
 function l7p_get_ddi($type = 'free')
 {
-    if (in_array($type, array('free', 'paid'))) {
+    if ($type == 'free') {
+        $ddi = l7p_get_option('ddi', array());
+
+        if (isset($ddi[$type])) {
+            return ksort($ddi[$type]);
+        }
+    }
+    
+    if ($type == 'paid') {
         $ddi = l7p_get_option('ddi', array());
         $currency = l7p_get_currency();
 
-        return isset($ddi[$type][$currency]) ? $ddi[$type][$currency] : array();
+        if (isset($ddi[$type][$currency])) {
+            
+            $ddi_countries = $ddi[$type][$currency];
+            $countries = array();
+            foreach ($ddi_countries as $key => $data) {
+                $countries[$key] = l7p_country_name($data['country_code']);
+            }
+            array_multisort($countries, SORT_ASC, $ddi_countries);
+                
+            return $ddi_countries;
+        }
     }
     return array();
 }
