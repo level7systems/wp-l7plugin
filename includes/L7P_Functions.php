@@ -74,21 +74,21 @@ function l7p_get_download()
 function l7p_get_download_url($os)
 {
     $downloads = l7p_get_download();
-    
+
     if ($os == 'osx') {
         return $downloads[$os]['x64'];
     }
-    
+
     // linux
-    if ($os == 'linux' && preg_match('/x86_64/i',$_SERVER['HTTP_USER_AGENT'])) {
+    if ($os == 'linux' && preg_match('/x86_64/i', $_SERVER['HTTP_USER_AGENT'])) {
         return $downloads[$os]['x64'];
     }
-    
+
     // win
-    if ($os == 'windows' && preg_match('/WOW64|Win64/i',$_SERVER['HTTP_USER_AGENT'])) {
+    if ($os == 'windows' && preg_match('/WOW64|Win64/i', $_SERVER['HTTP_USER_AGENT'])) {
         return $downloads[$os]['x64'];
     }
-    
+
     // x86
     return $downloads[$os]['x86'];
 }
@@ -244,11 +244,11 @@ function l7p_get_geo()
     if (function_exists('geoip_country_code_by_name')) {
         $country_code = @geoip_country_code_by_name($remote_addr);
     }
-    
+
     if (!$country_code) {
         $country_code = 'US';
     }
-    
+
     return $country_code;
 }
 
@@ -260,8 +260,6 @@ function l7p_get_geo_state()
 
     return (isset($geoip['region']) && $geoip['region']) ? $geoip['region'] : 'AL';
 }
-
-
 
 function l7p_get_countries($locale = null)
 {
@@ -328,7 +326,7 @@ function l7p_get_city_name_from_query()
     if (!isset($wp_query->query_vars['city'])) {
         return '';
     }
-    
+
     return strtr($wp_query->query_vars['city'], array('+' => ' '));
 }
 
@@ -380,7 +378,7 @@ function l7p_get_state_name_from_query()
 function l7p_get_phone_name_from_query()
 {
     global $wp_query;
-    
+
     return isset($wp_query->query_vars['model']) ? strtr($wp_query->query_vars['model'], array('+' => ' ')) : '';
 }
 
@@ -401,11 +399,11 @@ function l7p_get_chapter_name_from_query()
 function l7p_get_pricelist($key = false)
 {
     $pricelist = l7p_get_option('pricelist', array());
-    
+
     if ($key) {
         return isset($pricelist[$key]) ? $pricelist[$key] : array();
     }
-    
+
     return $pricelist;
 }
 
@@ -414,7 +412,7 @@ function l7p_get_pricelist_domestic($key = false)
     $pricelist = l7p_get_pricelist();
     $currency = l7p_get_currency();
     $country_code = l7p_get_geo();
-    
+
     $domestic = 0;
     if (isset($pricelist['domestic'][$currency][$country_code])) {
         $domestic = $pricelist['domestic'][$currency][$country_code];
@@ -423,7 +421,7 @@ function l7p_get_pricelist_domestic($key = false)
     if ($key && isset($domestic[$key])) {
         return $domestic[$key];
     }
-    
+
     return $domestic;
 }
 
@@ -501,20 +499,20 @@ function l7p_get_ddi($type = 'free')
             return ksort($ddi[$type]);
         }
     }
-    
+
     if ($type == 'paid') {
         $ddi = l7p_get_option('ddi', array());
         $currency = l7p_get_currency();
 
         if (isset($ddi[$type][$currency])) {
-            
+
             $ddi_countries = $ddi[$type][$currency];
             $countries = array();
             foreach ($ddi_countries as $key => $data) {
                 $countries[$key] = l7p_country_name($data['country_code']);
             }
             array_multisort($countries, SORT_ASC, $ddi_countries);
-                
+
             return $ddi_countries;
         }
     }
@@ -559,7 +557,7 @@ function l7p_get_phone($attr = null)
 {
     $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
-    
+
     if (is_null($attr)) {
         return isset($phones[$name]) ? $phones[$name] : array();
     }
@@ -570,7 +568,7 @@ function l7p_has_phone($phone_name)
 {
     $phones = l7p_get_phones();
     $phone_name = strtr($phone_name, ['+' => ' ']);
-    
+
     return isset($phones[$phone_name]);
 }
 
@@ -579,18 +577,18 @@ function l7p_get_min_price($group_name)
     $phones = l7p_get_option('phones', array());
     $currency = l7p_get_currency();
     $locale = l7p_get_locale();
-    
+
     $min_price = 0;
     if (!isset($phones[$locale][$currency][$group_name])) {
         return $min_price;
     }
-    
+
     foreach ($phones[$locale][$currency][$group_name] as $phone) {
         if ($phone['price'] < $min_price || !$min_price) {
             $min_price = $phone['price'];
         }
     }
-    
+
     return $min_price;
 }
 
@@ -710,7 +708,7 @@ function l7p_pre($var)
 function l7p_add_settings_field($id, $title, $callback, $page, $section = 'default', $args = array())
 {
     $cultures = l7p_get_cultures();
-    
+
     foreach ($cultures as $i => $culture) {
 
         $l7p_id = $culture . '_' . $id;
@@ -736,4 +734,49 @@ function l7p_urlize($text)
 function l7p_do_shortcode($content)
 {
     return L7P_Content::parse_content($content);
+}
+
+function l7p_confirm_account($token)
+{
+    $url = strtr('https://l7dev.co.cc/:domain/en/c/:token', array(
+        ':domain' => l7p_get_web_product_settings('domain'),
+        ':token' => $token
+    ));
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_URL => $url,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_USERAGENT => 'Level7 WP plugin',
+        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+        CURLOPT_FOLLOWLOCATION => true
+    ));
+    $json = curl_exec($curl);
+
+    if (!$json) {
+        return array(
+            'success' => false,
+            'info' => curl_error($curl)
+        );
+    }
+
+    curl_close($curl);
+
+    return json_decode($json, true);
+}
+
+function l7p_set_flash_message($message)
+{
+    return l7p_update_session('flash_message', $message);
+}
+
+function l7p_get_flash_message()
+{
+    $message = l7p_get_session('flash_message', '');
+    if ($message) {
+        l7p_update_session('flash_message', '');
+    }
+    return $message;
 }

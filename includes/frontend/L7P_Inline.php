@@ -461,6 +461,11 @@ function l7p_inline_form_security_token()
     return 'L7P_Form::hidden_input(array(\'name\' => \'extini\', \'value\' => l7p_get_session(\'extini\')))';
 }
 
+function l7p_inline_flash_message()
+{
+    return 'l7p_get_flash_message()';
+}
+
 function l7p_inline_package_type_value()
 {
     return 'isset($package_type_value) ? $package_type_value : \'<!-- PACKAGE_TYPE_VALUE not defined -->\'';

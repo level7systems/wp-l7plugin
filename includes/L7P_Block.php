@@ -36,10 +36,11 @@ function l7p_block_login_form()
 
     ?>
 
+    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
+    
     <form id="l7p-login-form" method="post" class="l7p-login-form">
-        <p class="errors"></p>
 
-        <?php echo L7P_Form::hidden_input(array('name' => 'extini', 'value' => l7p_get_session('extini'))) ?>
+        [FORM_SECURITY_TOKEN]
         
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'username', 'label' => 'E-mail')) ?>
@@ -85,6 +86,8 @@ function l7p_block_register_form()
     }
 
     ?>
+    
+    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
 
     <form id="l7p-register-form" method="post" class="l7p-register-form">
 

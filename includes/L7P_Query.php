@@ -8,7 +8,7 @@
 class L7P_Query
 {
 
-    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free', 'os');
+    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free', 'os', 'token');
 
     public function __construct()
     {
@@ -125,6 +125,7 @@ class L7P_Query
 //        l7p_pre($query->query_vars);
 
         $page_name = $query->query_vars['name'];
+        $post_type = 'l7p_page';
 
         if ($page_name == "rates") {
 
@@ -239,6 +240,22 @@ class L7P_Query
                 return $this->error_404();
             }
             
+        } else if ($page_name == 'confirmation') {
+            
+            if (isset($query->query_vars['token'])) {
+                // login page
+                $page_name = "login";
+                $post_type = 'page';
+                
+                $response = l7p_confirm_account($query->query_vars['token']);
+                
+                if ($response['success']) {
+                    l7p_set_flash_message($response['info']);
+                } else {
+                    l7p_set_flash_message(__('Invalid confirmation token.'));
+                }
+            }
+            
         } else {
             $page_name = null;
         }
@@ -272,7 +289,7 @@ class L7P_Query
             $query->is_page = true;
             $query->is_home = false;
             $query->is_singular = true;
-            $query->set('post_type', 'l7p_page');
+            $query->set('post_type', $post_type);
             $query->set('name', $page->post_name);
         }
     }
@@ -342,13 +359,16 @@ class L7P_Query
             // manual
             add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         }
-
+        
+        // account confirmation
+        add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&token=$matches[1]', 'top');
+        
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {
             add_rewrite_endpoint(strtolower($currency), EP_PAGES);
         }
 
-        // TODO: to be roemoved
+        // TODO: to be removed
         flush_rewrite_rules();
     }
 }
