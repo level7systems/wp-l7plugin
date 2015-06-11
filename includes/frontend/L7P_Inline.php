@@ -32,6 +32,12 @@ function l7p_inline_country_name()
     return 'l7p_country_name(l7p_get_geo())';
 }
 
+// get country name for the current user.
+function l7p_inline_country_code()
+{
+    return 'l7p_get_geo()';
+}
+
 // get two letter state code for the current user.
 function l7p_inline_state()
 {
@@ -461,9 +467,29 @@ function l7p_inline_form_security_token()
     return 'L7P_Form::hidden_input(array(\'name\' => \'extini\', \'value\' => l7p_get_session(\'extini\')))';
 }
 
+function l7p_inline_form_login_action()
+{
+    return 'l7p_api_url()';
+}
+
+function l7p_inline_form_register_action()
+{
+    return 'l7p_api_url()';
+}
+
+function l7p_inline_form_activate_action()
+{
+    return 'l7p_api_url()';
+}
+
 function l7p_inline_flash_message()
 {
     return 'l7p_get_flash_message()';
+}
+
+function l7p_inline_activation_message()
+{
+    return 'l7p_get_activation_message()';
 }
 
 function l7p_inline_package_type_value()

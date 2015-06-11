@@ -256,7 +256,10 @@ function l7p_get_geo_state()
 {
     // get remote address
     $remote_addr = $_SERVER['REMOTE_ADDR'];
-    $geoip = @geoip_record_by_name(MyTools::getRemoteAddress());
+    $geoip = array();
+    if (function_exists('geoip_record_by_name')) {
+        $geoip = @geoip_record_by_name($remote_addr);
+    }
 
     return (isset($geoip['region']) && $geoip['region']) ? $geoip['region'] : 'AL';
 }
@@ -738,8 +741,8 @@ function l7p_do_shortcode($content)
 
 function l7p_confirm_account($token)
 {
-    $url = strtr('https://l7dev.co.cc/:domain/en/c/:token', array(
-        ':domain' => l7p_get_web_product_settings('domain'),
+    $url = strtr(':url/:token', array(
+        ':url' => l7p_form_confirm_action(),
         ':token' => $token
     ));
 
@@ -779,4 +782,29 @@ function l7p_get_flash_message()
         l7p_update_session('flash_message', '');
     }
     return $message;
+}
+
+function l7p_set_activation_message($message)
+{
+    return l7p_update_session('activation_message', $message);
+}
+
+function l7p_get_activation_message()
+{
+    return l7p_get_session('activation_message', '');
+}
+
+function l7p_get_level7_domain()
+{
+    return l7p_get_settings('l7_tld');
+}
+
+function l7p_api_url()
+{
+    return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+}
+
+function l7p_form_confirm_action()
+{
+    return sprintf("https://%s/%s/en/c", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }

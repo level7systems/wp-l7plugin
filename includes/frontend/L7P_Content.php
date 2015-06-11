@@ -208,15 +208,14 @@ class L7P_Content
 
         switch ($condition) {
 
-            case 'login_email':
-                return '<?php if ($sf_flash->has("login-email")) : ?>';
-                break;
+            // forms
+            case 'package_route_selected':
+                return '<?php '
+                    . '$country_code = isset($package_route_value) ? substr($package_route_value, 0, stripos($package_route_value, "-")) : "";'
+                    . 'if ($country_code == l7p_get_geo()): '
+                    . '?>';
 
-            case 'subscribed':
-                return '<?php if (isset($subscriber) && $subscriber->getIsSubscribed()) : ?>';
-                break;
-
-// Termination
+            // termination
             case 'term_has_local':
                 return '<?php '
                     . '$domestic = l7p_get_pricelist_domestic(); '
@@ -300,19 +299,19 @@ class L7P_Content
 // Phones
             case 'phone_has_desk':
                 return '<?php if (isset($min_price) && $min_price["Desk Phones"]) : ?>';
-                break;
+                
             case 'phone_has_dect':
                 return '<?php if (isset($min_price) && $min_price["DECT Phones"]) : ?>';
-                break;
+                
             case 'phone_has_conference':
                 return '<?php if (isset($min_price) && $min_price["Conference Phones"]) : ?>';
-                break;
+                
             case 'phone_has_adaptor':
                 return '<?php if (isset($min_price) && $min_price["VoIP Adaptors"]) : ?>';
-                break;
+                
             case 'phone_has_accessory':
                 return '<?php if (isset($min_price) && $min_price["Accessories"]) : ?>';
-                break;
+                
             case 'phones':
                 return '<?php '
                     . '$phones = l7p_get_phones();'
@@ -361,7 +360,7 @@ class L7P_Content
                     . 'asort($package_routes);'
                     . 'foreach ($package_routes as $package_route_value => $package_route_label):'
                     . ' ?>';
-                
+
             case 'package_type_options':
                 return '<?php '
                     . '$currency = l7p_get_currency();'
@@ -394,13 +393,12 @@ class L7P_Content
 // Fax
             case 'fax_letters':
                 return '<?php foreach ((isset($fax_letters) ? $fax_letters : array()) as $fax_firstletter => $fax_countries) : ?>';
-                break;
+                
             case 'fax_countries':
                 return '<?php $fax_letter_changed = true; foreach ((isset($fax_countries) ? $fax_countries : array()) as $country_name => $fax_country_data) : ?>';
-                break;
+                
             case 'fax_routes':
                 return '<?php foreach ((isset($fax_country_data) ? $fax_country_data : array()) as $fax_data) : ?>';
-                break;
 
 // DDI
             case 'ddi_free':

@@ -1054,16 +1054,13 @@ CONTENT
 CONTENT
        
             ,'login'                => <<<CONTENT
-<div>
-    <h1>Login</h1>
-</div>
-            
-<div>
-    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
-            
-    <form class="l7p-login-form" method="post" id="l7p-login-form">
+<div id="l7p-login">
 
-        [FORM_SECURITY_TOKEN]
+    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
+
+    <form class="l7p-login-form" method="post" action="[FORM_LOGIN_ACTION]" id="l7p-login-form">
+
+        [FORM_SECURITY_TOKEN] 
         
         <div class="form-row">
             <label for="username">E-mail</label>
@@ -1079,8 +1076,35 @@ CONTENT
             <input type="checkbox" name="remember" id="remember">
             Remember Me
         </label>
-        <button type="submit" id="l7p-login-button">Login</button>
+        <button id="l7p-login-button">Login</button>
 
+    </form>
+</div>
+
+<div id="l7p-activate" style="display: none">
+    <p id="l7p-activate-form-global-errors">[FLASH_MESSAGE]</p>
+    <p id="l7p-activate-form-global-info"></p>
+
+    <form class="l7p-activate-form" method="post" action="[FORM_ACTIVATE_ACTION]" id="l7p-activate-form" >
+
+        [FORM_SECURITY_TOKEN]
+
+        <input type="hidden" value="" id="token" name="token" />
+        <input type="hidden" value="TBC" id="company" name="company" />
+        <input type="hidden" value="TBC" id="address" name="address" />
+        <input type="hidden" value="TBC" id="postcode" name="postcode" />
+        <input type="hidden" value="TBC" id="city" name="city" />
+        <input type="hidden" value="[COUNTRY_CODE]" id="country" name="country" />
+        <input type="hidden" value="[STATE]" id="state" name="state" />
+
+        <div class="form-row">
+            <input type="checkbox" name="tc" value="1" id="tc">
+            <label for="tc">
+                I have read and agree to the <a target="_blank" href="/en/terms-and-conditions">Terms and Conditions</a>
+            </label>
+
+            <button type="submit" id="l7p-activate-button">Activate an account</button>
+        </div>
     </form>
 </div>
             	
@@ -1088,14 +1112,10 @@ CONTENT
             
             ,'register'                => <<<CONTENT
 <div>
-    <h1>Registration</h1>
-</div>
             
-<div>
+    <p id="l7p-register-form-global-errors">[FLASH_MESSAGE]</p>
             
-    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
-            
-    <form class="l7p-register-form" method="post" id="l7p-register-form">
+    <form class="l7p-register-form" method="post" action="[FORM_REGISTER_ACTION]" id="l7p-register-form">
 
         [FORM_SECURITY_TOKEN]
 
@@ -1168,7 +1188,7 @@ CONTENT
   <h3><span>`Support</span> Centre`</h3>
   <p>`Access to the VoIP Studio Support Center is only granted to our customers.<br>
     Please login into Customer Portal to open a new Support Ticket.`</p>
-  <a href="%LOGIN_URL%">`Login`</a>
+  <a href="/login">`Login`</a>
 </div>
 
 CONTENT

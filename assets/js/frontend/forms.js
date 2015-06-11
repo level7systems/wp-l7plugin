@@ -7,20 +7,16 @@
 
     $(function () {
 
-//        var url = 'https://ssl.l7dev.co.cc/voipstudio.dev/api';
-//        var url = 'https://l7dev.co.cc/voipstudio.dev',
-        // TODO: sandbox 
-        var url = 'https://l7sandbox.net/voipstudio.l7sandbox.net',
-                api_url = url + '/api';
-
         // LOGIN
         $(document).on('submit', 'form#l7p-login-form', function (e) {
 
             clearErrors('#l7p-login-form');
+            
+            var $form = $(this);
 
             e.preventDefault();
             $.ajax({
-                url: api_url,
+                url: $form.attr('action'),
                 data: {
                     method: 'login',
                     username: $('form#l7p-login-form #username').val(),
@@ -36,6 +32,18 @@
                             $('form#l7p-login-form #password').after('<p class="small error-password">' + res.errors.password + '</p>')
                         if (res.errors.email)
                             $('#l7p-login-form-global-errors').html(res.errors.email);
+
+                        return false;
+                    }
+
+                    if (res.activation) {
+
+                        $('#l7p-login').hide();
+                        $('#l7p-activate-form-global-info').html(res.activation);
+                        $('#l7p-activate').show();
+                        
+                        $('form#l7p-activate-form #token').val(res.activation_token);
+
                         return false;
                     }
 
@@ -43,36 +51,37 @@
                     if ($('form#l7p-login-form #extini').val()) {
                         redirection += '?extini=' + $('form#l7p-login-form #extini').val();
                     }
-                    
+
                     // redirect user to their application url
                     window.location.href = redirection;
                 }
             });
         });
-        
-        if ($('form#l7p-register-form select#package_type')) {
-            
-            var hash = window.location.hash.substring(1);
-            if ($.inArray(hash, ['P', 'S', 'A']) !== -1) {
-                $('form#l7p-register-form select#package_type').val(hash);
-            }
-        }
 
-        $('form#l7p-register-form select#package_type').on('change', function() {
-            
-            if(this.value == "S") {
+        $('form#l7p-register-form select#package_type').on('change', function () {
+
+            if (this.value == "S") {
                 $('form#l7p-register-form #package_route_id').show();
             } else {
                 $('form#l7p-register-form #package_route_id').hide();
             }
         });
 
+        if ($('form#l7p-register-form select#package_type')) {
+
+            var hash = window.location.hash.substring(1);
+            if ($.inArray(hash, ['P', 'S', 'A']) !== -1) {
+                $('form#l7p-register-form select#package_type').val(hash).change();
+            }
+        }
+
         // REGISTER
         $(document).on('submit', 'form#l7p-register-form', function (e) {
 
             clearErrors('#l7p-register-form');
 
-            var t = '';
+            var $form = $(this),
+                t = '';
             if ($('#tc').prop('checked'))
                 t = true;
 
@@ -81,7 +90,7 @@
 
             e.preventDefault();
             $.ajax({
-                url: api_url,
+                url: $form.attr('action'),
                 type: 'POST',
                 data: {
                     method: 'register',
@@ -126,6 +135,52 @@
             });
         });
 
+        // ACTIVATE
+        $(document).on('submit', 'form#l7p-activate-form', function (e) {
+
+            clearErrors('#l7p-activate-form');
+
+            var $form = $(this),
+                t = '';
+            if ($('#tc').prop('checked'))
+                t = true;
+
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                dataType: 'jsonp',
+                data: {
+                    method: 'activate',
+                    user_id: $('form#l7p-activate-form #token').val(),
+                    company: $('form#l7p-activate-form #company').val(),
+                    address: $('form#l7p-activate-form #address').val(),
+                    postcode: $('form#l7p-activate-form #postcode').val(),
+                    city: $('form#l7p-activate-form #city').val(),
+                    country: $('form#l7p-activate-form #country').val(),
+                    state: $('form#l7p-activate-form #state').val(),
+                    tc: t
+                },
+                success: function (res) {
+
+                    if (res.status === 403) {
+
+                        if (res.errors.tc)
+                            $('form#l7p-activate-form #tc').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+
+                        return false;
+                    }
+                    
+                    var redirection = res.info;
+                    if ($('form#l7p-login-form #extini').val()) {
+                        redirection += '?extini=' + $('form#l7p-login-form #extini').val();
+                    }
+
+                    // redirect user to their application url
+                    window.location.href = redirection;
+                }
+            });
+        });
     });
 
 }(window.jQuery, window, document));
