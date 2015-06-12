@@ -310,7 +310,7 @@ function l7p_has_country($country_name, $urlized = true)
     if ($urlized) {
         $countries = l7p_get_countries_urlized();
     } else {
-        $country_name = strtr($country_name, array('+' => ' '));
+        $country_name = strtr($country_name, array('-' => ' '));
         $countries = l7p_get_countries();
     }
 
@@ -330,7 +330,7 @@ function l7p_get_city_name_from_query()
         return '';
     }
 
-    return strtr($wp_query->query_vars['city'], array('+' => ' '));
+    return strtr($wp_query->query_vars['city'], array('-' => ' '));
 }
 
 function l7p_get_country_code_from_query()
@@ -375,28 +375,28 @@ function l7p_get_state_name_from_query()
 {
     global $wp_query;
 
-    return isset($wp_query->query_vars['state']) ? strtr($wp_query->query_vars['state'], array('+' => ' ')) : '';
+    return isset($wp_query->query_vars['state']) ? strtr($wp_query->query_vars['state'], array('-' => ' ')) : '';
 }
 
 function l7p_get_phone_name_from_query()
 {
     global $wp_query;
 
-    return isset($wp_query->query_vars['model']) ? strtr($wp_query->query_vars['model'], array('+' => ' ')) : '';
+    return isset($wp_query->query_vars['model']) ? strtr($wp_query->query_vars['model'], array('-' => ' ')) : '';
 }
 
 function l7p_get_phone_group_name_from_query()
 {
     global $wp_query;
 
-    return isset($wp_query->query_vars['group']) ? strtr($wp_query->query_vars['group'], array('+' => ' ')) : '';
+    return isset($wp_query->query_vars['group']) ? strtr($wp_query->query_vars['group'], array('-' => ' ')) : '';
 }
 
 function l7p_get_chapter_name_from_query()
 {
     global $wp_query;
 
-    return isset($wp_query->query_vars['chapter']) ? strtr($wp_query->query_vars['chapter'], array('+' => ' ')) : '';
+    return isset($wp_query->query_vars['chapter']) ? strtr($wp_query->query_vars['chapter'], array('-' => ' ')) : '';
 }
 
 function l7p_get_pricelist($key = false)
@@ -570,7 +570,7 @@ function l7p_get_phone($attr = null)
 function l7p_has_phone($phone_name)
 {
     $phones = l7p_get_phones();
-    $phone_name = strtr($phone_name, ['+' => ' ']);
+    $phone_name = strtr($phone_name, ['-' => ' ']);
 
     return isset($phones[$phone_name]);
 }
@@ -731,7 +731,7 @@ function l7p_urlize($text)
 {
     include_once('Transliterator.php');
 
-    return Transliterator::urlize($text, '+');
+    return Transliterator::urlize($text, '-');
 }
 
 function l7p_do_shortcode($content)
