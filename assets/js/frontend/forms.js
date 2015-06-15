@@ -11,7 +11,7 @@
         $(document).on('submit', 'form#l7p-login-form', function (e) {
 
             clearErrors('#l7p-login-form');
-            
+
             var $form = $(this);
 
             e.preventDefault();
@@ -36,14 +36,19 @@
                         return false;
                     }
 
+                    // TODO: to be continued
                     if (res.activation) {
 
-                        $('#l7p-login').hide();
-                        $('#l7p-activate-form-global-info').html(res.activation);
-                        $('#l7p-activate').show();
-                        
-                        $('form#l7p-activate-form #token').val(res.activation_token);
+                        if ($('#activation_url')) {
 
+                            var redirection = $('#activation_url').val() + '/' + res.activation_token;
+                            if (res.activation) {
+                                redirection += '?message=' + res.activation;
+                            }
+
+                            // redirect user to their application url
+                            window.location.href = redirection;
+                        }
                         return false;
                     }
 
@@ -81,7 +86,7 @@
             clearErrors('#l7p-register-form');
 
             var $form = $(this),
-                t = '';
+                    t = '';
             if ($('#tc').prop('checked'))
                 t = true;
 
@@ -141,7 +146,7 @@
             clearErrors('#l7p-activate-form');
 
             var $form = $(this),
-                t = '';
+                    t = '';
             if ($('#tc').prop('checked'))
                 t = true;
 
@@ -152,7 +157,7 @@
                 dataType: 'jsonp',
                 data: {
                     method: 'activate',
-                    user_id: $('form#l7p-activate-form #token').val(),
+                    user_id: $('form#l7p-activate-form #activation_token').val(),
                     company: $('form#l7p-activate-form #company').val(),
                     address: $('form#l7p-activate-form #address').val(),
                     postcode: $('form#l7p-activate-form #postcode').val(),
@@ -170,7 +175,7 @@
 
                         return false;
                     }
-                    
+
                     var redirection = res.info;
                     if ($('form#l7p-login-form #extini').val()) {
                         redirection += '?extini=' + $('form#l7p-login-form #extini').val();

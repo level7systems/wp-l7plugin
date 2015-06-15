@@ -804,7 +804,24 @@ function l7p_api_url()
     return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
+function l7p_activation_url()
+{
+    $page = get_post(l7p_get_option('activation_page_id'));
+    return sprintf("/%s/%s", l7p_get_locale(), $page->post_name);
+}
+
 function l7p_form_confirm_action()
 {
     return sprintf("https://%s/%s/en/c", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+}
+
+function l7p_get_activation_token()
+{
+    global $wp_query;
+
+    if (!isset($wp_query->query_vars['activation_token'])) {
+        return false;
+    }
+
+    return $wp_query->query_vars['activation_token'];
 }

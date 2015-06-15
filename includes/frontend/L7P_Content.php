@@ -19,17 +19,15 @@ class L7P_Content
 
     public static function parse_content($content)
     {
-        if (is_single() || is_page() || is_search()) {
 // parse for extra syntax
 // strip PHP tags to avoid injcections
-            $content = preg_replace("#<\?.*?(\?>|$)#s", "", $content);
-            $content = L7P_Content::apply_callbacks($content);
+        $content = preg_replace("#<\?.*?(\?>|$)#s", "", $content);
+        $content = L7P_Content::apply_callbacks($content);
 
 // execute PHP functions
-            ob_start();
-            $content = eval("?> " . $content);
-            $content = ob_get_clean();
-        }
+        ob_start();
+        $content = eval("?> " . $content);
+        $content = ob_get_clean();
 
         return $content;
     }

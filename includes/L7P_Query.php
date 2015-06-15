@@ -8,7 +8,7 @@
 class L7P_Query
 {
 
-    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free', 'os', 'token');
+    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free', 'os', 'confirmation_token', 'activation_token');
 
     public function __construct()
     {
@@ -242,18 +242,40 @@ class L7P_Query
             
         } else if ($page_name == 'confirmation') {
             
-            if (isset($query->query_vars['token'])) {
+            if (isset($query->query_vars['confirmation_token'])) {
                 // login page
                 $page_name = "login";
                 $post_type = 'page';
                 
-                $response = l7p_confirm_account($query->query_vars['token']);
+                $response = l7p_confirm_account($query->query_vars['confirmation_token']);
                 
                 if ($response['success']) {
                     l7p_set_flash_message($response['info']);
                 } else {
                     l7p_set_flash_message(__('Invalid confirmation token.'));
                 }
+            } else {
+                return $this->error_404();
+            }
+            
+        } else if ($page_name == 'activation') {
+            
+            if (isset($query->query_vars['activation_token']) && $query->query_vars['activation_token']) {
+                
+                if (isset($_GET['message'])) {
+                    l7p_set_activation_message($_GET['message']);
+                    
+                    $url = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
+                    $parsed = parse_url($url);
+                    
+                    return l7p_redirect(sprintf('http://%s%s', $parsed['host'], $parsed['path']));
+                }
+// login page
+                $page_name = "activation";
+                $post_type = 'page';
+                
+            } else {
+                return $this->error_404();
             }
             
         } else {
@@ -361,13 +383,17 @@ class L7P_Query
         }
         
         // account confirmation
-        add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&token=$matches[1]', 'top');
+        add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&confirmation_token=$matches[1]', 'top');
+        
+        // account activation 
+        $page = get_post(l7p_get_option('activation_page_id'));
+        add_rewrite_rule(sprintf("%s/?([a-zA-Z0-9]{6,})?$", $page->post_name), 'index.php?name=activation&activation_token=$matches[1]', 'top');
         
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {
             add_rewrite_endpoint(strtolower($currency), EP_PAGES);
         }
-
+        
         // TODO: to be removed
         flush_rewrite_rules();
     }

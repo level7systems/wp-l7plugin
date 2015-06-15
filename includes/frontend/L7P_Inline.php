@@ -467,6 +467,11 @@ function l7p_inline_form_security_token()
     return 'L7P_Form::hidden_input(array(\'name\' => \'extini\', \'value\' => l7p_get_session(\'extini\')))';
 }
 
+function l7p_inline_form_activation_token()
+{
+    return 'L7P_Form::hidden_input(array(\'name\' => \'activation_token\', \'value\' => l7p_get_activation_token()))';
+}
+
 function l7p_inline_form_login_action()
 {
     return 'l7p_api_url()';
@@ -477,9 +482,19 @@ function l7p_inline_form_register_action()
     return 'l7p_api_url()';
 }
 
-function l7p_inline_form_activate_action()
+function l7p_inline_form_activation_action()
 {
     return 'l7p_api_url()';
+}
+
+function l7p_inline_activation_url()
+{
+    return 'l7p_activation_url()';
+}
+
+function l7p_inline_form_activation_url()
+{
+    return 'L7P_Form::hidden_input(array(\'name\' => \'activation_url\', \'value\' => l7p_activation_url()))';
 }
 
 function l7p_inline_flash_message()
