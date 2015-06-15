@@ -28,6 +28,7 @@ class L7P_Form
         $placeholder = isset($args['placeholder']) ? esc_attr($args['placeholder']) : '';
         $pre = isset($args['pre']) ? esc_attr($args['pre']) : false;
         $post = isset($args['post']) ? esc_attr($args['post']) : false;
+        $required = isset($args['required']) && $args['required'] ? ' required' : '';
         $help = isset($args['help']) ? esc_attr($args['help']) : false;
         $style = isset($args['style']) ? "style='".$args['style']."'" : '';
 
@@ -41,7 +42,7 @@ class L7P_Form
             echo $pre;
         }
 
-        echo "<input type='$type' id='$id' name='$name' value='$value' placeholder='$placeholder' $style />";
+        echo "<input type='$type' id='$id' name='$name' value='$value' placeholder='$placeholder' $required $style />";
 
         // post field
         if ($post) {
