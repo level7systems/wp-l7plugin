@@ -61,6 +61,7 @@ class L7P_Install
         wp_delete_post(l7p_get_option('hardware_page_id'));
         wp_delete_post(l7p_get_option('support_page_id'));
         wp_delete_post(l7p_get_option('login_page_id'));
+        wp_delete_post(l7p_get_option('activation_page_id'));
         wp_delete_post(l7p_get_option('register_page_id'));
         
         // delete options
@@ -121,6 +122,12 @@ class L7P_Install
                 'slug'      => 'login',
                 'title'     => 'Login',
                 'content'   => $pages_contents['login'],
+                'post_type' => 'page',
+            ),
+            'activation' => array(
+                'slug'      => 'activation',
+                'title'     => 'Activation',
+                'content'   => $pages_contents['activation'],
                 'post_type' => 'page',
             ),
             'register' => array(
@@ -1056,111 +1063,26 @@ CONTENT
             ,'login'                => <<<CONTENT
 <div id="l7p-login">
 
-    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
-
-    <form class="l7p-login-form" method="post" action="[FORM_LOGIN_ACTION]" id="l7p-login-form">
-
-        [FORM_SECURITY_TOKEN] 
-        
-        <div class="form-row">
-            <label for="username">E-mail</label>
-            <input type="text" placeholder="E-mail address" value="" name="username" id="username" required>
-        </div>
-        
-        <div class="form-row">
-            <label for="password">Password</label>
-            <input type="password" placeholder="Password" value="" name="password" id="password" required>
-        </div>
-        
-        <label for="remember">
-            <input type="checkbox" name="remember" id="remember">
-            Remember Me
-        </label>
-        <button id="l7p-login-button">Login</button>
-
-    </form>
+    [block login_form]
+            
 </div>
+            
+CONTENT
 
-<div id="l7p-activate" style="display: none">
-    <p id="l7p-activate-form-global-errors">[FLASH_MESSAGE]</p>
-    <p id="l7p-activate-form-global-info"></p>
+            ,'activation'                => <<<CONTENT
+<div id="l7p-activation">
 
-    <form class="l7p-activate-form" method="post" action="[FORM_ACTIVATE_ACTION]" id="l7p-activate-form" >
+    [block activation_form]
 
-        [FORM_SECURITY_TOKEN]
-
-        <input type="hidden" value="" id="token" name="token" />
-        <input type="hidden" value="TBC" id="company" name="company" />
-        <input type="hidden" value="TBC" id="address" name="address" />
-        <input type="hidden" value="TBC" id="postcode" name="postcode" />
-        <input type="hidden" value="TBC" id="city" name="city" />
-        <input type="hidden" value="[COUNTRY_CODE]" id="country" name="country" />
-        <input type="hidden" value="[STATE]" id="state" name="state" />
-
-        <div class="form-row">
-            <input type="checkbox" name="tc" value="1" id="tc">
-            <label for="tc">
-                I have read and agree to the <a target="_blank" href="/en/terms-and-conditions">Terms and Conditions</a>
-            </label>
-
-            <button type="submit" id="l7p-activate-button">Activate an account</button>
-        </div>
-    </form>
 </div>
-            	
+            
 CONTENT
             
             ,'register'                => <<<CONTENT
 <div>
             
-    <p id="l7p-register-form-global-errors">[FLASH_MESSAGE]</p>
+    [block register_form]
             
-    <form class="l7p-register-form" method="post" action="[FORM_REGISTER_ACTION]" id="l7p-register-form">
-
-        [FORM_SECURITY_TOKEN]
-
-        <div class="form-row">
-            <label for="firstname">First Name</label>
-            <input type="text" placeholder="First Name" value="" name="firstname" id="firstname">
-        </div>
-        <div class="form-row">
-            <label for="lastname">Last Name</label>
-            <input type="text" placeholder="Last Name" value="" name="lastname" id="lastname">
-        </div>
-        <div class="form-row">
-            <label for="password">Password</label>
-            <input type="password" placeholder="Password" value="" name="password" id="password">
-        </div>
-        <div class="form-row">
-            <label for="password2">Confirm Password</label>
-            <input type="password" placeholder="Confirm Password" value="" name="password2" id="password2">
-        </div>
-        <div class="form-row">
-            <label for="email">E-mail</label>
-            <input type="text" placeholder="E-mail" value="" name="email" id="email">
-        </div>
-        <div class="form-row">
-            <label for="package_type">Choose prefered Price Plan (you can change it later if needed).</label>
-            <select name="package_type" id="package_type">
-                [foreach package_type_options]
-                    <option value="[PACKAGE_TYPE_VALUE]">[PACKAGE_TYPE_LABEL]</option>
-                [/foreach]
-            </select>
-            <select style="display: none;" name="package_route_id" id="package_route_id">
-                [foreach package_route_options]
-                    <option value="[PACKAGE_ROUTE_VALUE]">[PACKAGE_ROUTE_LABEL]</option>
-                [/foreach]
-            </select>
-        </div>
-        <div class="form-row">
-            <input type="checkbox" name="tc" value="1" id="tc">
-            <label for="tc">
-                I have read and agree to the <a target="_blank" href="/en/terms-and-conditions">Terms and Conditions</a>
-            </label>
-
-            <button type="submit" id="l7p-register-button">Create an account</button>
-        </div>
-    </form>
 </div>
             	
 CONTENT
