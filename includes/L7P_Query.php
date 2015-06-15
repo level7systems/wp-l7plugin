@@ -386,8 +386,9 @@ class L7P_Query
         add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&confirmation_token=$matches[1]', 'top');
         
         // account activation 
-        $page = get_post(l7p_get_option('activation_page_id'));
-        add_rewrite_rule(sprintf("%s/?([a-zA-Z0-9]{6,})?$", $page->post_name), 'index.php?name=activation&activation_token=$matches[1]', 'top');
+        if ($page = get_post(l7p_get_option('activation_page_id'))) {
+            add_rewrite_rule(sprintf("%s/?([a-zA-Z0-9]{6,})?$", $page->post_name), 'index.php?name=activation&activation_token=$matches[1]', 'top');
+        }
         
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {
