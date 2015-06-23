@@ -1,7 +1,7 @@
 (function ($, window, document) {
 
     function clearErrors(selector) {
-        $(selector + '-global-errors').html("");
+        $(selector + '-global-errors').html("").hide();
         $(selector + ' [class*="error-"]').remove();
     }
 
@@ -31,7 +31,7 @@
                         if (res.errors.password)
                             $('form#l7p-login-form #password').after('<p class="small error-password">' + res.errors.password + '</p>')
                         if (res.errors.email)
-                            $('#l7p-login-form-global-errors').html(res.errors.email);
+                            $('#l7p-login-form-global-errors').html(res.errors.email).show();
 
                         return false;
                     }
