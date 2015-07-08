@@ -75,7 +75,7 @@ function l7p_get_download_url($os)
 {
     $downloads = l7p_get_download();
 
-    if ($os == 'osx') {
+    if ($os == 'mac-osx') {
         return $downloads[$os]['x64'];
     }
 
@@ -279,7 +279,10 @@ function l7p_get_countries($locale = null)
         return array();
     }
 
-    return $countries[$locale];
+    $countries = $countries[$locale];
+    asort($countries);
+    
+    return $countries;
 }
 
 function l7p_get_countries_urlized()
@@ -481,6 +484,18 @@ function l7p_get_pricelist_country($country_code)
     $routes = l7p_get_pricelist_routes();
 
     return isset($routes[$currency][$country_code]) ? $routes[$currency][$country_code] : array();
+}
+
+function l7p_get_pricelist_min_charge()
+{
+    $pricelist = l7p_get_pricelist();
+    $currency = l7p_get_currency();
+
+    if (isset($pricelist['min_charges'][$currency])) {
+        return $pricelist['min_charges'][$currency];
+    }
+
+    return 0;
 }
 
 function l7p_get_pricelist_routes()
@@ -801,6 +816,8 @@ function l7p_get_level7_domain()
 
 function l7p_api_url()
 {
+    // TODO
+    //return 'https://l7sandbox.net/voipstudio.l7sandbox.net/api';
     return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 

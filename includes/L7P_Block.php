@@ -90,7 +90,7 @@ function l7p_block_register_form()
     
     <p id="l7p-activate-form-global-info"></p>
     
-    <p id="l7p-login-form-global-errors">[FLASH_MESSAGE]</p>
+    <p id="l7p-register-form-global-errors">[FLASH_MESSAGE]</p>
 
     <form id="l7p-register-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p-register-form">
         
@@ -98,23 +98,23 @@ function l7p_block_register_form()
         
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'firstname', 'label' => __('First Name', 'level7platform'))) ?>
-            <?php echo L7P_Form::text_input(array('name' => 'firstname', 'placeholder' => __('First Name', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'firstname', 'placeholder' => __('First Name', 'level7platform'), 'required' => true)) ?>
         </div>
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'lastname', 'label' => __('Last Name', 'level7platform'))) ?>
-            <?php echo L7P_Form::text_input(array('name' => 'lastname', 'placeholder' => __('Last Name', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'lastname', 'placeholder' => __('Last Name', 'level7platform'), 'required' => true)) ?>
         </div>
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'password', 'label' => __('Password', 'level7platform'))) ?>
-            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => __('Password', 'level7platform'))) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => __('Password', 'level7platform'), 'required' => true)) ?>
         </div>
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'password2', 'label' => __('Confirm Password', 'level7platform'))) ?>
-            <?php echo L7P_Form::password_input(array('name' => 'password2', 'placeholder' => __('Confirm Password', 'level7platform'))) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password2', 'placeholder' => __('Confirm Password', 'level7platform'), 'required' => true)) ?>
         </div>
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'email', 'label' => __('E-mail', 'level7platform'))) ?>
-            <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => __('E-mail', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => __('E-mail', 'level7platform'), 'required' => true)) ?>
         </div>
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'package_type', 'label' => __('Choose prefered Price Plan (you can change it later if needed).', 'level7platform'))) ?>
@@ -132,6 +132,72 @@ function l7p_block_register_form()
             </label>
 
             <button id="l7p-register-button"><?php echo __('Create an account', 'level7platform') ?></button>
+        </div>
+    </form>
+
+    <?php
+    $content = ob_get_clean();
+
+    return L7P_Content::parse_content($content);
+}
+
+function l7p_block_register_agent_form()
+{
+    ob_start();
+
+    $countries = l7p_get_countries();
+
+    ?>
+    
+    <p id="l7p-register-agent-form-global-errors">[FLASH_MESSAGE]</p>
+
+    <form id="l7p-register-agent-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p-register-agent-form">
+        
+        [FORM_SECURITY_TOKEN]
+        
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'firstname', 'label' => __('First Name', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'firstname', 'placeholder' => __('First Name', 'level7platform'), 'required' => true)) ?>
+        </div>
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'lastname', 'label' => __('Last Name', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'lastname', 'placeholder' => __('Last Name', 'level7platform'), 'required' => true)) ?>
+        </div>
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'email', 'label' => __('E-mail', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => __('E-mail', 'level7platform'), 'required' => true)) ?>
+        </div>
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'email2', 'label' => __('Confirm E-mail', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'email2', 'placeholder' => __('Confirm E-mail', 'level7platform'), 'required' => true)) ?>
+        </div>
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'password', 'label' => __('Password', 'level7platform'))) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => __('Password', 'level7platform'), 'required' => true)) ?>
+        </div>
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'password2', 'label' => __('Confirm Password', 'level7platform'), 'required' => true)) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password2', 'placeholder' => __('Confirm Password', 'level7platform'), 'required' => true)) ?>
+        </div>
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'address', 'label' => __('Address', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'address', 'placeholder' => __('Address', 'level7platform'), 'required' => true)) ?>
+        </div>
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'country', 'label' => __('Country', 'level7platform'))) ?>
+            <?php echo L7P_Form::select(array('name' => 'country', 'choices' => $countries)) ?>
+        </div>
+        <div class="form-row">
+
+            <label for="tc">
+                <input id="tc" type="checkbox" value="1" name="tc">
+                <?php echo strtr(__('I have read and agree to the [a]Terms and Conditions[/a]', 'level7platform'), array(
+                    '[a]' => '<a href="' . l7p_url_for('@terms') . '" target="_blank">',
+                    '[/a]' => '</a>'
+                ));  ?>
+            </label>
+
+            <button id="l7p-register-agent-button"><?php echo __('Create an account', 'level7platform') ?></button>
         </div>
     </form>
 

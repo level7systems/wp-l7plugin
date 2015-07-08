@@ -358,7 +358,7 @@ class L7P_Query
         foreach ($cultures as $culture) {
 
             // downloads
-            add_rewrite_rule("download-for-(windows|osx|linux)/?$", 'index.php?name=download&os=$matches[1]', 'top');
+            add_rewrite_rule("download-for-(windows|mac-osx|linux)/?$", 'index.php?name=download&os=$matches[1]', 'top');
             // rates
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
             // virtual numbers

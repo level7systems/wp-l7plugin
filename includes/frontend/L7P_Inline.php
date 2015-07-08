@@ -114,7 +114,7 @@ function l7p_inline_term_min_price()
 // displays minimim per minute termination charge
 function l7p_inline_term_min_charge()
 {
-    return 'isset($min_charge) ? l7p_currency_symbol($min_charge,1,true) : \'<!-- TERM_MIN_CHARGE not defined -->\'';
+    return 'isset($min_charge) ? l7p_currency_symbol($min_charge,1,true) : l7p_currency_symbol(l7p_get_pricelist_min_charge(),1,true)';
 }
 
 // displays termination route first name (if different from previous one)
@@ -454,7 +454,7 @@ function l7p_inline_download_for_windows_url()
 
 function l7p_inline_download_for_mac_url()
 {
-    return 'l7p_url_for(\'download\', array(\'os\' => \'osx\'))';
+    return 'l7p_url_for(\'download\', array(\'os\' => \'mac-osx\'))';
 }
 
 function l7p_inline_download_for_linux_url()

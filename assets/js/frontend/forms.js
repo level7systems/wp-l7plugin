@@ -139,6 +139,65 @@
                 }
             });
         });
+        
+        // REGISTER AGENT
+        $(document).on('submit', 'form#l7p-register-agent-form', function (e) {
+
+            clearErrors('#l7p-register-agent-form');
+
+            var $form = $(this),
+                    t = '';
+            if ($('#tc').prop('checked'))
+                t = true;
+
+            var confirm_pass = $('form#l7p-register-agent-form #password2').val() || $('form#l7p-register-agent-form #password').val();
+            var package_type = $('form#l7p-register-agent-form #package_type').val() || "P";
+
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: {
+                    method: 'registeragent',
+                    first_name: $('form#l7p-register-agent-form #firstname').val(),
+                    last_name: $('form#l7p-register-agent-form #lastname').val(),
+                    email: $('form#l7p-register-agent-form #email').val(),
+                    email2: $('form#l7p-register-agent-form #email2').val(),
+                    password: $('form#l7p-register-agent-form #password').val(),
+                    password2: confirm_pass,
+                    address: $('form#l7p-register-agent-form #address').val(),
+                    country: $('form#l7p-register-agent-form #country').val(),
+                    tc: t
+                },
+                dataType: 'jsonp',
+                success: function (res) {
+
+                    if (res.status === 403) {
+
+                        if (res.errors.first_name)
+                            $('form#l7p-register-agent-form #firstname').after('<p class="small error-firstname">' + res.errors.first_name + '</p>');
+                        if (res.errors.last_name)
+                            $('form#l7p-register-agent-form #lastname').after('<p class="small error-lastname">' + res.errors.last_name + '</p>');
+                        if (res.errors.email)
+                            $('form#l7p-register-agent-form #email').after('<p class="small error-email">' + res.errors.email + '</p>');
+                        if (res.errors.email2)
+                            $('form#l7p-register-agent-form #email2').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
+                        if (res.errors.password)
+                            $('form#l7p-register-agent-form #password').after('<p class="small error-password">' + res.errors.password + '</p>');
+                        if (res.errors.password2)
+                            $('form#l7p-register-agent-form #password2').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
+                        if (res.errors.tc)
+                            $('form#l7p-register-agent-form #tc').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+
+                        return false;
+                    } else {
+
+                        $('#l7p-register-agent-form').html('<p class="big center text-center">Thank You for registering.</p>'
+                                + '<p class="big center text-center text-grey">Your account has been created and you can now <a href="/en/login">Login</a>.</p>');
+                    }
+                }
+            });
+        });
 
         // ACTIVATE
         $(document).on('submit', 'form#l7p-activate-form', function (e) {
