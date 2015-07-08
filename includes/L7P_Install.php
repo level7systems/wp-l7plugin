@@ -63,6 +63,7 @@ class L7P_Install
         wp_delete_post(l7p_get_option('login_page_id'));
         wp_delete_post(l7p_get_option('activation_page_id'));
         wp_delete_post(l7p_get_option('register_page_id'));
+        wp_delete_post(l7p_get_option('affiliate_page_id'));
         
         // delete options
         $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'l7p_%';");
@@ -134,6 +135,12 @@ class L7P_Install
                 'slug'      => 'register',
                 'title'     => 'Registration',
                 'content'   => $pages_contents['register'],
+                'post_type' => 'page',
+            ),
+            'affiliate' => array(
+                'slug'      => 'affiliate',
+                'title'     => 'Become Our Agent',
+                'content'   => $pages_contents['affiliate'],
                 'post_type' => 'page',
             ),
             // templates for dynamic pages
@@ -1082,6 +1089,15 @@ CONTENT
 <div>
             
     [block register_form]
+            
+</div>
+
+CONTENT
+	
+            ,'affiliate'                => <<<CONTENT
+<div>
+            
+    [block register_agent_form]
             
 </div>
             	
