@@ -151,7 +151,6 @@
                 t = true;
 
             var confirm_pass = $('form#l7p-register-agent-form #password2').val() || $('form#l7p-register-agent-form #password').val();
-            var package_type = $('form#l7p-register-agent-form #package_type').val() || "P";
 
             e.preventDefault();
             $.ajax({
@@ -186,6 +185,10 @@
                             $('form#l7p-register-agent-form #password').after('<p class="small error-password">' + res.errors.password + '</p>');
                         if (res.errors.password2)
                             $('form#l7p-register-agent-form #password2').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
+                        if (res.errors.address)
+                            $('form#l7p-register-agent-form #address').after('<p class="small error-address">' + res.errors.address + '</p>');
+                        if (res.errors.country)
+                            $('form#l7p-register-agent-form #country').after('<p class="small error-country">' + res.errors.country + '</p>');
                         if (res.errors.tc)
                             $('form#l7p-register-agent-form #tc').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
 
@@ -199,6 +202,37 @@
             });
         });
 
+        // PASSWORD RECOVERY
+        $(document).on('submit', 'form#l7p-password-recover-form', function (e) {
+
+            clearErrors('#l7p-password-recover-form');
+
+            var $form = $(this);
+
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                dataType: 'jsonp',
+                data: {
+                    method: 'recover',
+                    email: $('form#l7p-password-recover-form #email').val(),
+                },
+                success: function (res) {
+
+                    if (res.status === 403) {
+
+                        if (res.errors.email)
+                            $('form#l7p-password-recover-form #email').after('<p class="small error-email">' + res.errors.email + '</p>');
+
+                        return false;
+                    }
+
+                    $('#l7p-password-recover-form').html('<p class="big center text-center">Your password has been changed. An email has been sent to you with your new login details.</p>');
+                }
+            });
+        });
+        
         // ACTIVATE
         $(document).on('submit', 'form#l7p-activate-form', function (e) {
 

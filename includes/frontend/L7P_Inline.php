@@ -482,6 +482,11 @@ function l7p_inline_form_register_action()
     return 'l7p_api_url()';
 }
 
+function l7p_inline_form_reset_action()
+{
+    return 'l7p_api_url()';
+}
+
 function l7p_inline_form_activation_action()
 {
     return 'l7p_api_url()';

@@ -207,6 +207,34 @@ function l7p_block_register_agent_form()
     return L7P_Content::parse_content($content);
 }
 
+function l7p_block_password_recover_form()
+{
+    ob_start();
+    
+    ?>
+    
+    <p id="l7p-password-recover-form-global-info">[ACTIVATION_MESSAGE]</p>
+    
+    <p id="l7p-password-recover-form-global-errors">[FLASH_MESSAGE]</p>
+
+    <form id="l7p-password-recover-form" method="post" action="[FORM_RESET_ACTION]" class="l7p-password-recover-form">
+
+        [FORM_SECURITY_TOKEN]
+        
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'email', 'label' => __('E-mail', 'level7platform'))) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'email', 'placeholder' => __('E-mail', 'level7platform'), 'required' => true)) ?>
+
+            <button id="l7p-password-recover-button"><?php echo __('Reset password', 'level7platform') ?></button>
+        </div>
+    </form>
+
+    <?php
+    $content = ob_get_clean();
+
+    return L7P_Content::parse_content($content);
+}
+
 function l7p_block_activate_form()
 {
     ob_start();
