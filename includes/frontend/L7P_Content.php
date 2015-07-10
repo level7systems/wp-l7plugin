@@ -29,7 +29,7 @@ class L7P_Content
         $content = eval("?> " . $content);
         $content = ob_get_clean();
 
-        return $content;
+        return trim($content);
     }
 
     private static function apply_callbacks($content)
@@ -349,6 +349,12 @@ class L7P_Content
     {
         switch ($m[1]) {
 // forms
+            case 'countries':
+                return '<?php '
+                    . '$countries = l7p_get_countries();'
+                    . 'foreach ($countries as $country_code => $country_name): '
+                    . ' ?>';
+                
             case 'package_route_options':
                 return '<?php '
                     . '$register_settings = l7p_get_settings(\'register\');'

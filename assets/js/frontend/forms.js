@@ -4,9 +4,13 @@
         $(selector + '-global-errors').html("").hide();
         $(selector + ' [class*="error-"]').remove();
     }
-
+    
     $(function () {
 
+        if (!$('#l7p-login-form-global-errors').is(':empty')) {
+            $('#l7p-login-form-global-errors').show();
+        }
+    
         // LOGIN
         $(document).on('submit', 'form#l7p-login-form', function (e) {
 
@@ -17,6 +21,7 @@
             e.preventDefault();
             $.ajax({
                 url: $form.attr('action'),
+                type: 'POST',
                 data: {
                     method: 'login',
                     username: $('form#l7p-login-form #username').val(),

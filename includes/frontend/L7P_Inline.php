@@ -29,13 +29,13 @@ function l7p_inline_get_geo()
 // get country name for the current user.
 function l7p_inline_country_name()
 {
-    return 'l7p_country_name(l7p_get_geo())';
+    return 'isset($country_name) ? $country_name : l7p_country_name(l7p_get_geo())';
 }
 
 // get country name for the current user.
 function l7p_inline_country_code()
 {
-    return 'l7p_get_geo()';
+    return 'isset($country_code) ? $country_code : l7p_get_geo()';
 }
 
 // get two letter state code for the current user.
@@ -482,7 +482,7 @@ function l7p_inline_form_register_action()
     return 'l7p_api_url()';
 }
 
-function l7p_inline_form_reset_action()
+function l7p_inline_form_password_recover_action()
 {
     return 'l7p_api_url()';
 }

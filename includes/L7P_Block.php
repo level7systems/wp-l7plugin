@@ -217,7 +217,7 @@ function l7p_block_password_recover_form()
     
     <p id="l7p-password-recover-form-global-errors">[FLASH_MESSAGE]</p>
 
-    <form id="l7p-password-recover-form" method="post" action="[FORM_RESET_ACTION]" class="l7p-password-recover-form">
+    <form id="l7p-password-recover-form" method="post" action="[FORM_PASSWORD_RECOVER_ACTION]" class="l7p-password-recover-form">
 
         [FORM_SECURITY_TOKEN]
         

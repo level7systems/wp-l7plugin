@@ -236,27 +236,26 @@ class L7P_Query
                 
                 return l7p_redirect($url);
                 
-            } else {
-                return $this->error_404();
             }
+                
+            return $this->error_404();
             
         } else if ($page_name == 'confirmation') {
             
             if (isset($query->query_vars['confirmation_token'])) {
-                // login page
-                $page_name = "login";
-                $post_type = 'page';
                 
                 $response = l7p_confirm_account($query->query_vars['confirmation_token']);
-                
                 if ($response['success']) {
                     l7p_set_flash_message($response['info']);
                 } else {
                     l7p_set_flash_message(__('Invalid confirmation token.'));
                 }
-            } else {
-                return $this->error_404();
+                
+                return $this->redirect_to_login();
+                
             }
+                
+            return $this->error_404();
             
         } else if ($page_name == 'activation') {
             
