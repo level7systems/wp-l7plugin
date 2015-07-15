@@ -4,13 +4,13 @@
         $(selector + '-global-errors').html("").hide();
         $(selector + ' [class*="error-"]').remove();
     }
-    
+
     $(function () {
 
         if (!$('#l7p-login-form-global-errors').is(':empty')) {
             $('#l7p-login-form-global-errors').show();
         }
-    
+
         // LOGIN
         $(document).on('submit', 'form#l7p-login-form', function (e) {
 
@@ -36,19 +36,19 @@
                         if (res.errors.password)
                             $('form#l7p-login-form #password').after('<p class="small error-password">' + res.errors.password + '</p>')
                         if (res.errors.email)
-                            $('#l7p-login-form-global-errors').html(res.errors.email).show();
+                            $('#l7p-login-form-global-errors').html(res.errors.email + '<br><a href="/en/recover-password">Have you forgotten your password?</a>').show();
 
                         return false;
                     }
 
                     // TODO: to be continued
-                    if (res.activation) {
+                    if (res.redirect) {
 
                         if ($('#activation_url')) {
 
                             var redirection = $('#activation_url').val() + '/' + res.activation_token;
-                            if (res.activation) {
-                                redirection += '?message=' + res.activation;
+                            if (res.redirect) {
+                                redirection += '?message=' + res.info;
                             }
 
                             // redirect user to their application url
@@ -144,7 +144,7 @@
                 }
             });
         });
-        
+
         // REGISTER AGENT
         $(document).on('submit', 'form#l7p-register-agent-form', function (e) {
 
@@ -155,7 +155,8 @@
             if ($('#tc').prop('checked'))
                 t = true;
 
-            var confirm_pass = $('form#l7p-register-agent-form #password2').val() || $('form#l7p-register-agent-form #password').val();
+            var confirm_pass = $('form#l7p-register-agent-form #password2').val() || $('form#l7p-register-agent-form #password').val(),
+                    email = $('form#l7p-register-agent-form #email').val();
 
             e.preventDefault();
             $.ajax({
@@ -165,7 +166,7 @@
                     method: 'registeragent',
                     first_name: $('form#l7p-register-agent-form #firstname').val(),
                     last_name: $('form#l7p-register-agent-form #lastname').val(),
-                    email: $('form#l7p-register-agent-form #email').val(),
+                    email: email,
                     email2: $('form#l7p-register-agent-form #email2').val(),
                     password: $('form#l7p-register-agent-form #password').val(),
                     password2: confirm_pass,
@@ -201,7 +202,7 @@
                     } else {
 
                         $('#l7p-register-agent-form').html('<p class="big center text-center">Thank You for registering.</p>'
-                                + '<p class="big center text-center text-grey">Your account has been created and you can now <a href="/en/login">Login</a>.</p>');
+                                + '<p class="big center text-center text-grey">For security purposes, we have sent a confirmation email to <strong>' + email + '</strong>. </p>');
                     }
                 }
             });
@@ -221,7 +222,7 @@
                 dataType: 'jsonp',
                 data: {
                     method: 'recover',
-                    email: $('form#l7p-password-recover-form #email').val(),
+                    email: $('form#l7p-password-recover-form #email').val()
                 },
                 success: function (res) {
 
@@ -237,7 +238,44 @@
                 }
             });
         });
-        
+
+        // NEW PASSWORD
+        $(document).on('submit', 'form#l7p-new-password-form', function (e) {
+
+            clearErrors('#l7p-new-password-form');
+
+            var $form = $(this);
+
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                dataType: 'jsonp',
+                data: {
+                    method: 'onetimelogin',
+                    password1: $('form#l7p-new-password-form #password1').val(),
+                    password2: $('form#l7p-new-password-form #password2').val()
+                },
+                success: function (res) {
+
+                    if (!res.success) {
+                        if (res.errors.password1) {
+                            $('form#l7p-new-password-form #password1').after('<p class="small error-username">' + res.errors.password1 + '</p>')
+                        }
+
+                        return false;
+                    }
+
+                    if (res.redirect) {
+                        // redirect user to their application url
+                        window.location.href = res.redirect;
+                    }
+
+                    return false;
+                }
+            });
+        });
+
         // ACTIVATE
         $(document).on('submit', 'form#l7p-activate-form', function (e) {
 
