@@ -258,9 +258,10 @@
                 },
                 success: function (res) {
 
-                    if (!res.success) {
+                    if (res.status === 403) {
+
                         if (res.errors.password1) {
-                            $('form#l7p-new-password-form #password1').after('<p class="small error-username">' + res.errors.password1 + '</p>')
+                            $('form#l7p-new-password-form #password1').after('<p class="small error-email">' + res.errors.password1 + '</p>');
                         }
 
                         return false;
