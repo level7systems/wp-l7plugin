@@ -785,6 +785,37 @@ function l7p_confirm_account($token)
     return json_decode($json, true);
 }
 
+function l7p_verify_reset_token($token)
+{
+    $url = strtr(':url/:token', array(
+        ':url' => l7p_form_verify_reset_token_action(),
+        ':token' => $token
+    ));
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_URL => $url,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_USERAGENT => 'Level7 WP plugin',
+        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+        CURLOPT_FOLLOWLOCATION => true
+    ));
+    $json = curl_exec($curl);
+
+    if (!$json) {
+        return array(
+            'success' => false,
+            'info' => curl_error($curl)
+        );
+    }
+
+    curl_close($curl);
+
+    return json_decode($json, true);
+}
+
 function l7p_set_flash_message($message)
 {
     return l7p_update_session('flash_message', $message);
@@ -817,7 +848,7 @@ function l7p_get_level7_domain()
 function l7p_api_url()
 {
     // TODO
-    return 'https://l7dev.co.cc/voipstudio.dev/api';
+    //return 'https://l7dev.co.cc/voipstudio.dev/api';
     return 'https://l7sandbox.net/voipstudio.l7sandbox.net/api';
     return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
@@ -831,6 +862,11 @@ function l7p_activation_url()
 function l7p_form_confirm_action()
 {
     return sprintf("https://%s/%s/en/c", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+}
+
+function l7p_form_verify_reset_token_action()
+{
+    return sprintf("https://%s/%s/en/reset", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
 function l7p_get_activation_token()

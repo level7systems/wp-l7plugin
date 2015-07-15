@@ -8,7 +8,21 @@
 class L7P_Query
 {
 
-    public $query_vars = array('currency', 'city', 'country', 'state', 'group', 'model', 'chapter', 'buy', 'toll_free', 'os', 'confirmation_token', 'activation_token');
+    public $query_vars = array(
+        'currency',
+        'city',
+        'country',
+        'state',
+        'group',
+        'model',
+        'chapter',
+        'buy',
+        'toll_free',
+        'os',
+        'confirmation_token',
+        'activation_token',
+        'reset_token',
+    );
 
     public function __construct()
     {
@@ -153,16 +167,16 @@ class L7P_Query
 
                 // buying phone number for city
                 if (isset($query->query_vars['buy'])) {
-                    
+
                     $country_code = l7p_get_country_code_from_query();
                     $city = l7p_get_city_name_from_query();
-                    
+
                     if (isset($query->query_vars['toll_free'])) {
                         $country_code .= '-Toll-Free';
                     }
-                    
-                    l7p_update_session('extini',  'DdiAddWindow("' . $country_code . '","' . ucwords($city) . '");');
-                    
+
+                    l7p_update_session('extini', 'DdiAddWindow("' . $country_code . '","' . ucwords($city) . '");');
+
                     return $this->redirect_to_login();
                 }
             }
@@ -229,54 +243,62 @@ class L7P_Query
                 return $this->error_404();
             }
         } else if ($page_name == 'download') {
-            
+
             if (isset($query->query_vars['os'])) {
                 // download os
                 $url = l7p_get_download_url($query->query_vars['os']);
-                
+
                 return l7p_redirect($url);
-                
             }
-                
+
             return $this->error_404();
-            
         } else if ($page_name == 'confirmation') {
-            
+
             if (isset($query->query_vars['confirmation_token'])) {
-                
+
                 $response = l7p_confirm_account($query->query_vars['confirmation_token']);
                 if ($response['success']) {
                     l7p_set_flash_message($response['info']);
                 } else {
                     l7p_set_flash_message(__('Invalid confirmation token.'));
                 }
-                
+
                 return $this->redirect_to_login();
-                
             }
-                
+
             return $this->error_404();
-            
         } else if ($page_name == 'activation') {
-            
+
             if (isset($query->query_vars['activation_token']) && $query->query_vars['activation_token']) {
-                
+
                 if (isset($_GET['message'])) {
                     l7p_set_activation_message($_GET['message']);
-                    
+
                     $url = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
                     $parsed = parse_url($url);
-                    
+
                     return l7p_redirect(sprintf('http://%s%s', $parsed['host'], $parsed['path']));
                 }
-// login page
+                // login page
                 $page_name = "activation";
                 $post_type = 'page';
-                
             } else {
                 return $this->error_404();
             }
-            
+        } else if ($page_name == 'reset') {
+
+            if (isset($query->query_vars['reset_token'])) {
+
+                $response = l7p_verify_reset_($query->query_vars['reset_token']);
+                if ($response['success']) {
+                    return $this->redirect_to_one_time_login();
+                }
+                
+                l7p_set_flash_message(__('Invalid token.'));
+                return $this->redirect_to_login();
+            }
+            return $this->error_404();
+
         } else {
             $page_name = null;
         }
@@ -367,7 +389,7 @@ class L7P_Query
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/(%s)/buy$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
             // buy virtual number /:permalink/:country/toll-free/:city/:currency/buy
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/toll-free/([0-9]{3,4})/(%s)/buy$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1&toll_free=1', 'top');
-            
+
             // if web_product has shop enabled
             if (l7p_get_web_product_settings('has_shop')) {
                 // hardware
@@ -380,20 +402,22 @@ class L7P_Query
             // manual
             add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         }
-        
+
         // account confirmation
         add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&confirmation_token=$matches[1]', 'top');
-        
+
         // account activation 
         if ($page = get_post(l7p_get_option('activation_page_id'))) {
             add_rewrite_rule(sprintf("%s/?([a-zA-Z0-9]{6,})?$", $page->post_name), 'index.php?name=activation&activation_token=$matches[1]', 'top');
         }
-        
+        // password reset
+        add_rewrite_rule("%reset/?([a-zA-Z0-9]{20,})?$", 'index.php?name=reset&reset_token=$matches[1]', 'top');
+
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {
             add_rewrite_endpoint(strtolower($currency), EP_PAGES);
         }
-        
+
         // TODO: to be removed
         flush_rewrite_rules();
     }

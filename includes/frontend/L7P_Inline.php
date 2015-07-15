@@ -474,7 +474,7 @@ function l7p_inline_form_activation_token()
 
 function l7p_inline_form_login_action()
 {
-    return 'l7p_api_url()';
+    return 'l7p_api_url();';
 }
 
 function l7p_inline_form_register_action()
