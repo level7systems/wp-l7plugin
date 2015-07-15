@@ -482,6 +482,11 @@ function l7p_inline_form_register_action()
     return 'l7p_api_url()';
 }
 
+function l7p_inline_form_new_password_action()
+{
+    return 'l7p_api_url()';
+}
+
 function l7p_inline_form_password_recover_action()
 {
     return 'l7p_api_url()';
