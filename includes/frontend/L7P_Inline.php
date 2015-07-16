@@ -467,6 +467,11 @@ function l7p_inline_form_security_token()
     return 'L7P_Form::hidden_input(array(\'name\' => \'extini\', \'value\' => l7p_get_session(\'extini\')))';
 }
 
+function l7p_inline_form_reset_token()
+{
+    return 'L7P_Form::hidden_input(array(\'name\' => \'reset_token\', \'value\' => l7p_get_session(\'reset_token\')))';
+}
+
 function l7p_inline_form_activation_token()
 {
     return 'L7P_Form::hidden_input(array(\'name\' => \'activation_token\', \'value\' => l7p_get_activation_token()))';

@@ -12,9 +12,10 @@
         }
 
         // LOGIN
-        $(document).on('submit', 'form#l7p-login-form', function (e) {
+        $(document).on('submit', 'form#l7p-login-form, form#l7p-modal-login-form', function (e) {
 
             clearErrors('#l7p-login-form');
+            clearErrors('#l7p-modal-login-form');
 
             var $form = $(this);
 
@@ -24,17 +25,17 @@
                 type: 'POST',
                 data: {
                     method: 'login',
-                    username: $('form#l7p-login-form #username').val(),
-                    password: $('form#l7p-login-form #password').val(),
+                    username: $form.find('#username').val(),
+                    password: $form.find('#password').val(),
                 },
                 dataType: 'jsonp',
                 success: function (res) {
                     if (!res.success)
                     {
                         if (res.errors.username)
-                            $('form#l7p-login-form #username').after('<p class="small error-username">' + res.errors.username + '</p>')
+                            $form.find('#username').after('<p class="small error-username">' + res.errors.username + '</p>')
                         if (res.errors.password)
-                            $('form#l7p-login-form #password').after('<p class="small error-password">' + res.errors.password + '</p>')
+                            $form.find('#password').after('<p class="small error-password">' + res.errors.password + '</p>')
                         if (res.errors.email)
                             $('#l7p-login-form-global-errors').html(res.errors.email + '<br><a href="/en/recover-password">Have you forgotten your password?</a>').show();
 
@@ -58,8 +59,8 @@
                     }
 
                     var redirection = res.info;
-                    if ($('form#l7p-login-form #extini').val()) {
-                        redirection += '?extini=' + $('form#l7p-login-form #extini').val();
+                    if ($form.find('#extini').val()) {
+                        redirection += '?extini=' + $form.find('#extini').val();
                     }
 
                     // redirect user to their application url
@@ -253,6 +254,7 @@
                 dataType: 'jsonp',
                 data: {
                     method: 'onetimelogin',
+                    reset_token: $('form#l7p-new-password-form #reset_token').val(),
                     password1: $('form#l7p-new-password-form #password1').val(),
                     password2: $('form#l7p-new-password-form #password2').val()
                 },
@@ -262,6 +264,9 @@
 
                         if (res.errors.password1) {
                             $('form#l7p-new-password-form #password1').after('<p class="small error-email">' + res.errors.password1 + '</p>');
+                        }
+                        if (res.errors.password2) {
+                            $('form#l7p-new-password-form #password2').after('<p class="small error-email">' + res.errors.password2 + '</p>');
                         }
 
                         return false;

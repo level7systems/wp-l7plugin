@@ -22,6 +22,7 @@ class L7P_Query
         'confirmation_token',
         'activation_token',
         'reset_token',
+        'extini'
     );
 
     public function __construct()
@@ -221,7 +222,6 @@ class L7P_Query
 
                     $phone = l7p_get_phone();
                     l7p_update_session('extini', 'PhonesGridWindow(); PhoneBuyWindowInit("' . $phone['pricelist_item_id'] . '");');
-
                     return $this->redirect_to_login();
                 }
 
@@ -289,16 +289,30 @@ class L7P_Query
 
             if (isset($query->query_vars['reset_token'])) {
 
-                $response = l7p_verify_reset_($query->query_vars['reset_token']);
+                $response = l7p_verify_reset_token($query->query_vars['reset_token']);
+
                 if ($response['success']) {
+                    l7p_update_session('reset_token', $response['reset_token']);
                     return $this->redirect_to_one_time_login();
                 }
-                
-                l7p_set_flash_message(__('Invalid token.'));
+
+                l7p_set_flash_message(__($response['info']));
                 return $this->redirect_to_login();
             }
             return $this->error_404();
+        } else if ($page_name == 'extini') {
 
+            if (isset($query->query_vars['extini'])) {
+
+                if ($query->query_vars['extini'] == 'newticket') {
+                    l7p_update_session('extini', "SupportSubmitWindow();");
+                } else if (preg_match('/ticket\-([0-9]+)/', $query->query_vars['extini'], $m)) {
+                    $ticket_id = $m[1];
+                    l7p_update_session('extini', "Ext.ux.model.MySupportStore.load({ callback: function(){ if (r = Ext.ux.model.MySupportStore.getById($ticket_id)){ SupportReplyWindow(r.data); }}});");
+                }
+                return $this->redirect_to_login();
+            }
+            return $this->error_404();
         } else {
             $page_name = null;
         }
@@ -361,9 +375,15 @@ class L7P_Query
         $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $page = get_post(l7p_get_option('login_page_id'));
 
-        // TODO: to be verified after reinstall
-        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), 'login'));
-        // return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+    }
+
+    public function redirect_to_one_time_login()
+    {
+        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $page = get_post(l7p_get_option('one_time_login_page_id'));
+
+        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     /**
@@ -411,7 +431,9 @@ class L7P_Query
             add_rewrite_rule(sprintf("%s/?([a-zA-Z0-9]{6,})?$", $page->post_name), 'index.php?name=activation&activation_token=$matches[1]', 'top');
         }
         // password reset
-        add_rewrite_rule("%reset/?([a-zA-Z0-9]{20,})?$", 'index.php?name=reset&reset_token=$matches[1]', 'top');
+        add_rewrite_rule("reset/?([a-zA-Z0-9]{20,})?$", 'index.php?name=reset&reset_token=$matches[1]', 'top');
+        // 
+        add_rewrite_rule("xi/?([-a-zA-Z0-9]{4,20})?$", 'index.php?name=extini&extini=$matches[1]', 'top');
 
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {
