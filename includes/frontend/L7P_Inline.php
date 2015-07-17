@@ -512,6 +512,17 @@ function l7p_inline_form_activation_url()
     return 'L7P_Form::hidden_input(array(\'name\' => \'activation_url\', \'value\' => l7p_activation_url()))';
 }
 
+function l7p_inline_success_flash_message()
+{
+    return 'l7p_get_success_flash_message()';
+}
+
+function l7p_inline_error_flash_message()
+{
+    return 'l7p_get_error_flash_message()';
+}
+
+// deprecated
 function l7p_inline_flash_message()
 {
     return 'l7p_get_flash_message()';

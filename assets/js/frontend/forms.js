@@ -10,12 +10,15 @@
         if (!$('#l7p-login-form-global-errors').is(':empty')) {
             $('#l7p-login-form-global-errors').show();
         }
-
+        
+        if (!$('#l7p-login-form-global-success').is(':empty')) {
+            $('#l7p-login-form-global-success').show();
+        }
+        
         // LOGIN
-        $(document).on('submit', 'form#l7p-login-form, form#l7p-modal-login-form', function (e) {
+        $(document).on('submit', 'form#l7p-login-form', function (e) {
 
             clearErrors('#l7p-login-form');
-            clearErrors('#l7p-modal-login-form');
 
             var $form = $(this);
 
@@ -30,19 +33,23 @@
                 },
                 dataType: 'jsonp',
                 success: function (res) {
-                    if (!res.success)
-                    {
+                    if (!res.success) {
+                        
                         if (res.errors.username)
                             $form.find('#username').after('<p class="small error-username">' + res.errors.username + '</p>')
                         if (res.errors.password)
                             $form.find('#password').after('<p class="small error-password">' + res.errors.password + '</p>')
-                        if (res.errors.email)
-                            $('#l7p-login-form-global-errors').html(res.errors.email + '<br><a href="/en/recover-password">Have you forgotten your password?</a>').show();
+                        if (res.errors.email) {
+                            if (res.errors.email.indexOf("not confirmed") != -1) {
+                                $('#l7p-login-form-global-errors').html(res.errors.email + '<br><a href="/en/resend-confirmation-email/' + $form.find('#username').val() + '">Resend confirmation email to ' + $form.find('#username').val() + '</a>').show();
+                            } else {
+                                $('#l7p-login-form-global-errors').html(res.errors.email + '<br><a href="/en/recover-password">Have you forgotten your password?</a>').show();
+                            }
+                        }
 
                         return false;
                     }
 
-                    // TODO: to be continued
                     if (res.redirect) {
 
                         if ($('#activation_url')) {

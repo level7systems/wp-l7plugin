@@ -761,28 +761,7 @@ function l7p_confirm_account($token)
         ':token' => $token
     ));
 
-    $curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_URL => $url,
-        CURLOPT_SSL_VERIFYHOST => false,
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_USERAGENT => 'Level7 WP plugin',
-        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
-        CURLOPT_FOLLOWLOCATION => true
-    ));
-    $json = curl_exec($curl);
-
-    if (!$json) {
-        return array(
-            'success' => false,
-            'info' => curl_error($curl)
-        );
-    }
-
-    curl_close($curl);
-
-    return json_decode($json, true);
+    return l7p_send_curl($url);
 }
 
 function l7p_verify_reset_token($token)
@@ -792,6 +771,21 @@ function l7p_verify_reset_token($token)
         ':token' => $token
     ));
 
+    return l7p_send_curl($url);
+}
+
+function l7p_ressend_confirmation_email($email)
+{
+    $url = strtr(':url/:email', array(
+        ':url' => l7p_form_resend_confirmation_email_action(),
+        ':email' => $email
+    ));
+    
+    return l7p_send_curl($url);
+}
+
+function l7p_send_curl($url)
+{
     $curl = curl_init();
     curl_setopt_array($curl, array(
         CURLOPT_RETURNTRANSFER => true,
@@ -816,11 +810,40 @@ function l7p_verify_reset_token($token)
     return json_decode($json, true);
 }
 
+function l7p_set_success_flash_message($message)
+{
+    return l7p_update_session('success_flash_message', $message);
+}
+
+function l7p_set_error_flash_message($message)
+{
+    return l7p_update_session('error_flash_message', $message);
+}
+
+function l7p_get_success_flash_message()
+{
+    $message = l7p_get_session('success_flash_message', '');
+    if ($message) {
+        l7p_update_session('success_flash_message', '');
+    }
+    return $message;
+}
+
+function l7p_get_error_flash_message()
+{
+    $message = l7p_get_session('error_flash_message', '');
+    if ($message) {
+        l7p_update_session('error_flash_message', '');
+    }
+    return $message;
+}
+
+// deprecated
 function l7p_set_flash_message($message)
 {
     return l7p_update_session('flash_message', $message);
 }
-
+// deprecated
 function l7p_get_flash_message()
 {
     $message = l7p_get_session('flash_message', '');
@@ -867,6 +890,11 @@ function l7p_form_confirm_action()
 function l7p_form_verify_reset_token_action()
 {
     return sprintf("https://%s/%s/en/reset", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+}
+
+function l7p_form_resend_confirmation_email_action()
+{
+    return sprintf("https://%s/%s/en/r", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
 function l7p_get_activation_token()
