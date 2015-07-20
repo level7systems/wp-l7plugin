@@ -64,6 +64,7 @@ class L7P_Install
         wp_delete_post(l7p_get_option('one_time_login_page_id'));
         wp_delete_post(l7p_get_option('recover_page_id'));
         wp_delete_post(l7p_get_option('activation_page_id'));
+        wp_delete_post(l7p_get_option('subscription_page_id'));
         wp_delete_post(l7p_get_option('register_page_id'));
         wp_delete_post(l7p_get_option('affiliate_page_id'));
         
@@ -137,6 +138,12 @@ class L7P_Install
                 'slug'      => 'activation',
                 'title'     => 'Activation',
                 'content'   => $pages_contents['activation'],
+                'post_type' => 'page',
+            ),
+            'subscription' => array(
+                'slug'      => 'subscription',
+                'title'     => 'Email subscription',
+                'content'   => $pages_contents['subscription'],
                 'post_type' => 'page',
             ),
             'register' => array(
@@ -1099,9 +1106,18 @@ CONTENT
     [block activation_form]
 
 </div>
-            
+
 CONTENT
             
+            ,'subscription'              => <<<CONTENT
+<div id="l7p-subscription">
+
+    [block subscription_form]
+
+</div>
+
+CONTENT
+
             ,'register'                => <<<CONTENT
 <div>
             
