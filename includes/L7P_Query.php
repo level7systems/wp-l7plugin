@@ -19,9 +19,7 @@ class L7P_Query
         'buy',
         'toll_free',
         'os',
-        'confirmation_token',
-        'activation_token',
-        'reset_token',
+        'token',
         'extini',
         'email'
     );
@@ -138,7 +136,7 @@ class L7P_Query
             }
         }
 
-        l7p_update_option('one_time_login_page_id', 2198);
+        l7p_update_option('subscription_page_id', 2210);
 
 //        l7p_pre($query->query_vars);
 
@@ -257,9 +255,9 @@ class L7P_Query
             return $this->error_404();
         } else if ($page_name == 'confirmation') {
 
-            if (isset($query->query_vars['confirmation_token'])) {
+            if (isset($query->query_vars['token'])) {
 
-                $response = l7p_confirm_account($query->query_vars['confirmation_token']);
+                $response = l7p_confirm_account($query->query_vars['token']);
                 if ($response['success']) {
                     l7p_set_success_flash_message($response['info']);
                 } else {
@@ -272,29 +270,25 @@ class L7P_Query
             return $this->error_404();
         } else if ($page_name == 'activation') {
 
-            if (isset($query->query_vars['activation_token']) && $query->query_vars['activation_token']) {
+            if (isset($query->query_vars['token'])) {
 
+                l7p_update_session('activation_token', $query->query_vars['token']);
                 if (isset($_GET['message'])) {
-                    l7p_set_activation_message($_GET['message']);
-
-                    $url = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
-                    $parsed = parse_url($url);
-
-                    return l7p_redirect(sprintf('http://%s%s', $parsed['host'], $parsed['path']));
+                    l7p_set_success_flash_message($_GET['message']);
                 }
-                // login page
-                $page_name = "activation";
-                $post_type = 'page';
+                
+                return $this->redirect_activation();
+                
             } else {
                 return $this->error_404();
             }
         } else if ($page_name == 'reset') {
 
-            if (isset($query->query_vars['reset_token'])) {
+            if (isset($query->query_vars['token'])) {
 
-                $response = l7p_verify_reset_token($query->query_vars['reset_token']);
+                $response = l7p_verify_reset_token($query->query_vars['token']);
                 if ($response['success']) {
-                    l7p_update_session('reset_token', $response['reset_token']);
+                    l7p_update_session('reset_token', $response['token']);
                     return $this->redirect_to_one_time_login();
                 }
 
@@ -308,12 +302,28 @@ class L7P_Query
 
                 $response = l7p_ressend_confirmation_email($query->query_vars['email']);
                 if ($response['success']) {
-                    l7p_set_success_flash_message(__($response['info']));
+                    l7p_update_session('subscription_token', $response['token']);
+                    return $this->redirect_to_one_time_login();
                 } else {
                     l7p_set_error_flash_message(__($response['info']));
                 }
 
                 return $this->redirect_to_login();
+            }
+            return $this->error_404();
+        } else if ($page_name == 'subscription') {
+
+            if (isset($query->query_vars['token'])) {
+
+                $response = l7p_verify_subscription_token($query->query_vars['token']);
+                
+                if ($response['success']) {
+                    l7p_update_session('subscription_token', $query->query_vars['token']);
+                    l7p_update_session('is_subscribed', $response['is_subscribed']);
+                    l7p_set_success_flash_message(__($response['info']));
+                    
+                    return $this->redirect_to_subscription();
+                }
             }
             return $this->error_404();
         } else if ($page_name == 'extini') {
@@ -401,6 +411,22 @@ class L7P_Query
 
         return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
+    
+    public function redirect_to_subscription()
+    {
+        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $page = get_post(l7p_get_option('subscription_page_id'));
+
+        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+    }
+    
+    public function redirect_activation()
+    {
+        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $page = get_post(l7p_get_option('activation_page_id'));
+
+        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+    }
 
     /**
      * Add endpoints for query vars
@@ -440,18 +466,18 @@ class L7P_Query
         }
 
         // account confirmation
-        add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&confirmation_token=$matches[1]', 'top');
+        add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&token=$matches[1]', 'top');
 
         // account activation 
-        if ($page = get_post(l7p_get_option('activation_page_id'))) {
-            add_rewrite_rule(sprintf("%s/?([a-zA-Z0-9]{6,})?$", $page->post_name), 'index.php?name=activation&activation_token=$matches[1]', 'top');
-        }
+        add_rewrite_rule("activate/([a-zA-Z0-9]{6,})$", 'index.php?name=activation&token=$matches[1]', 'top');
         // password reset
-        add_rewrite_rule("reset/([a-zA-Z0-9]{20,})$", 'index.php?name=reset&reset_token=$matches[1]', 'top');
+        add_rewrite_rule("reset/([a-zA-Z0-9]{20,})$", 'index.php?name=reset&token=$matches[1]', 'top');
         // resend confirmation email
         add_rewrite_rule("resend-confirmation-email/([-\._@a-zA-Z0-9]{4,})$", 'index.php?name=resend&email=$matches[1]', 'top');
         // extinit actions
         add_rewrite_rule("xi/([-a-zA-Z0-9]{4,20})$", 'index.php?name=extini&extini=$matches[1]', 'top');
+        // subscription
+        add_rewrite_rule("profile/([a-zA-Z0-9]{20,})$", 'index.php?name=subscription&token=$matches[1]', 'top');
 
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {

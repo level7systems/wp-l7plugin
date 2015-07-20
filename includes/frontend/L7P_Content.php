@@ -212,6 +212,12 @@ class L7P_Content
                     . '$country_code = isset($package_route_value) ? substr($package_route_value, 0, stripos($package_route_value, "-")) : "";'
                     . 'if ($country_code == l7p_get_geo()): '
                     . '?>';
+                
+            case 'is_subscribed':
+                return '<?php '
+                    . '$is_subscribed = l7p_get_session(\'is_subscribed\', false);'
+                    . 'if ($is_subscribed): '
+                    . '?>';
 
             // termination
             case 'term_has_local':

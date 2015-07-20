@@ -784,6 +784,16 @@ function l7p_ressend_confirmation_email($email)
     return l7p_send_curl($url);
 }
 
+function l7p_verify_subscription_token($token)
+{
+    $url = strtr(':url/:token', array(
+        ':url' => l7p_form_subscription_action(),
+        ':token' => $token
+    ));
+    
+    return l7p_send_curl($url);
+}
+
 function l7p_send_curl($url)
 {
     $curl = curl_init();
@@ -876,12 +886,6 @@ function l7p_api_url()
     return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
-function l7p_activation_url()
-{
-    $page = get_post(l7p_get_option('activation_page_id'));
-    return sprintf("/%s/%s", l7p_get_locale(), $page->post_name);
-}
-
 function l7p_form_confirm_action()
 {
     return sprintf("https://%s/%s/en/c", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
@@ -897,13 +901,7 @@ function l7p_form_resend_confirmation_email_action()
     return sprintf("https://%s/%s/en/r", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
-function l7p_get_activation_token()
+function l7p_form_subscription_action()
 {
-    global $wp_query;
-
-    if (!isset($wp_query->query_vars['activation_token'])) {
-        return false;
-    }
-
-    return $wp_query->query_vars['activation_token'];
+    return sprintf("https://%s/%s/en/profile", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }

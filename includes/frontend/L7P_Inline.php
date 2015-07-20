@@ -474,7 +474,12 @@ function l7p_inline_form_reset_token()
 
 function l7p_inline_form_activation_token()
 {
-    return 'L7P_Form::hidden_input(array(\'name\' => \'activation_token\', \'value\' => l7p_get_activation_token()))';
+    return 'L7P_Form::hidden_input(array(\'name\' => \'activation_token\', \'value\' => l7p_get_session(\'activation_token\')))';
+}
+
+function l7p_inline_form_subscription_token()
+{
+    return 'L7P_Form::hidden_input(array(\'name\' => \'subscription_token\', \'value\' => l7p_get_session(\'subscription_token\')))';
 }
 
 function l7p_inline_form_login_action()
@@ -497,19 +502,14 @@ function l7p_inline_form_password_recover_action()
     return 'l7p_api_url()';
 }
 
-function l7p_inline_form_activation_action()
+function l7p_inline_form_subscription_action()
 {
     return 'l7p_api_url()';
 }
 
-function l7p_inline_activation_url()
+function l7p_inline_form_activation_action()
 {
-    return 'l7p_activation_url()';
-}
-
-function l7p_inline_form_activation_url()
-{
-    return 'L7P_Form::hidden_input(array(\'name\' => \'activation_url\', \'value\' => l7p_activation_url()))';
+    return 'l7p_api_url()';
 }
 
 function l7p_inline_success_flash_message()
