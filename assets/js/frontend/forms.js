@@ -140,7 +140,7 @@
                         return false;
                     } else {
 
-                        $form.find('#l7p-register-form').html('<p class="big center text-center">Thank You for registering.</p>'
+                        $form.html('<p class="big center text-center">Thank You for registering.</p>'
                                 + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="/en/login">Login</a>.</p>');
                     }
                 }
@@ -203,7 +203,7 @@
                         return false;
                     } else {
 
-                        $form.find('#l7p-register-agent-form').html('<p class="big center text-center">Thank You for registering.</p>'
+                        $form.html('<p class="big center text-center">Thank You for registering.</p>'
                                 + '<p class="big center text-center text-grey">For security purposes, we have sent a confirmation email to <strong>' + email + '</strong>. </p>');
                     }
                 }
