@@ -73,9 +73,9 @@
         $('select#package_type').on('change', function () {
 
             if (this.value == "S") {
-                $form.find('#package_route_id').show();
+                $('select#package_route_id').show();
             } else {
-                $form.find('#package_route_id').hide();
+                $('select#package_route_id').hide();
             }
         });
 
