@@ -794,6 +794,21 @@ function l7p_verify_subscription_token($token)
     return l7p_send_curl($url);
 }
 
+function l7p_register_ppc_click($token)
+{
+    $params = array(
+        'method' => 'ppc',
+        'id' => $token,
+        'referer' => $_SERVER['HTTP_REFERER'],
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+        'ip' => $_SERVER['REMOTE_ADDR']
+    );
+    
+    $url = l7p_api_url() . '?' . http_build_query($params);
+    
+    return l7p_send_curl($url);
+}
+
 function l7p_send_curl($url)
 {
     $curl = curl_init();
@@ -807,6 +822,11 @@ function l7p_send_curl($url)
         CURLOPT_FOLLOWLOCATION => true
     ));
     $json = curl_exec($curl);
+    
+    // if JSONP was returned
+    if(!in_array($json[0], array('[', '{'))) {
+        $json = substr(trim($json,'();'), strpos($json, '(')+1);
+    }
 
     if (!$json) {
         return array(

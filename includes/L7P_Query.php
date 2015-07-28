@@ -276,9 +276,8 @@ class L7P_Query
                 if (isset($_GET['message'])) {
                     l7p_set_success_flash_message($_GET['message']);
                 }
-                
+
                 return $this->redirect_activation();
-                
             } else {
                 return $this->error_404();
             }
@@ -316,13 +315,23 @@ class L7P_Query
             if (isset($query->query_vars['token'])) {
 
                 $response = l7p_verify_subscription_token($query->query_vars['token']);
-                
+
                 if ($response['success']) {
                     l7p_update_session('subscription_token', $query->query_vars['token']);
                     l7p_update_session('is_subscribed', $response['is_subscribed']);
                     l7p_set_success_flash_message(__($response['info']));
-                    
+
                     return $this->redirect_to_subscription();
+                }
+            }
+            return $this->error_404();
+        } else if ($page_name == 'ppc') {
+
+            if (isset($query->query_vars['token'])) {
+
+                $response = l7p_register_ppc_click($query->query_vars['token']);
+                if ($response['success']) {
+                    return l7p_redirect($response['redirect']);
                 }
             }
             return $this->error_404();
@@ -411,7 +420,7 @@ class L7P_Query
 
         return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
-    
+
     public function redirect_to_subscription()
     {
         $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -419,7 +428,7 @@ class L7P_Query
 
         return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
-    
+
     public function redirect_activation()
     {
         $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -478,6 +487,8 @@ class L7P_Query
         add_rewrite_rule("xi/([-a-zA-Z0-9]{4,20})$", 'index.php?name=extini&extini=$matches[1]', 'top');
         // subscription
         add_rewrite_rule("profile/([a-zA-Z0-9]{20,})$", 'index.php?name=subscription&token=$matches[1]', 'top');
+        // ppc
+        add_rewrite_rule("ppc/([0-9]{1,10})$", 'index.php?name=ppc&token=$matches[1]', 'top');
 
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {
