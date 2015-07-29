@@ -913,9 +913,6 @@ function l7p_get_level7_domain()
 
 function l7p_api_url()
 {
-    // TODO
-    return 'https://l7dev.co.cc/voipstudiowp.dev/api';
-    return 'https://l7sandbox.net/voipstudio.l7sandbox.net/api';
     return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
