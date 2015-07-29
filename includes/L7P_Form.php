@@ -30,6 +30,7 @@ class L7P_Form
         $post = isset($args['post']) ? esc_attr($args['post']) : false;
         $required = isset($args['required']) && $args['required'] ? ' required' : '';
         $help = isset($args['help']) ? esc_attr($args['help']) : false;
+        $class = isset($args['class']) ? "class='".$args['class']."'" : '';
         $style = isset($args['style']) ? "style='".$args['style']."'" : '';
 
         // field section
@@ -42,7 +43,7 @@ class L7P_Form
             echo $pre;
         }
 
-        echo "<input type='$type' id='$id' name='$name' value='$value' placeholder='$placeholder' $required $style />";
+        echo "<input type='$type' id='$id' name='$name' value='$value' placeholder='$placeholder' $required $class $style />";
 
         // post field
         if ($post) {

@@ -18,18 +18,31 @@ function l7p_get_option($option, $default = null)
 
 function l7p_get_settings($option, $default = null)
 {
-    $setttings = l7p_get_option('settings');
-    return isset($setttings[$option]) ? $setttings[$option] : $default;
+    $settings = l7p_get_option('settings');
+    return isset($settings[$option]) ? $settings[$option] : $default;
+}
+
+function l7p_update_settings($option, $value)
+{
+    $settings = l7p_get_option('settings');
+    $settings[$option] = $value;
+    l7p_update_option('settings', $settings);
 }
 
 function l7p_get_web_product_settings($option, $default = null)
 {
-    $setttings = l7p_get_option('settings');
-    if (!isset($setttings['web_product'][$option])) {
+    $settings = l7p_get_option('settings');
+    if (!isset($settings['web_product'][$option])) {
         return false;
     }
+    return $settings['web_product'][$option];
+}
 
-    return $setttings['web_product'][$option];
+function l7p_update_web_product_settings($option, $value)
+{
+    $settings = l7p_get_option('settings');
+    $settings['web_product'][$option] = $value;
+    l7p_update_option('settings', $settings);
 }
 
 function l7p_update_option($option, $value)
