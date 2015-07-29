@@ -345,7 +345,7 @@ class L7P_Admin
 
     public function advanced_section_callback()
     {
-        echo wpautop(__('These settings control the adnacend configuration of Level7 integration plugin. Do not change these options if it is not required.', 'level7platform'));
+        echo wpautop(__('These settings control the advanced configuration of Level7 integration plugin. Do not change these options if it is not required.', 'level7platform'));
     }
 
     public function mappings_section_callback()
