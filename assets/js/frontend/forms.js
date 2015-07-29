@@ -8,8 +8,6 @@
     function validateRequiredFields($form, fields) {
         var errors = [];
 
-        console.log("Form field validation: " + $form.attr('id'));
-        
         for (var i in fields){
             var field = fields[i];
             if ($form.find('#' + field).length == 0) {
