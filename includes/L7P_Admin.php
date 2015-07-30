@@ -489,7 +489,7 @@ class L7P_Admin
 
     private function settings_tabs($current = 'general')
     {
-        $tabs = array('general' => 'General', 'advanced' => 'Advanced', 'mappings' => 'Page mappings');
+        $tabs = array('general' => 'General', 'mappings' => 'Page mappings', 'advanced' => 'Advanced');
         echo '<div id="icon-themes" class="icon32"><br></div>';
         echo '<h2 class="nav-tab-wrapper">';
         foreach ($tabs as $tab => $name) {
