@@ -382,7 +382,6 @@ class L7P_Admin
             case 'mappings';
 
                 $mappings_data = $_POST['l7p_mappings'];
-
                 foreach ($mappings_data as $pagename => $page_id) {
                     $field = ucfirst(strtr(rtrim($pagename, '_id'), array('_' => ' ')));
                     if (empty($page_id)) {

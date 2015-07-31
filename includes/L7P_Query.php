@@ -136,10 +136,6 @@ class L7P_Query
             }
         }
 
-        l7p_update_option('subscription_page_id', 2210);
-
-//        l7p_pre($query->query_vars);
-
         $page_name = $query->query_vars['name'];
         $post_type = 'l7p_page';
 
