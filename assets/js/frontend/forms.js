@@ -8,9 +8,22 @@
     function validateRequiredFields($form, fields) {
         var errors = [];
 
-        for (var i in fields){
+        for (var i in fields) {
             var field = fields[i];
-            if ($form.find('#' + field).length == 0) {
+            // if fields depend on other fields
+            if ($.isArray(field)) {
+                // if first exists - other are required to exist
+                if ($form.find('#' + field[0]).length > 0) {
+                    // check each field
+                    for (var j in field) {
+                        if (j > 0) {
+                            if ($form.find('#' + field[j]).length == 0) {
+                                errors.push(field[j]);
+                            }
+                        }
+                    }
+                }
+            } else if ($form.find('#' + field).length == 0) {
                 errors.push(field);
             }
         }
@@ -34,9 +47,9 @@
         if ($('form#l7p-login-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-login-form'), [
-               'username',
-               'password',
-               'remember'
+                'username',
+                'password',
+                'remember'
             ]);
         }
 
@@ -94,18 +107,17 @@
                 }
             });
         });
-        
+
         // REGISTER
         if ($('form#l7p-register-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-register-form'), [
-               'firstname',
-               'lastname',
-               'email',
-               'password',
-               'package_type',
-               'package_route_id',
-               'tc'
+                'firstname',
+                'lastname',
+                'email',
+                'password',
+                ['package_type', 'package_route_id'],
+                'tc'
             ]);
         }
 
@@ -189,16 +201,16 @@
         if ($('form#l7p-register-agent-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-register-agent-form'), [
-               'firstname',
-               'lastname',
-               'email',
-               'password',
-               'address',
-               'country',
-               'tc'
+                'firstname',
+                'lastname',
+                'email',
+                'password',
+                'address',
+                'country',
+                'tc'
             ]);
         }
-        
+
         $(document).on('submit', 'form#l7p-register-agent-form', function (e) {
 
             clearErrors('#l7p-register-agent-form');
@@ -265,10 +277,10 @@
         if ($('form#l7p-password-recover-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-password-recover-form'), [
-               'email'
+                'email'
             ]);
         }
-        
+
         $(document).on('submit', 'form#l7p-password-recover-form', function (e) {
 
             clearErrors('#l7p-password-recover-form');
@@ -303,12 +315,12 @@
         if ($('form#l7p-new-password-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-new-password-form'), [
-               'reset_token',
-               'password1',
-               'password2',
+                'reset_token',
+                'password1',
+                'password2',
             ]);
         }
-        
+
         $(document).on('submit', 'form#l7p-new-password-form', function (e) {
 
             clearErrors('#l7p-new-password-form');
@@ -354,11 +366,11 @@
         if ($('form#l7p-subscription-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-subscription-form'), [
-               'is_subscribed',
-               'subscription_token'
+                'is_subscribed',
+                'subscription_token'
             ]);
         }
-        
+
         $(document).on('submit', 'form#l7p-subscription-form', function (e) {
 
             clearErrors('#l7p-subscription-form');
@@ -397,17 +409,17 @@
         if ($('form#l7p-activate-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-activate-form'), [
-               'activation_token',
-               'company',
-               'address',
-               'postcode',
-               'city',
-               'country',
-               'state',
-               'tc'
+                'activation_token',
+                'company',
+                'address',
+                'postcode',
+                'city',
+                'country',
+                'state',
+                'tc'
             ]);
         }
-        
+
         $(document).on('submit', 'form#l7p-activate-form', function (e) {
 
             clearErrors('#l7p-activate-form');
