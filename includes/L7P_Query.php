@@ -297,8 +297,7 @@ class L7P_Query
 
                 $response = l7p_ressend_confirmation_email($query->query_vars['email']);
                 if ($response['success']) {
-                    l7p_update_session('subscription_token', $response['token']);
-                    return $this->redirect_to_one_time_login();
+                    l7p_set_success_flash_message(__($response['info']));
                 } else {
                     l7p_set_error_flash_message(__($response['info']));
                 }
