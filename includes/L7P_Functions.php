@@ -294,7 +294,7 @@ function l7p_get_countries($locale = null)
 
     $countries = $countries[$locale];
     asort($countries);
-    
+
     return $countries;
 }
 
@@ -793,7 +793,7 @@ function l7p_ressend_confirmation_email($email)
         ':url' => l7p_form_resend_confirmation_email_action(),
         ':email' => $email
     ));
-    
+
     return l7p_send_curl($url);
 }
 
@@ -803,7 +803,7 @@ function l7p_verify_subscription_token($token)
         ':url' => l7p_form_subscription_action(),
         ':token' => $token
     ));
-    
+
     return l7p_send_curl($url);
 }
 
@@ -816,9 +816,9 @@ function l7p_register_ppc_click($token)
         'user_agent' => $_SERVER['HTTP_USER_AGENT'],
         'ip' => $_SERVER['REMOTE_ADDR']
     );
-    
+
     $url = l7p_api_url() . '?' . http_build_query($params);
-    
+
     return l7p_send_curl($url);
 }
 
@@ -835,10 +835,10 @@ function l7p_send_curl($url)
         CURLOPT_FOLLOWLOCATION => true
     ));
     $json = curl_exec($curl);
-    
+
     // if JSONP was returned
-    if(!in_array($json[0], array('[', '{'))) {
-        $json = substr(trim($json,'();'), strpos($json, '(')+1);
+    if (!in_array($json[0], array('[', '{'))) {
+        $json = substr(trim($json, '();'), strpos($json, '(') + 1);
     }
 
     if (!$json) {
@@ -886,6 +886,7 @@ function l7p_set_flash_message($message)
 {
     return l7p_update_session('flash_message', $message);
 }
+
 // deprecated
 function l7p_get_flash_message()
 {
@@ -934,4 +935,47 @@ function l7p_form_resend_confirmation_email_action()
 function l7p_form_subscription_action()
 {
     return sprintf("https://%s/%s/en/profile", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+}
+
+function l7p_image_tag($source, array $options = array())
+{
+    if (!$source) {
+        return '';
+    }
+
+    $absolute = false;
+    if (isset($options['absolute'])) {
+        unset($options['absolute']);
+        $absolute = true;
+    }
+
+    $options['src'] = l7p_image_path($source, $absolute);
+
+    if (!isset($options['alt'])) {
+        $path_pos = strrpos($source, '/');
+        $dot_pos = strrpos($source, '.');
+        $begin = $path_pos ? $path_pos + 1 : 0;
+        $nb_str = ($dot_pos ? $dot_pos : strlen($source)) - $begin;
+        $options['alt'] = ucfirst(substr($source, $begin, $nb_str));
+    }
+
+    if (isset($options['size'])) {
+        list($options['width'], $options['height']) = explode('x', $options['size'], 2);
+        unset($options['size']);
+    }
+
+    $html = '';
+    foreach ($options as $key => $value) {
+        $html .= ' ' . $key . '="' . $value . '"';
+    }
+
+    return sprintf("<img %s />", $html);
+}
+
+function l7p_image_path($source, $absolute = true)
+{
+    $path = '/images/';
+    $url = 'http://static.ssl7.net';
+
+    return $absolute ? $url . $path . $source : $path . $source;
 }

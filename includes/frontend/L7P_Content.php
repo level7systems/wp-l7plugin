@@ -94,31 +94,30 @@ class L7P_Content
         return sprintf("<?php echo call_user_func('%s') ?>", $block);
     }
 
-    public static function image($m, $with_php_tag = true)
+    public static function image($m)
     {
         $temp = array();
-
         foreach (explode("|", $m[1]) as $part) {
             if (!trim($part))
                 continue;
             $temp[] = trim(trim($part), "'");
         }
 
-        if (count($temp) < 2)
+        if (count($temp) < 2) {
             return '<p MySyntaxError="true" style="color: red; font-weight: bold;">Missing parameters</p>';
-
-        $options = (isset($temp[2])) ? ' ' . $temp[2] : '';
-
+        }
+        
+        $options = array('absolute' => true);
         if (strpos($temp[0], "%CULTURE%") === false) {
             $src_img = $temp[0];
         } else {
-            $src_img = str_replace("%CULTURE%", "'.get_culture().'", $temp[0]);
+            $src_img = str_replace("%CULTURE%", "'.l7p_get_culture().'", $temp[0]);
         }
+        
+        $options['alt'] = $options['title'] = $temp[1];
+        $img = l7p_image_tag($src_img, $options);
 
-        if ($with_php_tag) {
-            return "<?php echo image_tag('" . $src_img . "','alt=\"" . $temp[1] . "\"" . $options . "') ?>";
-        }
-        return "image_tag('" . $src_img . "','alt=\"" . $temp[1] . "\"" . $options . "')";
+        return "<?php echo '$img'; ?>";
     }
 
     public static function url($match)
