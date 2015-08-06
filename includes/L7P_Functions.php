@@ -979,3 +979,8 @@ function l7p_image_path($source, $absolute = true)
 
     return $absolute ? $url . $path . $source : $path . $source;
 }
+
+function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
+{
+    setcookie($name, $value, $expire, $path, $domain, $secure);
+}

@@ -137,7 +137,7 @@
                 $('select#package_type').val(hash).change();
             }
         }
-
+        
         $(document).on('submit', 'form#l7p-register-form', function (e) {
 
             clearErrors('#l7p-register-form');
@@ -150,6 +150,14 @@
             var confirm_pass = $form.find('#password2').val() || $form.find('#password').val();
             var package_type = $form.find('#package_type').val() || "P";
 
+            var xl7ppc = '';
+            $.each(document.cookie.split("; "), function(key, value) {
+                var m = value.match(/^xl7ppc=(.*)/);
+                if (m && 1 in m) {
+                    xl7ppc = m[1];
+                }
+            });
+           
             e.preventDefault();
             $.ajax({
                 url: $form.attr('action'),
@@ -165,6 +173,7 @@
                     package_type: package_type,
                     package_route_id: $form.find('#package_route_id').val(),
                     google_client_id: $form.find('#google_client_id').val(),
+                    xl7ppc: xl7ppc,
                     tc: t
                 },
                 dataType: 'jsonp',

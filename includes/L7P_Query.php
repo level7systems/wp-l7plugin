@@ -135,7 +135,7 @@ class L7P_Query
                 l7p_update_session('currency', $currency);
             }
         }
-
+        
         $page_name = $query->query_vars['name'];
         $post_type = 'l7p_page';
 
@@ -326,6 +326,7 @@ class L7P_Query
 
                 $response = l7p_register_ppc_click($query->query_vars['token']);
                 if ($response['success']) {
+                    l7p_setcookie('xl7ppc', $response['ppc_click_id']);
                     return l7p_redirect($response['redirect']);
                 }
             }
