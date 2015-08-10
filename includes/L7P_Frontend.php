@@ -15,6 +15,7 @@ class L7P_Frontend
     {
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
+        add_filter('widget_posts_args', array($this, 'filter_recent_posts_widget_parameters'));
     }
 
     /**
@@ -41,6 +42,14 @@ class L7P_Frontend
         );
     }
 
+    // recent posts widget order
+    public function filter_recent_posts_widget_parameters($params)
+    {
+        $params['orderby'] = 'date';
+        $params['order'] = 'DESC';
+        
+        return $params;
+    }
 }
 
 return new L7P_Frontend();
