@@ -372,7 +372,6 @@ class L7P_Admin
                 }
 
                 if (!count($errors)) {
-                    echo "save < < " . $advanced_data['l7_tld'];
                     l7p_update_settings('l7_tld', $advanced_data['l7_tld']);
                     l7p_update_web_product_settings('domain', $advanced_data['web_product_domain']);
                 }
