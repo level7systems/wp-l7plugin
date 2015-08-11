@@ -139,7 +139,10 @@ class L7P_Query
         $page_name = $query->query_vars['name'];
         $post_type = 'l7p_page';
 
-        if ($page_name == "rates") {
+        if ($page_name == "pricing") {
+            return $this->redirect_to_currency();
+
+        } else if ($page_name == "rates") {
 
             if (!$query->query_vars['currency']) {
                 return $this->redirect_to_currency();
@@ -443,6 +446,11 @@ class L7P_Query
         $currencies = l7p_get_currencies();
         $currencies_rule = strtolower(implode("|", $currencies));
 
+        $pricing_page = get_post(l7p_get_option('pricing_page_id'));
+
+        // pricing
+        add_rewrite_rule(sprintf("%s/?$", $pricing_page->post_name), 'index.php?name=pricing', 'top');
+            
         foreach ($cultures as $culture) {
 
             // downloads
