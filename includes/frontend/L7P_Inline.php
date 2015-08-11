@@ -154,7 +154,7 @@ function l7p_inline_term_route_rate()
 }
 
 // displays termination route  connection fee
-function l7p_inline_term_conn_fee()
+function l7p_inline_term_route_conn_fee()
 {
     return '(($term_data[\'connection\'] * 100) <= 100) ? l7p_currency_symbol($term_data[\'connection\'],1,true) : l7p_currency_symbol($term_data[\'connection\'])';
 }
