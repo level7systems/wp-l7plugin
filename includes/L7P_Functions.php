@@ -161,7 +161,7 @@ function l7p_get_currency_names()
 function l7p_currency_symbol($value, $decimal = 2, $minor = false, $iso = null)
 {
     if (!$iso) {
-        $iso = l7p_get_session('currency', 'USD');
+        $iso = l7p_get_currency();
     }
 
     $value = floatval($value);
