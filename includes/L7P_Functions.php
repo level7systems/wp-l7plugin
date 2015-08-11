@@ -412,7 +412,7 @@ function l7p_get_chapter_name_from_query()
 {
     global $wp_query;
 
-    return isset($wp_query->query_vars['chapter']) ? strtr($wp_query->query_vars['chapter'], array('-' => ' ')) : '';
+    return isset($wp_query->query_vars['chapter']) ? $wp_query->query_vars['chapter'] : '';
 }
 
 function l7p_get_pricelist($key = false)
@@ -636,7 +636,6 @@ function l7p_get_chapter($attr)
 {
     $chapters = l7p_get_chapters();
     $name = l7p_get_chapter_name_from_query();
-
     $parts = explode("_", $name);
     $manual_type = array_shift($parts);
     $name = implode("_", $parts);
