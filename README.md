@@ -5,7 +5,6 @@ Requires at least: 3.4
 Tested up to: 4.0
 License: GPLv2 or later
  
-  
 
 This is a Level 7 Systems integration plugin which will help you to manage your white label communication service.
 
