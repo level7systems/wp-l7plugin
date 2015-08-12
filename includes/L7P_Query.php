@@ -401,39 +401,35 @@ class L7P_Query
             $uri = preg_replace(sprintf('#/%s/$#', strtolower($currency)), '/', $uri);
         }
 
-        return l7p_redirect(sprintf("http://%s/%s", $uri, strtolower(l7p_get_currency())));
+        return l7p_redirect(sprintf("http://%s%s/", $uri, strtolower(l7p_get_currency())));
     }
 
     public function redirect_to_login()
     {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $page = get_post(l7p_get_option('login_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     public function redirect_to_one_time_login()
     {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $page = get_post(l7p_get_option('one_time_login_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     public function redirect_to_subscription()
     {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $page = get_post(l7p_get_option('subscription_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     public function redirect_activation()
     {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $page = get_post(l7p_get_option('activation_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     /**
