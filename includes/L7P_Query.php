@@ -475,7 +475,7 @@ class L7P_Query
             }
 
             // manual
-            add_rewrite_rule(sprintf("%s/([\w\-\+]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
+            add_rewrite_rule(sprintf("%s/([\w\-\+!]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         }
 
         // account confirmation
