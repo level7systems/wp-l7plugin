@@ -12,7 +12,7 @@ This is a Level 7 Systems integration plugin which will help you to manage your 
 ## Description
 Detailed description of our plugin will go here.
 
-# Features =
+## Features 
 *	easy integration with Level7 VoIP studio
 * dynamic pages (call rates, telephone numbers, hardware, manuals)
 * 
