@@ -652,18 +652,18 @@ function l7p_get_routes()
     $login_page = get_post(l7p_get_option('login_page_id'));
     
     return array(
-        'login' => sprintf('/%s', $login_page->post_name),
-        'country_rates' => '/:permalink_rates/:country/:currency',
-        'numbers' => '/:permalink_telephone_numbers/:country/:currency',
-        'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency',
-        'number_buy' => '/:permalink_telephone_numbers/:country/:city/:currency/buy',
-        'number_buy_toll_free' => '/:permalink_telephone_numbers/:country/toll-free/:city/:currency/buy',
-        'phone_page' => '/:permalink_hardware/:group/:model/:currency',
-        'phones_group' => '/:permalink_hardware/:group/:currency',
-        'phone_buy' => '/:permalink_hardware/:group/:model/:currency/buy',
-        'manual' => '/:permalink_manual/:chapter',
-        'terms' => '/:permalink_terms',
-        'download' => '/download-for-:os'
+        'login' => sprintf('/%s/', $login_page->post_name),
+        'country_rates' => '/:permalink_rates/:country/:currency/',
+        'numbers' => '/:permalink_telephone_numbers/:country/:currency/',
+        'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency/',
+        'number_buy' => '/:permalink_telephone_numbers/:country/:city/:currency/buy/',
+        'number_buy_toll_free' => '/:permalink_telephone_numbers/:country/toll-free/:city/:currency/buy/',
+        'phone_page' => '/:permalink_hardware/:group/:model/:currency/',
+        'phones_group' => '/:permalink_hardware/:group/:currency/',
+        'phone_buy' => '/:permalink_hardware/:group/:model/:currency/buy/',
+        'manual' => '/:permalink_manual/:chapter/',
+        'terms' => '/:permalink_terms/',
+        'download' => '/download-for-:os/'
     );
 }
 
@@ -985,4 +985,12 @@ function l7p_image_path($source, $absolute = true)
 function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
 {
     setcookie($name, $value, $expire, $path, $domain, $secure);
+}
+
+function l7p_starts_with($haystack, $needle) {
+    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+}
+
+function l7p_ends_with($haystack, $needle) {
+    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
 }

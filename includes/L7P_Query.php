@@ -143,7 +143,7 @@ class L7P_Query
             return $this->redirect_to_currency();
 
         } else if ($page_name == "rates") {
-
+            
             if (!$query->query_vars['currency']) {
                 return $this->redirect_to_currency();
             }
@@ -395,7 +395,11 @@ class L7P_Query
 
     public function redirect_to_currency()
     {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; 
+        if (!l7p_ends_with($uri, '/')) {
+            $uri .= '/';
+        }
+        
         $currencies = l7p_get_currencies();
         foreach ($currencies as $currency) {
             $uri = preg_replace(sprintf('#/%s/$#', strtolower($currency)), '/', $uri);
