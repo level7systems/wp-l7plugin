@@ -16,8 +16,10 @@ class L7P_Frontend
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
         add_filter('widget_posts_args', array($this, 'filter_recent_posts_widget_parameters'));
-        // removes WP shortlinks
+        // removes WP shortlinks from <heade>
         remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+        // removes WP extra feeds from <head>
+        remove_action('wp_head', 'feed_links_extra', 3 );
     }
 
     /**
