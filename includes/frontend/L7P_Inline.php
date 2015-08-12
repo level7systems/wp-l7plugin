@@ -552,3 +552,8 @@ function l7p_inline_package_route_label()
 {
     return 'isset($package_route_label) ? $package_route_label : \'<!-- PACKAGE_ROUTE_LABEL not defined -->\'';
 }
+
+function l7p_inline_login_url()
+{
+    return 'l7p_url_for(\'@login\')';
+}

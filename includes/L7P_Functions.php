@@ -649,7 +649,10 @@ function l7p_get_chapter($attr)
 
 function l7p_get_routes()
 {
+    $login_page = get_post(l7p_get_option('login_page_id'));
+    
     return array(
+        'login' => sprintf('/%s', $login_page->post_name),
         'country_rates' => '/:permalink_rates/:country/:currency',
         'numbers' => '/:permalink_telephone_numbers/:country/:currency',
         'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency',
