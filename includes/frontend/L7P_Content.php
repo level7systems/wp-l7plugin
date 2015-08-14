@@ -141,8 +141,6 @@ class L7P_Content
                 }
 
                 if (isset($m[2])) {
-                    print_r($m);
-
                     return 'href="<?php echo l7p_url_for(__("@' . $route_name . '")) ?>' . $m[2] . '"';
                 } else {
                     return 'href="<?php echo l7p_url_for(__("@' . $route_name . '")) ?>"';

@@ -420,7 +420,7 @@ function l7p_inline_manual_name()
 // Manual - full title
 function l7p_inline_manual_title()
 {
-    return 'l7p_get_chapter(\'title\');';
+    return 'l7p_get_chapter(\'chapter\');';
 }
 
 // Manual - chapter short description
@@ -556,4 +556,14 @@ function l7p_inline_package_route_label()
 function l7p_inline_login_url()
 {
     return 'l7p_url_for(\'@login\')';
+}
+
+function l7_inline_product_name()
+{
+    return 'l7p_get_web_product_settings(\'name\')';
+}
+
+function l7_inline_product_domain()
+{
+    return 'l7p_get_web_product_settings(\'domain\')';
 }

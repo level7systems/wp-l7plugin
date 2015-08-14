@@ -15,6 +15,8 @@ class L7P_Frontend
     {
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
+        
+        add_filter('wp_title', array($this, 'filter_wp_title'), 10, 2);
         add_filter('widget_posts_args', array($this, 'filter_recent_posts_widget_parameters'));
         // removes WP shortlinks from <heade>
         remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
@@ -44,6 +46,28 @@ class L7P_Frontend
         wp_enqueue_script(
             'level7-forms', plugins_url('/assets/js/frontend/forms.js', L7P_PLUGIN_FILE), array('jquery', 'jquery-ui-dialog')
         );
+    }
+    
+    public function filter_wp_title($title, $sep)
+    {
+        $product_name = l7p_get_web_product_settings('name');
+        
+        if (l7p_is_manual_chapter_page()) {
+            $chapter_title = l7p_get_chapter('chapter');
+            return sprintf("%s Manual - %s", $product_name, $chapter_title);
+        }
+        
+        if (l7p_is_rates_country_page()) {
+            $country_name = l7p_get_country_name_from_query();
+            return sprintf("%s Call Rates - %s", $product_name, $country_name);
+        }
+        
+        if (l7p_is_telephone_numbers_country_page()) {
+            $country_name = l7p_get_country_name_from_query();
+            return sprintf("%s Telephone Numbers - %s", $product_name, $country_name);
+        }
+        
+        return $title;
     }
 
     // recent posts widget order

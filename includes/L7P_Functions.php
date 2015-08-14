@@ -643,7 +643,6 @@ function l7p_get_chapter($attr)
     if ($attr == 'toc') {
         return isset($chapters[$manual_type]['index']) ? $chapters[$manual_type]['index'] : '';
     }
-
     return isset($chapters[$manual_type][$name][$attr]) ? $chapters[$manual_type][$name][$attr] : '';
 }
 
@@ -993,4 +992,25 @@ function l7p_starts_with($haystack, $needle) {
 
 function l7p_ends_with($haystack, $needle) {
     return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
+}
+
+function l7p_is_manual_chapter_page()
+{
+    global $wp_query;
+    
+    return isset($wp_query->query_vars['chapter']);
+}
+
+function l7p_is_rates_country_page()
+{
+    global $wp_query;
+    
+    return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-rates';
+}
+
+function l7p_is_telephone_numbers_country_page()
+{
+    global $wp_query;
+    
+    return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-telephone-numbers';
 }
