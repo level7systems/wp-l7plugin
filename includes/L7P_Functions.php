@@ -823,6 +823,21 @@ function l7p_register_ppc_click($token)
     return l7p_send_curl($url);
 }
 
+function l7p_register_agent_click($token)
+{
+    $params = array(
+        'method' => 'agentclick',
+        'id' => $token,
+        'referer' => $_SERVER['HTTP_REFERER'],
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+        'ip' => $_SERVER['REMOTE_ADDR']
+    );
+
+    $url = l7p_api_url() . '?' . http_build_query($params);
+
+    return l7p_send_curl($url);
+}
+
 function l7p_send_curl($url)
 {
     $curl = curl_init();

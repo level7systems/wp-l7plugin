@@ -135,15 +135,14 @@ class L7P_Query
                 l7p_update_session('currency', $currency);
             }
         }
-        
+
         $page_name = $query->query_vars['name'];
         $post_type = 'l7p_page';
 
         if ($page_name == "pricing") {
             return $this->redirect_to_currency();
-
         } else if ($page_name == "rates") {
-            
+
             if (!$query->query_vars['currency']) {
                 return $this->redirect_to_currency();
             }
@@ -334,6 +333,17 @@ class L7P_Query
                 }
             }
             return $this->error_404();
+        } else if ($page_name == 'agentclick') {
+
+            if (isset($query->query_vars['token'])) {
+
+                $response = l7p_register_agent_click($query->query_vars['token']);
+                if ($response['success']) {
+                    l7p_setcookie('xl7a', $response['agent_click_id']);
+                    return l7p_redirect($response['redirect']);
+                }
+            }
+            return $this->error_404();
         } else if ($page_name == 'extini') {
 
             if (isset($query->query_vars['extini'])) {
@@ -395,11 +405,11 @@ class L7P_Query
 
     public function redirect_to_currency()
     {
-        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; 
+        $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         if (!l7p_ends_with($uri, '/')) {
             $uri .= '/';
         }
-        
+
         $currencies = l7p_get_currencies();
         foreach ($currencies as $currency) {
             $uri = preg_replace(sprintf('#/%s/$#', strtolower($currency)), '/', $uri);
@@ -450,7 +460,7 @@ class L7P_Query
 
         // pricing
         add_rewrite_rule(sprintf("%s/?$", $pricing_page->post_name), 'index.php?name=pricing', 'top');
-            
+
         foreach ($cultures as $culture) {
 
             // downloads
@@ -493,6 +503,8 @@ class L7P_Query
         add_rewrite_rule("profile/([a-zA-Z0-9]{20,})$", 'index.php?name=subscription&token=$matches[1]', 'top');
         // ppc
         add_rewrite_rule("ppc/([0-9]{1,10})$", 'index.php?name=ppc&token=$matches[1]', 'top');
+        // agent click
+        add_rewrite_rule("a/([0-9]{1,10})$", 'index.php?name=agentclick&token=$matches[1]', 'top');
 
         // add endpoint for pages for each currency
         foreach ($currencies as $currency) {

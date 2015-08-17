@@ -137,7 +137,7 @@
                 $('select#package_type').val(hash).change();
             }
         }
-        
+
         $(document).on('submit', 'form#l7p-register-form', function (e) {
 
             clearErrors('#l7p-register-form');
@@ -150,32 +150,44 @@
             var confirm_pass = $form.find('#password2').val() || $form.find('#password').val();
             var package_type = $form.find('#package_type').val() || "P";
 
-            var xl7ppc = '';
-            $.each(document.cookie.split("; "), function(key, value) {
+            var data = {
+                method: 'register',
+                first_name: $form.find('#firstname').val(),
+                last_name: $form.find('#lastname').val(),
+                email: $form.find('#email').val(),
+                email2: $form.find('#email').val(),
+                password: $form.find('#password').val(),
+                password2: confirm_pass,
+                package_type: package_type,
+                package_route_id: $form.find('#package_route_id').val(),
+                google_client_id: $form.find('#google_client_id').val(),
+                tc: t
+            };
+            
+            var xl7ppc = xl7a = '';
+            $.each(document.cookie.split("; "), function (key, value) {
                 var m = value.match(/^xl7ppc=(.*)/);
                 if (m && 1 in m) {
                     xl7ppc = m[1];
                 }
+                m = value.match(/^xl7a=(.*)/);
+                if (m && 1 in m) {
+                    xl7a = m[1];
+                }
             });
-           
+            
+            if (xl7ppc) {
+                data.xl7ppc = xl7ppc;
+            }
+            if (xl7a) {
+                data.xl7a = xl7a;
+            }
+
             e.preventDefault();
             $.ajax({
                 url: $form.attr('action'),
                 type: 'POST',
-                data: {
-                    method: 'register',
-                    first_name: $form.find('#firstname').val(),
-                    last_name: $form.find('#lastname').val(),
-                    email: $form.find('#email').val(),
-                    email2: $form.find('#email').val(),
-                    password: $form.find('#password').val(),
-                    password2: confirm_pass,
-                    package_type: package_type,
-                    package_route_id: $form.find('#package_route_id').val(),
-                    google_client_id: $form.find('#google_client_id').val(),
-                    xl7ppc: xl7ppc,
-                    tc: t
-                },
+                data: data,
                 dataType: 'jsonp',
                 success: function (res) {
 
