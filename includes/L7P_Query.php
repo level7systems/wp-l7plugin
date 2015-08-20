@@ -50,9 +50,19 @@ class L7P_Query
         }
     }
 
+    /**
+     * @global type $wp_query
+     * @global type $sitepress
+     * @return type
+     */
     public function currency_template_redirect()
     {
         global $wp_query;
+
+        $currency = strtolower(l7p_get_currency());
+        if (isset($wp_query->query_vars[$currency])) {
+            return;
+        }
 
         $page = null;
         if (isset($wp_query->query_vars['pagename'])) {
@@ -85,12 +95,6 @@ class L7P_Query
 
             // TODO: needs caching
             $currency_redirect_ids = l7p_get_option('currency_redirect_ids');
-
-            $currency = strtolower(l7p_get_currency());
-            if (isset($wp_query->query_vars[$currency])) {
-                return;
-            }
-
             if (!in_array($page->ID, $currency_redirect_ids)) {
                 return;
             }
@@ -128,9 +132,16 @@ class L7P_Query
         }
 
         // set locale based on url
+        $currencies = l7p_get_currencies();
+        foreach ($currencies as $currency) {
+            if (isset($query->query_vars[strtolower($currency)])) {
+                l7p_update_session('currency', $currency);
+            }
+        }
+
+        // set locale based on url
         if (isset($query->query_vars['currency']) && $query->query_vars['currency']) {
             $currency = strtoupper($query->query_vars['currency']);
-            $currencies = l7p_get_currencies();
             if (in_array($currency, $currencies)) {
                 l7p_update_session('currency', $currency);
             }
