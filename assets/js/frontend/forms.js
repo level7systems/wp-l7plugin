@@ -213,6 +213,8 @@
 
                         $form.html('<p class="big center text-center">Thank You for registering.</p>'
                                 + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="/en/login">Login</a>.</p>');
+                        
+                        $(document).trigger("l7p:registration:completed", {type: 'customer'});
                     }
                 }
             });
@@ -289,6 +291,8 @@
 
                         $form.html('<p class="big center text-center">Thank You for registering.</p>'
                                 + '<p class="big center text-center text-grey">For security purposes, we have sent a confirmation email to <strong>' + email + '</strong>. </p>');
+                        
+                        $(document).trigger("l7p:registration:completed", {type: 'agent'});
                     }
                 }
             });
@@ -328,6 +332,8 @@
                     }
 
                     $form.html('<p class="big center text-center">Your password has been changed. An email has been sent to you with your new login details.</p>');
+                    
+                    $(document).trigger("l7p:password:requested");
                 }
             });
         });
@@ -372,6 +378,8 @@
 
                         return false;
                     }
+                    
+                    $(document).trigger("l7p:password:changed");
 
                     if (res.redirect) {
                         // redirect user to their application url
@@ -422,6 +430,8 @@
                     }
 
                     $form.html('<p class="big center text-center">Your subscription has been updated.</p>');
+                    
+                    $(document).trigger("l7p:subscription:completed", {is_subscribed: s});
                 }
             });
         });
@@ -475,6 +485,8 @@
 
                         return false;
                     }
+                    
+                    $(document).trigger("l7p:activation:completed");
 
                     var redirection = res.info;
                     if ($('form#l7p-login-form #extini').val()) {
