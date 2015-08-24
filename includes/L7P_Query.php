@@ -296,7 +296,7 @@ class L7P_Query
 
                 $response = l7p_verify_reset_token($query->query_vars['token']);
                 if ($response['success']) {
-                    l7p_update_session('reset_token', $response['token']);
+                    l7p_update_session('reset_token', $response['reset_token']);
                     return $this->redirect_to_one_time_login();
                 }
 
