@@ -252,7 +252,7 @@ function l7p_get_geo()
 {
     $country_code = '';
     // get remote address
-    $remote_addr = $_SERVER['REMOTE_ADDR'];
+    $remote_addr = l7p_get_remote_addr();
     // try to get country by addr
     if (function_exists('geoip_country_code_by_name')) {
         $country_code = @geoip_country_code_by_name($remote_addr);
@@ -268,7 +268,7 @@ function l7p_get_geo()
 function l7p_get_geo_state()
 {
     // get remote address
-    $remote_addr = $_SERVER['REMOTE_ADDR'];
+    $remote_addr = l7p_get_remote_addr();
     $geoip = array();
     if (function_exists('geoip_record_by_name')) {
         $geoip = @geoip_record_by_name($remote_addr);
@@ -815,7 +815,7 @@ function l7p_register_ppc_click($token)
         'id' => $token,
         'referer' => $_SERVER['HTTP_REFERER'],
         'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-        'ip' => $_SERVER['REMOTE_ADDR']
+        'ip' => l7p_get_remote_addr()
     );
 
     $url = l7p_api_url() . '?' . http_build_query($params);
@@ -830,7 +830,7 @@ function l7p_register_agent_click($token)
         'id' => $token,
         'referer' => $_SERVER['HTTP_REFERER'],
         'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-        'ip' => $_SERVER['REMOTE_ADDR']
+        'ip' => l7p_get_remote_addr()
     );
 
     $url = l7p_api_url() . '?' . http_build_query($params);
@@ -1028,4 +1028,13 @@ function l7p_is_telephone_numbers_country_page()
     global $wp_query;
     
     return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-telephone-numbers';
+}
+
+function l7p_get_remote_addr()
+{
+    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+    
+    return $_SERVER['REMOTE_ADDR'];
 }
