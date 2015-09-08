@@ -340,7 +340,11 @@ class L7P_Query
                 $response = l7p_register_ppc_click($query->query_vars['token']);
                 if ($response['success']) {
                     l7p_setcookie('xl7ppc', $response['ppc_click_id']);
-                    return l7p_redirect($response['redirect']);
+                    $redirect_url = $response['redirect'];
+                    if (isset($_GET['gclid'])) {
+                        $redirect_url .= '?gclid=' . $_GET['gclid'];
+                    }
+                    return l7p_redirect($redirect_url);
                 }
             }
             return $this->error_404();
