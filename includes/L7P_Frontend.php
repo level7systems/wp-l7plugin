@@ -44,9 +44,6 @@ class L7P_Frontend
     public function scripts()
     {
         wp_enqueue_script(
-            'level7-jsonp', plugins_url('/assets/js/frontend/jquery.jsonp.js', L7P_PLUGIN_FILE), array('jquery')
-        );
-        wp_enqueue_script(
             'level7-forms', plugins_url('/assets/js/frontend/forms.js', L7P_PLUGIN_FILE), array('jquery', 'jquery-ui-dialog')
         );
     }
