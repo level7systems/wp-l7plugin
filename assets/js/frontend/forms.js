@@ -60,7 +60,7 @@
             var $form = $(this);
 
             e.preventDefault();
-            $.ajax({
+            $.jsonp({
                 url: $form.attr('action'),
                 type: 'POST',
                 data: {
@@ -69,7 +69,6 @@
                     password: $form.find('#password').val(),
                     remember_me: $form.find('#remember').is(':checked'),
                 },
-                dataType: 'jsonp',
                 success: function (res) {
                     if (!res.success) {
 
@@ -104,6 +103,14 @@
 
                     // redirect user to their application url
                     window.location.href = redirection;
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if ($('div#maintenance').length == 0) {
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:login:error");
                 }
             });
         });
@@ -184,11 +191,10 @@
             }
 
             e.preventDefault();
-            $.ajax({
+            $.jsonp({
                 url: $form.attr('action'),
                 type: 'POST',
                 data: data,
-                dataType: 'jsonp',
                 success: function (res) {
 
                     if (res.status === 403) {
@@ -216,6 +222,14 @@
 
                         jQuery(document).trigger("l7p:registration:completed", ['customer']);
                     }
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if ($('div#maintenance').length == 0) {
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:registration:error", ['customer']);
                 }
             });
         });
@@ -247,7 +261,7 @@
                     email = $form.find('#email').val();
 
             e.preventDefault();
-            $.ajax({
+            $.jsonp({
                 url: $form.attr('action'),
                 type: 'POST',
                 data: {
@@ -262,7 +276,6 @@
                     country: $form.find('#country').val(),
                     tc: t
                 },
-                dataType: 'jsonp',
                 success: function (res) {
 
                     if (res.status === 403) {
@@ -294,6 +307,14 @@
                         
                         jQuery(document).trigger("l7p:registration:completed", ['agent']);
                     }
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if ($('div#maintenance').length == 0) {
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:registration:error", ['agent']);
                 }
             });
         });
@@ -313,10 +334,9 @@
             var $form = $(this);
 
             e.preventDefault();
-            $.ajax({
+            $.jsonp({
                 url: $form.attr('action'),
                 type: 'POST',
-                dataType: 'jsonp',
                 data: {
                     method: 'recover',
                     email: $form.find('#email').val()
@@ -334,6 +354,14 @@
                     $form.html('<p class="big center text-center">Your password has been changed. An email has been sent to you with your new login details.</p>');
                     
                     jQuery(document).trigger("l7p:password:requested");
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if ($('div#maintenance').length == 0) {
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:password:error");
                 }
             });
         });
@@ -355,10 +383,9 @@
             var $form = $(this);
 
             e.preventDefault();
-            $.ajax({
+            $.jsonp({
                 url: $form.attr('action'),
                 type: 'POST',
-                dataType: 'jsonp',
                 data: {
                     method: 'onetimelogin',
                     reset_token: $form.find('#reset_token').val(),
@@ -387,6 +414,14 @@
                     }
 
                     return false;
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if ($('div#maintenance').length == 0) {
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:password:error");
                 }
             });
         });
@@ -410,10 +445,9 @@
                 s = 1;
 
             e.preventDefault();
-            $.ajax({
+            $.jsonp({
                 url: $form.attr('action'),
                 type: 'POST',
-                dataType: 'jsonp',
                 data: {
                     method: 'subscribe',
                     is_subscribed: s,
@@ -432,6 +466,14 @@
                     $form.html('<p class="big center text-center">Your subscription has been updated.</p>');
                     
                     jQuery(document).trigger("l7p:subscription:completed", [s]);
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if ($('div#maintenance').length == 0) {
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:subscription:error");
                 }
             });
         });
@@ -461,10 +503,9 @@
                 t = true;
 
             e.preventDefault();
-            $.ajax({
+            $.jsonp({
                 url: $form.attr('action'),
                 type: 'POST',
-                dataType: 'jsonp',
                 data: {
                     method: 'activate',
                     user_id: $form.find('#activation_token').val(),
@@ -495,6 +536,14 @@
 
                     // redirect user to their application url
                     window.location.href = redirection;
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if ($('div#maintenance').length == 0) {
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:activation:error");
                 }
             });
         });
