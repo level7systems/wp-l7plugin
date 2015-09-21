@@ -155,6 +155,7 @@ function l7p_get_currency_names()
         'DKK' => array('DKr', 'Danish Krone'),
         'JPY' => array('¥', 'Japanese Yen'),
         'CAD' => array('Can$', 'Canadian Dollar'),
+        'SEK' => array('kr', 'Swedish Krone'),
     );
 }
 
@@ -175,6 +176,7 @@ function l7p_currency_symbol($value, $decimal = 2, $minor = false, $iso = null)
         'DKK' => 'øre',
         'JPY' => 'r',
         'CAD' => '¢',
+        'SEK' => 'öre',
     );
 
     $names = l7p_get_currency_names();
@@ -212,7 +214,7 @@ function l7p_get_culture()
 // allowed currencies
 function l7p_get_currencies()
 {
-    return l7p_get_settings('currencies', array('EUR', 'USD', 'JPY', 'GBP', 'PLN'));
+    return l7p_get_settings('currencies', array('EUR', 'USD', 'JPY', 'GBP', 'PLN', 'SEK'));
 }
 
 function l7p_get_currency($auto_discover = false)
