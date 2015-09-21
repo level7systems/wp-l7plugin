@@ -8,10 +8,10 @@ License: GPLv2 or later
  
 
 ## Description
-This plugin provides integration of http://voipstudio.com web product for Level7 partners and will help you to manage your white label communication service.
+This plugin provides integration of Cloud PBX web product for Level 7 Systems partners to help them manage white label communication service.
 
 ## Features 
-*	easy integration with Level7 VoIP studio
+* easy integration with Level 7 Systems Cloud PBX platform
 * dynamic pages (call rates, telephone numbers, hardware, manuals)
  
 ## Installation
