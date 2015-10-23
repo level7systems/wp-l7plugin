@@ -124,7 +124,7 @@
                 'lastname',
                 'email',
                 'password',
-                ['package_type', 'package_route_id'],
+                'package_type',
                 'tc'
             ]);
         }
