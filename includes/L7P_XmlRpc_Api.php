@@ -21,6 +21,7 @@ class L7P_XmlRpc_Api
         'l7.setDdiCountries'=> 'setDdiCountries',
         'l7.setPhones'      => 'setPhones',
         'l7.setChapters'    => 'setChapters',
+        'l7.cacheClear'     => 'cacheClear'
     );
     
     public function __construct()
@@ -126,6 +127,19 @@ class L7P_XmlRpc_Api
         return "OK";
     }
     
+    public function cacheClear($params)
+    {
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        l7p_cache_clear();
+        
+        return "OK";
+    }
+
+
     public function ping()
     {
         return "OK";

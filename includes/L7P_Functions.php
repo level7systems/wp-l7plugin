@@ -651,7 +651,7 @@ function l7p_get_chapter($attr)
 function l7p_get_routes()
 {
     $login_page = get_post(l7p_get_option('login_page_id'));
-    
+
     return array(
         'login' => sprintf('/%s/', $login_page->post_name),
         'country_rates' => '/:permalink_rates/:country/:currency/',
@@ -1003,32 +1003,34 @@ function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = nu
     setcookie($name, $value, $expire, $path, $domain, $secure);
 }
 
-function l7p_starts_with($haystack, $needle) {
+function l7p_starts_with($haystack, $needle)
+{
     return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
 }
 
-function l7p_ends_with($haystack, $needle) {
+function l7p_ends_with($haystack, $needle)
+{
     return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
 }
 
 function l7p_is_manual_chapter_page()
 {
     global $wp_query;
-    
+
     return isset($wp_query->query_vars['chapter']);
 }
 
 function l7p_is_rates_country_page()
 {
     global $wp_query;
-    
+
     return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-rates';
 }
 
 function l7p_is_telephone_numbers_country_page()
 {
     global $wp_query;
-    
+
     return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-telephone-numbers';
 }
 
@@ -1037,6 +1039,14 @@ function l7p_get_remote_addr()
     if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         return $_SERVER['HTTP_X_FORWARDED_FOR'];
     }
-    
+
     return $_SERVER['REMOTE_ADDR'];
+}
+
+function l7p_cache_clear()
+{
+    // support for WP Super Cache
+    if (function_exists("wp_cache_clear_cache")) {
+        wp_cache_clear_cache();
+    }
 }
