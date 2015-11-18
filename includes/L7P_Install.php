@@ -128,6 +128,12 @@ class L7P_Install
                 'content'   => $pages_contents['login'],
                 'post_type' => 'page',
             ),
+            'one_time_login' => array(
+                'slug'      => 'one-time-login',
+                'title'     => 'One time login',
+                'content'   => $pages_contents['one_time_login'],
+                'post_type' => 'page',
+            ),
             'recover' => array(
                 'slug'      => 'recover-password',
                 'title'     => 'Recover password',
@@ -1086,9 +1092,18 @@ CONTENT
 <div id="l7p-login">
 
     [block login_form]
-            
+
 </div>
             
+CONTENT
+            
+            ,'one_time_login'      => <<<CONTENT
+<div id="l7p-new-password">
+
+    [block new_password_form]
+
+</div>
+        
 CONTENT
 
             ,'recover'             => <<<CONTENT
@@ -1162,12 +1177,6 @@ CONTENT
   <a href="/login">`Login`</a>
 </div>
 
-CONTENT
-            
-            , 'manual_chaoter'        => <<<CONTENT
-<h1>[MANUAL_NAME]</h1>
-
-[MANUAL_CONTENT]
 CONTENT
             
         );
