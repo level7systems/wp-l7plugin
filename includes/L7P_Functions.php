@@ -760,9 +760,9 @@ function l7p_add_settings_field($id, $title, $callback, $page, $section = 'defau
 
 function l7p_urlize($text)
 {
-    include_once('Transliterator.php');
+    include_once('L7P_Transliterator.php');
 
-    return Transliterator::urlize($text, '-');
+    return L7P_Transliterator::urlize($text, '-');
 }
 
 function l7p_do_shortcode($content)
