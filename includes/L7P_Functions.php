@@ -252,6 +252,11 @@ function l7p_has_currency($currency_name)
 // return country code
 function l7p_get_geo()
 {
+    // allow ?l7p_geo_ip=PL
+    if (isset($_GET['l7p_geo_ip'])) {
+        return $_GET['l7p_geo_ip'];
+    }
+    
     $country_code = '';
     // get remote address
     $remote_addr = l7p_get_remote_addr();
