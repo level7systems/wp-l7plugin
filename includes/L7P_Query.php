@@ -146,7 +146,7 @@ class L7P_Query
                 l7p_update_session('currency', $currency);
             }
         }
-
+        
         $page_name = $query->query_vars['name'];
         $post_type = 'l7p_page';
 
@@ -526,8 +526,6 @@ class L7P_Query
             add_rewrite_endpoint(strtolower($currency), EP_PAGES);
         }
 
-        // TODO: to be removed
-        flush_rewrite_rules();
     }
 }
 
