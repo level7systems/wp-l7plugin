@@ -252,9 +252,9 @@ function l7p_has_currency($currency_name)
 // return country code
 function l7p_get_geo()
 {
-    // allow ?l7p_geo_ip=PL
-    if (isset($_GET['l7p_geo_ip'])) {
-        return $_GET['l7p_geo_ip'];
+    // allow X-L7p-Geo-Ip header
+    if ($geo_ip = l7p_get_http_header("X-L7p-Geo-Ip")) {
+        return $geo_ip;
     }
     
     $country_code = '';
@@ -1054,4 +1054,38 @@ function l7p_cache_clear()
     if (function_exists("wp_cache_clear_cache")) {
         wp_cache_clear_cache();
     }
+}
+
+/**
+ * Return http header
+ * 
+ * @param string $headerName
+ * 
+ * @return string|null
+ */
+function l7p_get_http_header($headerName)
+{
+   $headerName = strtoupper(strtr($headerName, ['-' => '_']));
+   
+   if (function_exists('getallheaders')) {
+       $allheaders = getallheaders();
+   } else {
+       $allheaders = [];
+       foreach ($_SERVER as $name => $value) {
+           if (substr($name, 0, 5) == 'HTTP_') {
+               $allheaders[substr($name, 5)] = $value;
+           }
+       }
+   }
+   
+   $headers = array();
+   foreach ($allheaders as $name => $value) {
+       $headers[strtoupper(strtr($name, ['-' => '_']))] = $value;
+   }
+   
+   if (array_key_exists($headerName, $headers)) {
+       return $headers[$headerName];
+   }
+
+   return null;
 }
