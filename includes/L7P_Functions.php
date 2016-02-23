@@ -214,7 +214,7 @@ function l7p_get_culture()
 // allowed currencies
 function l7p_get_currencies()
 {
-    return l7p_get_settings('currencies', array('EUR', 'USD', 'JPY', 'GBP', 'PLN', 'SEK'));
+    return l7p_get_settings('currencies', array());
 }
 
 function l7p_get_currency($auto_discover = false)
@@ -343,6 +343,23 @@ function l7p_has_country($country_name, $urlized = true)
 function l7p_get_states()
 {
     return l7p_get_settings('states', array());
+}
+
+function l7p_get_currency_from_query()
+{
+    global $wp_query;
+
+    if (!isset($wp_query->query_vars['currency'])) {
+        return null;
+    }
+    
+    $currency = $wp_query->query_vars['currency'];
+    $currencies = l7p_get_currencies();
+    if (!in_array(strtoupper($currency), $currencies)) {
+        return null;
+    }
+
+    return $currency;
 }
 
 function l7p_get_city_name_from_query()
@@ -662,11 +679,11 @@ function l7p_get_routes()
         'country_rates' => '/:permalink_rates/:country/:currency/',
         'numbers' => '/:permalink_telephone_numbers/:country/:currency/',
         'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency/',
-        'number_buy' => '/:permalink_telephone_numbers/:country/:city/:currency/buy/',
-        'number_buy_toll_free' => '/:permalink_telephone_numbers/:country/toll-free/:city/:currency/buy/',
+        'number_buy' => '/:permalink_telephone_numbers/:country/:city/buy/:currency/',
+        'number_buy_toll_free' => '/:permalink_telephone_numbers/:country/toll-free/:city/buy/:currency/',
         'phone_page' => '/:permalink_hardware/:group/:model/:currency/',
         'phones_group' => '/:permalink_hardware/:group/:currency/',
-        'phone_buy' => '/:permalink_hardware/:group/:model/:currency/buy/',
+        'phone_buy' => '/:permalink_hardware/:group/:model/buy/:currency/',
         'manual' => '/:permalink_manual/:chapter/',
         'terms' => '/:permalink_terms/',
         'download' => '/download-for-:os/'
@@ -698,9 +715,11 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
         $replace_pairs[':' . $key] = $param;
     }
 
-    // add currency id not set
-    if (!isset($replace_pairs[':currency'])) {
-        $replace_pairs[':currency'] = strtolower(l7p_get_currency());
+    // add currency only if exists in query
+    if ($currency = l7p_get_currency_from_query()) {
+        $replace_pairs[':currency'] = strtolower($currency);
+    } else {
+        $replace_pairs['/:currency'] = '';
     }
 
     $url = strtr($routes[$route_name], $replace_pairs);
@@ -740,7 +759,7 @@ function l7p_get_page()
 function l7p_pre($var)
 {
     echo '<pre>';
-    print_r($var);
+    var_dump($var);
     echo '</pre>';
 }
 
@@ -1088,4 +1107,13 @@ function l7p_get_http_header($headerName)
    }
 
    return null;
+}
+
+function l7p_is_ssl()
+{
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        return true;
+    }
+    
+    return is_ssl();
 }

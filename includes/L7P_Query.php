@@ -28,7 +28,8 @@ class L7P_Query
     {
         add_action('init', array($this, 'add_rewrite_rules'));
         add_action('init', array($this, 'currency_change'));
-        add_action('template_redirect', array($this, 'currency_template_redirect'));
+        
+//        add_action('template_redirect', array($this, 'currency_template_redirect'));
 
         if (!is_admin()) {
             add_filter('query_vars', array($this, 'add_query_vars'), 0);
@@ -51,6 +52,8 @@ class L7P_Query
     }
 
     /**
+     * @deprecated since version number
+     * 
      * @global type $wp_query
      * @global type $sitepress
      * @return type
@@ -58,6 +61,8 @@ class L7P_Query
     public function currency_template_redirect()
     {
         global $wp_query;
+        
+        return ;
 
         $currency = strtolower(l7p_get_currency());
         if (isset($wp_query->query_vars[$currency])) {
@@ -134,8 +139,10 @@ class L7P_Query
         // set locale based on url
         $currencies = l7p_get_currencies();
         foreach ($currencies as $currency) {
-            if (isset($query->query_vars[strtolower($currency)])) {
-                l7p_update_session('currency', $currency);
+            $currency = strtolower($currency);
+            if (isset($query->query_vars[$currency])) {
+                $query->query_vars['currency'] = $currency;
+                unset($query->query_vars[$currency]);
             }
         }
 
@@ -150,13 +157,7 @@ class L7P_Query
         $page_name = $query->query_vars['name'];
         $post_type = 'l7p_page';
 
-        if ($page_name == "pricing") {
-            return $this->redirect_to_currency();
-        } else if ($page_name == "rates") {
-
-            if (!$query->query_vars['currency']) {
-                return $this->redirect_to_currency();
-            }
+        if ($page_name == "rates") {
 
             if (!isset($query->query_vars['country'])) {
                 return $this->error_404();
@@ -169,10 +170,6 @@ class L7P_Query
             // call rates country
             $page_name .= "_country";
         } else if ($page_name == 'telephone_numbers') {
-
-            if (!$query->query_vars['currency']) {
-                return $this->redirect_to_currency();
-            }
 
             if (isset($query->query_vars['city'])) {
 
@@ -215,10 +212,6 @@ class L7P_Query
             // skip web_product has disabled shop option
             if (!l7p_get_web_product_settings('has_shop')) {
                 return;
-            }
-
-            if (!$query->query_vars['currency']) {
-                return $this->redirect_to_currency();
             }
 
             if (isset($query->query_vars['model'])) {
@@ -375,6 +368,7 @@ class L7P_Query
         } else {
             $page_name = null;
         }
+        
 
         if ($page_name) {
 
@@ -413,11 +407,14 @@ class L7P_Query
     private function error_404()
     {
         global $wp_query;
-
+        
         $wp_query->set_404();
         status_header(404);
     }
 
+    /**
+     * Redirects to given page with currency suffix
+     */
     public function redirect_to_currency()
     {
         $uri = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -430,35 +427,35 @@ class L7P_Query
             $uri = preg_replace(sprintf('#/%s/$#', strtolower($currency)), '/', $uri);
         }
 
-        return l7p_redirect(sprintf("http://%s%s/", $uri, strtolower(l7p_get_currency())));
+        return l7p_redirect(sprintf("%s://%s%s/", l7p_is_ssl() ? 'https' : 'http', $uri, strtolower(l7p_get_currency())));
     }
 
     public function redirect_to_login()
     {
         $page = get_post(l7p_get_option('login_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     public function redirect_to_one_time_login()
     {
         $page = get_post(l7p_get_option('one_time_login_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     public function redirect_to_subscription()
     {
         $page = get_post(l7p_get_option('subscription_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     public function redirect_activation()
     {
         $page = get_post(l7p_get_option('activation_page_id'));
 
-        return l7p_redirect(sprintf("http://%s/%s/%s/", $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
     /**
@@ -466,37 +463,38 @@ class L7P_Query
      */
     public function add_rewrite_rules()
     {
+        
         $permalink = l7p_get_permalinks();
         $cultures = l7p_get_cultures();
         $currencies = l7p_get_currencies();
         $currencies_rule = strtolower(implode("|", $currencies));
-
-        $pricing_page = get_post(l7p_get_option('pricing_page_id'));
-
-        // pricing
-        add_rewrite_rule(sprintf("%s/?$", $pricing_page->post_name), 'index.php?name=pricing', 'top');
 
         foreach ($cultures as $culture) {
 
             // downloads
             add_rewrite_rule("download-for-(windows|mac-osx|linux)/?$", 'index.php?name=download&os=$matches[1]', 'top');
             // rates
+            // /:permalink/:country/:currency/
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
             // virtual numbers
+            // /:permalink/:phone/:currency/
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
+            // /:permalink/:phone/:country/:currency/
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
-            // buy virtual number /:permalink/:country/:city/:currency/buy
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/(%s)/buy$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
-            // buy virtual number /:permalink/:country/toll-free/:city/:currency/buy
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/toll-free/([0-9]{3,4})/(%s)/buy$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1&toll_free=1', 'top');
+            // /:permalink/:country/:city/buy/:currency/
+            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/buy/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
+            // /:permalink/:country/toll-free/:city/buy/:currency/
+            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/toll-free/([0-9]{3,4})/buy/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1&toll_free=1', 'top');
 
             // if web_product has shop enabled
             if (l7p_get_web_product_settings('has_shop')) {
                 // hardware
+                // /:permalink/:group/:currency/
                 add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
+                // /:permalink/:group/:model/:currency/
                 add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
-                // buy phone /:permalink/:group/:model/:currency/buy
-                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/(%s)/buy$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]&buy=1', 'top');
+                // /:permalink/:group/:model/buy/:currency/
+                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/buy/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]&buy=1', 'top');
             }
 
             // manual
@@ -505,7 +503,6 @@ class L7P_Query
 
         // account confirmation
         add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&token=$matches[1]', 'top');
-
         // account activation 
         add_rewrite_rule("activate/([a-zA-Z0-9]{6,})$", 'index.php?name=activation&token=$matches[1]', 'top');
         // password reset
@@ -525,7 +522,6 @@ class L7P_Query
         foreach ($currencies as $currency) {
             add_rewrite_endpoint(strtolower($currency), EP_PAGES);
         }
-
     }
 }
 
