@@ -715,11 +715,9 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
         $replace_pairs[':' . $key] = $param;
     }
 
-    // add currency only if exists in query
-    if ($currency = l7p_get_currency_from_query()) {
-        $replace_pairs[':currency'] = strtolower($currency);
-    } else {
-        $replace_pairs['/:currency'] = '';
+    // add currency id not set
+    if (!isset($replace_pairs[':currency'])) {
+        $replace_pairs[':currency'] = strtolower(l7p_get_currency());
     }
 
     $url = strtr($routes[$route_name], $replace_pairs);
