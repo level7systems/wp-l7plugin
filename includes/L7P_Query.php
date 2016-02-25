@@ -59,9 +59,8 @@ class L7P_Query
     public function currency_template_redirect()
     {
         global $wp_query;
-
-        $currency = strtolower(l7p_get_currency());
-        if (isset($wp_query->query_vars[$currency])) {
+        
+        if (isset($wp_query->query_vars['currency'])) {
             return;
         }
 
@@ -74,10 +73,6 @@ class L7P_Query
         if (isset($wp_query->query_vars['page_id']) && $wp_query->query_vars['page_id']) {
 
             $page = get_post($wp_query->query_vars['page_id']);
-
-            // TODO: to be refactored
-            // get original page
-            // support for WPML plugin
             if (function_exists('icl_object_id') && $page) {
 
                 global $sitepress;
@@ -91,7 +86,7 @@ class L7P_Query
                 }
             }
         }
-
+        
         if ($page) {
 
             $currency_redirect_ids = l7p_get_option('currency_redirect_ids');
@@ -130,14 +125,13 @@ class L7P_Query
         if (!$query->is_main_query()) {
             return;
         }
-
+        
         // set locale based on url
         $currencies = l7p_get_currencies();
         foreach ($currencies as $currency) {
             $currency = strtolower($currency);
             if (isset($query->query_vars[$currency])) {
                 $query->query_vars['currency'] = $currency;
-                unset($query->query_vars[$currency]);
             }
         }
 
@@ -153,6 +147,7 @@ class L7P_Query
         $wp_pagename = $query->query_vars['pagename'];
         $pagename = $query->query_vars['name'];
         
+        
         // redirect to currency page
         if (in_array($wp_pagename, array('pricing', 'rates', 'telephone-numbers', 'hardware')) && !$query->query_vars['currency']) {
             return $this->redirect_to_currency();
@@ -162,7 +157,7 @@ class L7P_Query
         if (in_array($pagename, array('pricing', 'rates', 'telephone_numbers', 'hardware')) && !$query->query_vars['currency']) {
             return $this->redirect_to_currency();
         }
-
+        
         if ($pagename == "rates") {
             
             if (!isset($query->query_vars['country'])) {
@@ -374,7 +369,6 @@ class L7P_Query
             $pagename = null;
         }
         
-
         if ($pagename) {
 
             $page = get_post(l7p_get_option(sprintf("%s_page_id", $pagename)));
