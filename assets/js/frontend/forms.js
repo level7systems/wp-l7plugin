@@ -32,8 +32,52 @@
             alert('Your are missing the following fields in your form:\n - ' + errors.join("\n - "));
         }
     }
+    
+    function get_cookie(key, defaults) {
+        var cookies = document.cookie ? document.cookie.split('; ') : [];
+
+        for (var i = 0, l = cookies.length; i < l; i++) {
+            var parts = cookies[i].split('=');
+            var name = decodeURIComponent(parts.shift());
+            var cookie = parts.join('=');
+
+            if (key && key === name) {
+                return JSON.parse(cookie);
+            }
+        }
+
+        return defaults !== undefined ? defaults : undefined;
+    }
+
+    function set_cookie(name, value, options) {
+        
+        var options = (options === undefined) ? {} : options;
+        
+        if (typeof options.expires === 'number') {
+            var days = options.expires, t = options.expires = new Date();
+            t.setTime(+t + days * 864e+5);
+        }
+            
+        document.cookie = [
+            // storage of JOSN objects - serialize
+            name, '=', JSON.stringify(value),
+            options.expires ? '; expires=' + options.expires.toGMTString() : '', // use expires attribute, max-age is not supported by IE
+            '; path=' + (options.path ? options.path : '/'),
+            options.domain  ? '; domain=' + options.domain : '',
+            options.secure || window.location.protocol == "https:" ? '; secure' : ''
+        ].join('');
+    }
 
     $(function () {
+        
+        // set referer cookie
+        if (get_cookie('xl7ref', false) === false && document.referrer) {
+            // cookie for one year
+            var expire = new Date(),
+                time = expire.getTime() + 1000*60*60*24*365;
+            expire.setTime(time);
+            set_cookie('xl7ref', document.referrer, { expires: expire });
+        }
 
         if (!$('#l7p-global-errors').is(':empty')) {
             $('#l7p-global-errors').show();
@@ -172,30 +216,14 @@
                 tc: t
             };
             
-            var xl7ppc = xl7a = xl7ref = '';
-            $.each(document.cookie.split("; "), function (key, value) {
-                var m = value.match(/^xl7ppc=(.*)/);
-                if (m && 1 in m) {
-                    xl7ppc = m[1];
-                }
-                m = value.match(/^xl7a=(.*)/);
-                if (m && 1 in m) {
-                    xl7a = m[1];
-                }
-                m = value.match(/^xl7ref=(.*)/);
-                if (m && 1 in m) {
-                    xl7ref = m[1];
-                }
-            });
-            
-            if (xl7ppc) {
-                data.xl7ppc = xl7ppc;
+            if (get_cookie('xl7ppc', false)) {
+                data.xl7ppc = get_cookie('xl7ppc');
             }
-            if (xl7a) {
-                data.xl7a = xl7a;
+            if (get_cookie('xl7a', false)) {
+                data.xl7a = get_cookie('xl7a');
             }
-            if (xl7ref) {
-                data.xl7ref = xl7ref;
+            if (get_cookie('xl7ref', false)) {
+                data.xl7ref = get_cookie('xl7ref');
             }
 
             e.preventDefault();
@@ -206,7 +234,6 @@
                 data: data,
                 success: function (res) {
 
-                    console.log('success');
                     if (res.status === 403) {
 
                         if (res.errors.first_name)
@@ -235,7 +262,6 @@
                 }, 
                 error: function(jqXhr, status) {
                     
-                    console.log('error');
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
