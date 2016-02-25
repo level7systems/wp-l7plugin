@@ -185,6 +185,8 @@ class L7P_Query
                     }
 
                     l7p_update_session('extini', 'DdiAddWindow("' . $country_code . '","' . ucwords($city) . '");');
+                    
+                    l7p_set_success_flash_message("Please login to complete your purchase.");
 
                     return $this->redirect_to_login();
                 }
@@ -225,6 +227,9 @@ class L7P_Query
                 if (isset($query->query_vars['buy'])) {
                     $phone = l7p_get_phone();
                     l7p_update_session('extini', 'PhonesGridWindow(); PhoneBuyWindowInit("' . $phone['pricelist_item_id'] . '");');
+                    
+                    l7p_set_success_flash_message("Please login to complete your purchase.");
+                    
                     return $this->redirect_to_login();
                 }
 
