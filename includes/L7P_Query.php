@@ -126,6 +126,12 @@ class L7P_Query
             return;
         }
         
+        // set referer cookie
+        if (!l7p_hascookie('xl7ref') && isset($_SERVER['HTTP_REFERER'])) {
+            // cookie for one year
+            l7p_setcookie('xl7ref', $_SERVER['HTTP_REFERER'], time()+60*60*24*365);
+        }
+        
         // set locale based on url
         $currencies = l7p_get_currencies();
         foreach ($currencies as $currency) {

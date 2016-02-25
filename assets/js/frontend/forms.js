@@ -172,7 +172,7 @@
                 tc: t
             };
             
-            var xl7ppc = xl7a = '';
+            var xl7ppc = xl7a = xl7ref = '';
             $.each(document.cookie.split("; "), function (key, value) {
                 var m = value.match(/^xl7ppc=(.*)/);
                 if (m && 1 in m) {
@@ -182,6 +182,10 @@
                 if (m && 1 in m) {
                     xl7a = m[1];
                 }
+                m = value.match(/^xl7ref=(.*)/);
+                if (m && 1 in m) {
+                    xl7ref = m[1];
+                }
             });
             
             if (xl7ppc) {
@@ -189,6 +193,9 @@
             }
             if (xl7a) {
                 data.xl7a = xl7a;
+            }
+            if (xl7ref) {
+                data.xl7ref = xl7ref;
             }
 
             e.preventDefault();

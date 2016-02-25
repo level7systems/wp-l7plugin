@@ -663,7 +663,7 @@ function l7p_get_chapter($attr)
     $parts = explode("_", $name);
     $manual_type = array_shift($parts);
     $name = implode("_", $parts);
-
+    
     if ($attr == 'toc') {
         return isset($chapters[$manual_type]['index']) ? $chapters[$manual_type]['index'] : '';
     }
@@ -1023,6 +1023,11 @@ function l7p_image_path($source, $absolute = true)
 function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
 {
     setcookie($name, $value, $expire, $path, $domain, $secure);
+}
+
+function l7p_hascookie($name)
+{
+    return isset($_COOKIE[$name]);
 }
 
 function l7p_starts_with($haystack, $needle)
