@@ -42,7 +42,11 @@
             var cookie = parts.join('=');
 
             if (key && key === name) {
-                return JSON.parse(cookie);
+                try {
+                   return JSON.parse(cookie);
+                } catch (error) {
+                   return cookie;
+                }
             }
         }
 
