@@ -78,6 +78,11 @@
             expire.setTime(time);
             set_cookie('xl7ref', document.referrer, { expires: expire });
         }
+        
+        // set cookie on currency change
+        $('#currency').change(function() {
+            set_cookie('l7p_currency', $(this).val());
+        });
 
         if (!$('#l7p-global-errors').is(':empty')) {
             $('#l7p-global-errors').show();
@@ -172,7 +177,25 @@
                 'tc'
             ]);
         }
-
+        
+        if (typeof package_type_options != 'undefined') {
+            
+            var currency = 'USD';
+            if (typeof l7_geoip != 'undefined') {
+                var currencies = { EU: "EUR", US: "USD", JP: "JPY", GB: "GBP", PL: "PLN" };
+                currency = l7_geoip.country_code in currencies ? currencies[l7_geoip.country_code] : currency;
+            }
+            if (get_cookie('l7p_currency', false) !== false) {
+                currency = get_cookie('l7p_currency');
+            }
+            
+            $('select#package_type').html();
+            var options = package_type_options[currency];
+            for(var value in options) {
+                $('select#package_type').append($('<option>').attr('value', value).text(options[value]));
+            };
+        }
+        
         $('select#package_type').on('change', function () {
 
             if (this.value == "S") {
