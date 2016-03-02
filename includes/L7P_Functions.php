@@ -663,7 +663,7 @@ function l7p_get_chapter($attr)
     $parts = explode("_", $name);
     $manual_type = array_shift($parts);
     $name = implode("_", $parts);
-
+    
     if ($attr == 'toc') {
         return isset($chapters[$manual_type]['index']) ? $chapters[$manual_type]['index'] : '';
     }
@@ -715,11 +715,9 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
         $replace_pairs[':' . $key] = $param;
     }
 
-    // add currency only if exists in query
-    if ($currency = l7p_get_currency_from_query()) {
-        $replace_pairs[':currency'] = strtolower($currency);
-    } else {
-        $replace_pairs['/:currency'] = '';
+    // add currency id not set
+    if (!isset($replace_pairs[':currency'])) {
+        $replace_pairs[':currency'] = strtolower(l7p_get_currency());
     }
 
     $url = strtr($routes[$route_name], $replace_pairs);
@@ -1025,6 +1023,11 @@ function l7p_image_path($source, $absolute = true)
 function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
 {
     setcookie($name, $value, $expire, $path, $domain, $secure);
+}
+
+function l7p_hascookie($name)
+{
+    return isset($_COOKIE[$name]);
 }
 
 function l7p_starts_with($haystack, $needle)

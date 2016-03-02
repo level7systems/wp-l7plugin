@@ -1171,7 +1171,7 @@ CONTENT
 </div>
 
 <div>
-  <h3><span>`Support</span> Centre`</h3>
+  <h3><span>`Support</span> Center`</h3>
   <p>`Access to the VoIP Studio Support Center is only granted to our customers.<br>
     Please login into Customer Portal to open a new Support Ticket.`</p>
   <a href="/login">`Login`</a>

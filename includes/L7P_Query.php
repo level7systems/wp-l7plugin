@@ -29,7 +29,7 @@ class L7P_Query
         add_action('init', array($this, 'add_rewrite_rules'));
         add_action('init', array($this, 'currency_change'));
         
-//        add_action('template_redirect', array($this, 'currency_template_redirect'));
+        add_action('template_redirect', array($this, 'currency_template_redirect'));
 
         if (!is_admin()) {
             add_filter('query_vars', array($this, 'add_query_vars'), 0);
@@ -52,8 +52,6 @@ class L7P_Query
     }
 
     /**
-     * @deprecated since version number
-     * 
      * @global type $wp_query
      * @global type $sitepress
      * @return type
@@ -62,10 +60,7 @@ class L7P_Query
     {
         global $wp_query;
         
-        return ;
-
-        $currency = strtolower(l7p_get_currency());
-        if (isset($wp_query->query_vars[$currency])) {
+        if (isset($wp_query->query_vars['currency'])) {
             return;
         }
 
@@ -78,10 +73,6 @@ class L7P_Query
         if (isset($wp_query->query_vars['page_id']) && $wp_query->query_vars['page_id']) {
 
             $page = get_post($wp_query->query_vars['page_id']);
-
-            // TODO: to be refactored
-            // get original page
-            // support for WPML plugin
             if (function_exists('icl_object_id') && $page) {
 
                 global $sitepress;
@@ -95,10 +86,9 @@ class L7P_Query
                 }
             }
         }
-
+        
         if ($page) {
 
-            // TODO: needs caching
             $currency_redirect_ids = l7p_get_option('currency_redirect_ids');
             if (!in_array($page->ID, $currency_redirect_ids)) {
                 return;
@@ -135,14 +125,13 @@ class L7P_Query
         if (!$query->is_main_query()) {
             return;
         }
-
+        
         // set locale based on url
         $currencies = l7p_get_currencies();
         foreach ($currencies as $currency) {
             $currency = strtolower($currency);
             if (isset($query->query_vars[$currency])) {
                 $query->query_vars['currency'] = $currency;
-                unset($query->query_vars[$currency]);
             }
         }
 
@@ -154,11 +143,23 @@ class L7P_Query
             }
         }
         
-        $page_name = $query->query_vars['name'];
-        $post_type = 'l7p_page';
-
-        if ($page_name == "rates") {
-
+        // pagename
+        $wp_pagename = $query->query_vars['pagename'];
+        $pagename = $query->query_vars['name'];
+        
+        
+        // redirect to currency page
+        if (in_array($wp_pagename, array('pricing', 'rates', 'telephone-numbers', 'hardware')) && !$query->query_vars['currency']) {
+            return $this->redirect_to_currency();
+        }
+        
+        // redirect to currency page
+        if (in_array($pagename, array('pricing', 'rates', 'telephone_numbers', 'hardware')) && !$query->query_vars['currency']) {
+            return $this->redirect_to_currency();
+        }
+        
+        if ($pagename == "rates") {
+            
             if (!isset($query->query_vars['country'])) {
                 return $this->error_404();
             }
@@ -168,8 +169,8 @@ class L7P_Query
             }
 
             // call rates country
-            $page_name .= "_country";
-        } else if ($page_name == 'telephone_numbers') {
+            $pagename .= "_country";
+        } else if ($pagename == 'telephone_numbers') {
 
             if (isset($query->query_vars['city'])) {
 
@@ -184,6 +185,8 @@ class L7P_Query
                     }
 
                     l7p_update_session('extini', 'DdiAddWindow("' . $country_code . '","' . ucwords($city) . '");');
+                    
+                    l7p_set_success_flash_message("Please login to complete your purchase.");
 
                     return $this->redirect_to_login();
                 }
@@ -191,7 +194,7 @@ class L7P_Query
 
             if (isset($query->query_vars['state'])) {
                 // phone number state
-                $page_name .= "_country";
+                $pagename .= "_country";
             } else if (isset($query->query_vars['country'])) {
                 // phone numbers country
                 if (!l7p_has_country($query->query_vars['country'])) {
@@ -199,15 +202,15 @@ class L7P_Query
                 }
 
                 if (l7p_get_country_code_from_query() == 'US') {
-                    $page_name .= "_state";
+                    $pagename .= "_state";
                 } else {
-                    $page_name .= "_country";
+                    $pagename .= "_country";
                 }
             } else {
                 // errorr 404
                 return $this->error_404();
             }
-        } else if ($page_name == 'hardware') {
+        } else if ($pagename == 'hardware') {
 
             // skip web_product has disabled shop option
             if (!l7p_get_web_product_settings('has_shop')) {
@@ -222,30 +225,32 @@ class L7P_Query
 
                 // buying phone
                 if (isset($query->query_vars['buy'])) {
-
                     $phone = l7p_get_phone();
                     l7p_update_session('extini', 'PhonesGridWindow(); PhoneBuyWindowInit("' . $phone['pricelist_item_id'] . '");');
+                    
+                    l7p_set_success_flash_message("Please login to complete your purchase.");
+                    
                     return $this->redirect_to_login();
                 }
 
                 // hardware model
-                $page_name .= "_model";
+                $pagename .= "_model";
             } else if (isset($query->query_vars['group'])) {
                 // hardware group
-                $page_name .= "_group";
+                $pagename .= "_group";
             } else {
                 // errorr 404
                 return $this->error_404();
             }
-        } else if ($page_name == 'manual') {
+        } else if ($pagename == 'manual') {
 
             if (isset($query->query_vars['chapter'])) {
                 // manual chapter
-                $page_name .= "_chapter";
+                $pagename .= "_chapter";
             } else {
                 return $this->error_404();
             }
-        } else if ($page_name == 'download') {
+        } else if ($pagename == 'download') {
 
             if (isset($query->query_vars['os'])) {
                 // download os
@@ -255,7 +260,7 @@ class L7P_Query
             }
 
             return $this->error_404();
-        } else if ($page_name == 'confirmation') {
+        } else if ($pagename == 'confirmation') {
 
             if (isset($query->query_vars['token'])) {
 
@@ -270,7 +275,7 @@ class L7P_Query
             }
 
             return $this->error_404();
-        } else if ($page_name == 'activation') {
+        } else if ($pagename == 'activation') {
 
             if (isset($query->query_vars['token'])) {
 
@@ -283,7 +288,7 @@ class L7P_Query
             } else {
                 return $this->error_404();
             }
-        } else if ($page_name == 'reset') {
+        } else if ($pagename == 'reset') {
 
             if (isset($query->query_vars['token'])) {
 
@@ -297,7 +302,7 @@ class L7P_Query
                 return $this->redirect_to_login();
             }
             return $this->error_404();
-        } else if ($page_name == 'resend') {
+        } else if ($pagename == 'resend') {
 
             if (isset($query->query_vars['email'])) {
 
@@ -311,7 +316,7 @@ class L7P_Query
                 return $this->redirect_to_login();
             }
             return $this->error_404();
-        } else if ($page_name == 'subscription') {
+        } else if ($pagename == 'subscription') {
 
             if (isset($query->query_vars['token'])) {
 
@@ -326,7 +331,7 @@ class L7P_Query
                 }
             }
             return $this->error_404();
-        } else if ($page_name == 'ppc') {
+        } else if ($pagename == 'ppc') {
 
             if (isset($query->query_vars['token'])) {
 
@@ -341,7 +346,7 @@ class L7P_Query
                 }
             }
             return $this->error_404();
-        } else if ($page_name == 'agentclick') {
+        } else if ($pagename == 'agentclick') {
 
             if (isset($query->query_vars['token'])) {
 
@@ -352,7 +357,7 @@ class L7P_Query
                 }
             }
             return $this->error_404();
-        } else if ($page_name == 'extini') {
+        } else if ($pagename == 'extini') {
 
             if (isset($query->query_vars['extini'])) {
 
@@ -366,13 +371,12 @@ class L7P_Query
             }
             return $this->error_404();
         } else {
-            $page_name = null;
+            $pagename = null;
         }
         
+        if ($pagename) {
 
-        if ($page_name) {
-
-            $page = get_post(l7p_get_option(sprintf("%s_page_id", $page_name)));
+            $page = get_post(l7p_get_option(sprintf("%s_page_id", $pagename)));
 
             // TODO: to be refactored
             // support for WPML plugin
@@ -399,7 +403,7 @@ class L7P_Query
             $query->is_page = true;
             $query->is_home = false;
             $query->is_singular = true;
-            $query->set('post_type', $post_type);
+            $query->set('post_type', 'l7p_page');
             $query->set('name', $page->post_name);
         }
     }
