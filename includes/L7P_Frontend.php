@@ -18,6 +18,8 @@ class L7P_Frontend
         
         add_filter('wp_title', array($this, 'filter_wp_title'), 10, 2);
         add_filter('widget_posts_args', array($this, 'filter_recent_posts_widget_parameters'));
+        // remove rel cannonical
+        add_filter('wpseo_canonical', '__return_false');
         // removes WP shortlinks from <heade>
         remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
         // removes WP extra feeds from <head>
