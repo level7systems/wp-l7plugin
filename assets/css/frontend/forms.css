@@ -15,5 +15,17 @@ p.errors {
     font-size: 12px; 
 }
 p[class*="error-"] {
-    color: red;
+    color: red !important;
+    margin: 0px;
+}
+
+p.small[class*="error-"] {
+    font-size: 12px !important; 
+    line-height: 28px !important;
+}
+
+.big.center.text-center {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 30px;
 }

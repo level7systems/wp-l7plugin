@@ -5,7 +5,7 @@
   Description: This is a Level 7 Systems integration plugin which will help you to manage your white label communication service.
   Author: Level 7 Systems Ltd.
   Author URI: http://level7systems.co.uk
-  Version: 0.1
+  Version: 1.0.6
  */
 
 if (defined('LEVEL7PLATFORM_VERSION'))
@@ -16,7 +16,7 @@ define('LEVEL7_PATH', dirname(__FILE__));
 class Level7Platform
 {
 
-    const VERSION = '0.1';
+    const VERSION = '1.0.6';
 
     /**
      * @var L7P_Query $query
@@ -40,10 +40,6 @@ class Level7Platform
 
     public function __construct()
     {
-        // only for develop purpose
-        // error_reporting(E_ALL);
-        //ini_set('display_errors', 1);
-
         // Auto-load classes on demand
         if (function_exists("__autoload")) {
             spl_autoload_register("__autoload");

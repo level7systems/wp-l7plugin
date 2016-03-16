@@ -1,29 +1,37 @@
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position){
+      position = position || 0;
+      return this.substr(position, searchString.length) === searchString;
+  };
+}
+
 (function ($, window, document) {
 
-    function clearErrors(selector) {
-        $(selector + '-global-errors').html("").hide();
-        $(selector + ' [class*="error-"]').remove();
+    function clearErrors($form) {
+        $form.find('[class*="-global-errors"]').html("").hide();
+        $form.find('[class*="error-"]').remove();
     }
 
     function validateRequiredFields($form, fields) {
         var errors = [];
-
+        
         for (var i in fields) {
             var field = fields[i];
             // if fields depend on other fields
             if ($.isArray(field)) {
                 // if first exists - other are required to exist
-                if ($form.find('#' + field[0]).length > 0) {
+                if ($form.find('[name="' + field[0] +'"]').length > 0) {
                     // check each field
                     for (var j in field) {
                         if (j > 0) {
-                            if ($form.find('#' + field[j]).length == 0) {
+                            if ($form.find('[name="' + field[j] + '"]').length == 0) {
                                 errors.push(field[j]);
+                                console.log('does not exist');
                             }
                         }
                     }
                 }
-            } else if ($form.find('#' + field).length == 0) {
+            } else if ($form.find('[name="' + field + '"]').length == 0) {
                 errors.push(field);
             }
         }
@@ -106,11 +114,11 @@
             ]);
         }
 
-        $(document).on('submit', 'form#l7p-login-form', function (e) {
-
-            clearErrors('#l7p-login-form');
+        $(document).on('submit', 'form#l7p-login-form, form.l7p-login-form', function (e) {
 
             var $form = $(this);
+            
+            clearErrors($form);
 
             e.preventDefault();
             $.jsonp({
@@ -119,22 +127,34 @@
                 type: 'POST',
                 data: {
                     method: 'login',
-                    username: $form.find('#username').val(),
-                    password: $form.find('#password').val(),
+                    username: $form.find('input[name="username"]').val(),
+                    password: $form.find('input[name="password"]').val(),
                     remember_me: $form.find('#remember').is(':checked'),
                 },
                 success: function (res) {
                     if (!res.success) {
 
                         if (res.errors.username)
-                            $form.find('#username').after('<p class="small error-username">' + res.errors.username + '</p>')
+                            $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>')
                         if (res.errors.password)
-                            $form.find('#password').after('<p class="small error-password">' + res.errors.password + '</p>')
+                            $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>')
                         if (res.errors.email) {
                             if (res.errors.email.indexOf("unrecognised user name") != -1) {
-                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="/en/recover-password">Have you forgotten your password?</a>').show();
+                                
+                                var recover_url = '/recover-password';
+                                if (document.location.pathname.startsWith('/en')) {
+                                    recover_url = '/en' + recover_url;
+                                }
+                        
+                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
                             } else if (res.errors.email.indexOf("not confirmed") != -1) {
-                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="/en/resend-confirmation-email/' + $form.find('#username').val() + '">Resend confirmation email to ' + $form.find('#username').val() + '</a>').show();
+                                
+                                var confirmation_url = '/resend-confirmation-email';
+                                if (document.location.pathname.startsWith('/en')) {
+                                    confirmation_url = '/en' + confirmation_url;
+                                }
+                        
+                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
                             } else {
                                 $('#l7p-global-errors').html(res.errors.email).show();
                             }
@@ -170,16 +190,19 @@
         });
 
         // REGISTER
-        if ($('form#l7p-register-form').length > 0) {
-            // validate login form fields
-            validateRequiredFields($('form#l7p-register-form'), [
-                'firstname',
-                'lastname',
-                'email',
-                'password',
-                ['package_type', 'package_route_id'],
-                'tc'
-            ]);
+        if ($('form#l7p-register-form, form.l7p-register-form').length > 0) {
+            
+            $('form#l7p-register-form, form.l7p-register-form').each(function(index, form) {
+                
+                validateRequiredFields($(form), [
+                    'firstname',
+                    'lastname',
+                    'email',
+                    'password',
+                    ['package_type', 'package_route_id'],
+                    'tc'
+                ]);
+            });
         }
         
         if (typeof package_type_options != 'undefined') {
@@ -193,53 +216,58 @@
                 currency = get_cookie('l7p_currency');
             }
             
-            $('select#package_type').html();
+            $('select#package_type, form.l7p-register-form select.package_type').html();
             var options = package_type_options[currency];
             for(var value in options) {
-                $('select#package_type').append($('<option>').attr('value', value).text(options[value]));
+                $('select#package_type, form.l7p-register-form select.package_type').append($('<option>').attr('value', value).text(options[value]));
             };
         }
         
-        $('select#package_type').on('change', function () {
+        $('select#package_type, form.l7p-register-form select.package_type').on('change', function () {
 
+            var $form = $(this).parent('form:first'),
+                $select = $form.find('select[name="package_route_id"]');
+            
             if (this.value == "S") {
-                $('select#package_route_id').show();
+                $select.show();
             } else {
-                $('select#package_route_id').hide();
+                $select.hide();
             }
         });
 
-        if ($('select#package_type')) {
+        if ($('select[name="package_type"]')) {
 
             var hash = window.location.hash.substring(1);
             if ($.inArray(hash, ['P', 'S', 'A']) !== -1) {
-                $('select#package_type').val(hash).change();
+                $('select[name="package_type"]').val(hash).change();
             }
         }
 
-        $(document).on('submit', 'form#l7p-register-form', function (e) {
-
-            clearErrors('#l7p-register-form');
+        $(document).on('submit', 'form#l7p-register-form, form.l7p-register-form', function (e) {
 
             var $form = $(this),
-                    t = '';
-            if ($form.find('#tc').prop('checked'))
-                t = true;
+                t = '';
+            
+            clearErrors($form);
 
-            var confirm_pass = $form.find('#password2').val() || $form.find('#password').val();
-            var package_type = $form.find('#package_type').val() || "P";
+            if ($form.find('input[name="tc"]').prop('checked')) {
+                t = true;
+            }
+
+            var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val();
+            var package_type = $form.find('input[name="package_type"]').val() || "P";
 
             var data = {
                 method: 'register',
-                first_name: $form.find('#firstname').val(),
-                last_name: $form.find('#lastname').val(),
-                email: $form.find('#email').val(),
-                email2: $form.find('#email').val(),
-                password: $form.find('#password').val(),
+                first_name: $form.find('input[name="firstname"]').val(),
+                last_name: $form.find('input[name="lastname"]').val(),
+                email: $form.find('input[name="email"]').val(),
+                email2: $form.find('input[name="email"]').val(),
+                password: $form.find('input[name="password"]').val(),
                 password2: confirm_pass,
                 package_type: package_type,
-                package_route_id: $form.find('#package_route_id').val(),
-                google_client_id: $form.find('#google_client_id').val(),
+                package_route_id: $form.find('input[name="package_route_id"]').val(),
+                google_client_id: $form.find('input[name="google_client_id"]').val(),
                 tc: t
             };
             
@@ -264,25 +292,35 @@
                     if (res.status === 403) {
 
                         if (res.errors.first_name)
-                            $form.find('#firstname').after('<p class="small error-firstname">' + res.errors.first_name + '</p>');
+                            $form.find('input[name="firstname"]').after('<p class="small error-firstname">' + res.errors.first_name + '</p>');
                         if (res.errors.last_name)
-                            $form.find('#lastname').after('<p class="small error-lastname">' + res.errors.last_name + '</p>');
+                            $form.find('input[name="lastname"]').after('<p class="small error-lastname">' + res.errors.last_name + '</p>');
                         if (res.errors.email)
-                            $form.find('#email').after('<p class="small error-email">' + res.errors.email + '</p>');
+                            $form.find('input[name="email"]').after('<p class="small error-email">' + res.errors.email + '</p>');
                         if (res.errors.email2)
-                            $form.find('#email2').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
+                            $form.find('input[name="emai2l"]').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
                         if (res.errors.password)
-                            $form.find('#password').after('<p class="small error-password">' + res.errors.password + '</p>');
+                            $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>');
                         if (res.errors.password2)
-                            $form.find('#password2').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
-                        if (res.errors.tc)
-                            $form.find('#tc').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+                            $form.find('input[name="password2"]').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
+                        if (res.errors.tc) {
+                            if ($form.find('input[name="tc"]').parent().is('label')) {
+                                $form.find('input[name="tc"]').parent().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+                            } else if ($form.find('input[name="tc"]').next()) {
+                                $form.find('input[name="tc"]').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+                            }
+                        }
 
                         return false;
                     } else {
 
+                        var login_url = '/login';
+                        if (document.location.pathname.startsWith('/en')) {
+                            login_url = '/en' + login_url;
+                        }
+                        
                         $form.html('<p class="big center text-center">Thank You for registering.</p>'
-                                + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="/en/login">Login</a>.</p>');
+                                + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
 
                         jQuery(document).trigger("l7p:registration:completed", ['customer']);
                     }
@@ -299,30 +337,34 @@
         });
 
         // REGISTER AGENT
-        if ($('form#l7p-register-agent-form').length > 0) {
-            // validate login form fields
-            validateRequiredFields($('form#l7p-register-agent-form'), [
-                'firstname',
-                'lastname',
-                'email',
-                'password',
-                'address',
-                'country',
-                'tc'
-            ]);
+        if ($('form#l7p-register-agent-form, form.l7p-register-agent-form').length > 0) {
+            
+            $('form#l7p-register-agent-form, form.l7p-register-agent-form').each(function(index, form) {
+            
+                validateRequiredFields($(form), [
+                    'firstname',
+                    'lastname',
+                    'email',
+                    'password',
+                    'address',
+                    'country',
+                    'tc'
+                ]);
+            });
         }
 
-        $(document).on('submit', 'form#l7p-register-agent-form', function (e) {
-
-            clearErrors('#l7p-register-agent-form');
+        $(document).on('submit', 'form#l7p-register-agent-form, form.l7p-register-agent-form', function (e) {
 
             var $form = $(this),
                     t = '';
-            if ($form.find('#tc').prop('checked'))
+                    
+            clearErrors($form);
+            
+            if ($form.find('input[name="tc"]').prop('checked'))
                 t = true;
 
-            var confirm_pass = $form.find('#password2').val() || $form.find('#password').val(),
-                    email = $form.find('#email').val();
+            var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val(),
+                    email = $form.find('input[name="email"]').val();
 
             e.preventDefault();
             $.jsonp({
@@ -331,11 +373,11 @@
                 type: 'POST',
                 data: {
                     method: 'registeragent',
-                    first_name: $form.find('#firstname').val(),
-                    last_name: $form.find('#lastname').val(),
+                    first_name: $form.find('input[name="firstname"]').val(),
+                    last_name: $form.find('input[name="lastname"]').val(),
                     email: email,
-                    email2: $form.find('#email2').val(),
-                    password: $form.find('#password').val(),
+                    email2: $form.find('input[name="emai2l"]').val(),
+                    password: $form.find('input[name="password"]').val(),
                     password2: confirm_pass,
                     address: $form.find('#address').val(),
                     country: $form.find('#country').val(),
@@ -346,23 +388,23 @@
                     if (res.status === 403) {
 
                         if (res.errors.first_name)
-                            $form.find('#firstname').after('<p class="small error-firstname">' + res.errors.first_name + '</p>');
+                            $form.find('input[name="firstname"]').after('<p class="small error-firstname">' + res.errors.first_name + '</p>');
                         if (res.errors.last_name)
-                            $form.find('#lastname').after('<p class="small error-lastname">' + res.errors.last_name + '</p>');
+                            $form.find('input[name="lastname"]').after('<p class="small error-lastname">' + res.errors.last_name + '</p>');
                         if (res.errors.email)
-                            $form.find('#email').after('<p class="small error-email">' + res.errors.email + '</p>');
+                            $form.find('input[name="email"]').after('<p class="small error-email">' + res.errors.email + '</p>');
                         if (res.errors.email2)
-                            $form.find('#email2').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
+                            $form.find('input[name="emai2l"]').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
                         if (res.errors.password)
-                            $form.find('#password').after('<p class="small error-password">' + res.errors.password + '</p>');
+                            $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>');
                         if (res.errors.password2)
-                            $form.find('#password2').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
+                            $form.find('input[name="password2"]').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
                         if (res.errors.address)
                             $form.find('#address').after('<p class="small error-address">' + res.errors.address + '</p>');
                         if (res.errors.country)
                             $form.find('#country').after('<p class="small error-country">' + res.errors.country + '</p>');
                         if (res.errors.tc)
-                            $form.find('#tc').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+                            $form.find('input[name="tc"]').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
 
                         return false;
                     } else {
@@ -394,9 +436,9 @@
 
         $(document).on('submit', 'form#l7p-password-recover-form', function (e) {
 
-            clearErrors('#l7p-password-recover-form');
-
             var $form = $(this);
+
+            clearErrors($form);
 
             e.preventDefault();
             $.jsonp({
@@ -405,14 +447,14 @@
                 type: 'POST',
                 data: {
                     method: 'recover',
-                    email: $form.find('#email').val()
+                    email: $form.find('input[name="email"]').val()
                 },
                 success: function (res) {
 
                     if (res.status === 403) {
 
                         if (res.errors.email)
-                            $form.find('#email').after('<p class="small error-email">' + res.errors.email + '</p>');
+                            $form.find('input[name="email"]').after('<p class="small error-email">' + res.errors.email + '</p>');
 
                         return false;
                     }
@@ -442,11 +484,11 @@
             ]);
         }
 
-        $(document).on('submit', 'form#l7p-new-password-form', function (e) {
-
-            clearErrors('#l7p-new-password-form');
+        $(document).on('submit', 'form#l7p-new-password-form, form.l7p-new-password-form', function (e) {
 
             var $form = $(this);
+            
+            clearErrors($form);
 
             e.preventDefault();
             $.jsonp({
@@ -457,7 +499,7 @@
                     method: 'onetimelogin',
                     reset_token: $form.find('#reset_token').val(),
                     password1: $form.find('#password1').val(),
-                    password2: $form.find('#password2').val()
+                    password2: $form.find('input[name="password2"]').val()
                 },
                 success: function (res) {
 
@@ -467,7 +509,7 @@
                             $form.find('#password1').after('<p class="small error-email">' + res.errors.password1 + '</p>');
                         }
                         if (res.errors.password2) {
-                            $form.find('#password2').after('<p class="small error-email">' + res.errors.password2 + '</p>');
+                            $form.find('input[name="password2"]').after('<p class="small error-email">' + res.errors.password2 + '</p>');
                         }
 
                         return false;
@@ -502,12 +544,13 @@
             ]);
         }
 
-        $(document).on('submit', 'form#l7p-subscription-form', function (e) {
-
-            clearErrors('#l7p-subscription-form');
+        $(document).on('submit', 'form#l7p-subscription-form, form.l7p-subscription-form', function (e) {
 
             var $form = $(this),
                     s = '';
+                    
+            clearErrors($form);
+
             if ($form.find('#is_subscribed').prop('checked'))
                 s = 1;
 
@@ -561,13 +604,14 @@
             ]);
         }
 
-        $(document).on('submit', 'form#l7p-activate-form', function (e) {
-
-            clearErrors('#l7p-activate-form');
-
+        $(document).on('submit', 'form#l7p-activate-form, form.l7p-activate-form', function (e) {
+            
             var $form = $(this),
                     t = '';
-            if ($form.find('#tc').prop('checked'))
+                    
+            clearErrors($form);
+
+            if ($form.find('input[name="tc"]').prop('checked'))
                 t = true;
 
             e.preventDefault();
@@ -591,7 +635,7 @@
                     if (res.status === 403) {
 
                         if (res.errors.tc)
-                            $form.find('#tc').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
+                            $form.find('input[name="tc"]').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
 
                         return false;
                     }
