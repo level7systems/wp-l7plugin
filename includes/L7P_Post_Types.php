@@ -49,12 +49,7 @@ class L7P_Post_Types
             'show_in_menu' => 'l7-settings',
             'capability_type' => 'page',
             'map_meta_cap' => true,
-            'capabilities' => array(
-                // this need to be enabled for creating translation for templates
-                'create_posts' => true,
-                'delete_posts' => false,
-                'delete_published_posts' => false,
-            ),
+            'capabilities' => array(),
             'supports' => array('title', 'editor', 'excerpt', 'thumbnail'),
             'rewrite' => false,
             'query_var' => false

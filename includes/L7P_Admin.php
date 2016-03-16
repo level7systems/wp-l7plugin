@@ -70,8 +70,8 @@ class L7P_Admin
 
     public function bulk_actions($actions)
     {
-        // remove all bulk actions
-        return array();
+        // allows only for bulk delete
+        return array('trash' => 'Move to Trash');
     }
 
     public function remove_meta_boxes()
