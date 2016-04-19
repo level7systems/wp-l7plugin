@@ -510,7 +510,7 @@ class L7P_Query
         // account activation 
         add_rewrite_rule("activate/([a-zA-Z0-9]{6,})$", 'index.php?name=activation&token=$matches[1]', 'top');
         // password reset
-        add_rewrite_rule("reset/([a-zA-Z0-9]{20,})$", 'index.php?name=reset&token=$matches[1]', 'top');
+//        add_rewrite_rule("reset/([a-zA-Z0-9]{20,})$", 'index.php?name=reset&token=$matches[1]', 'top');
         // resend confirmation email
         add_rewrite_rule("resend-confirmation-email/([-\._@a-zA-Z0-9]{4,})$", 'index.php?name=resend&email=$matches[1]', 'top');
         // extinit actions
