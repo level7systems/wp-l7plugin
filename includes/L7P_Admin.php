@@ -211,7 +211,6 @@ class L7P_Admin
         );
 
         // advanced settings
-
         $section_name = 'l7p_advanced';
         $value = l7p_get_settings('l7_tld');
         $has_error = empty($value);
@@ -226,7 +225,7 @@ class L7P_Admin
             'section' => $section_name,
             'value' => $value,
             'help' => __('Required for communication with external Level7 API.', 'level7platform'),
-            'style' => $has_error ? 'border: 2px solid red;' : ''
+            'style' => ($has_error ? 'border: 2px solid red;' : '') . ' width: 400px'
             )
         );
 
@@ -243,7 +242,24 @@ class L7P_Admin
             'section' => $section_name,
             'value' => $value,
             'help' => __('Required for communication with external Level7 API.', 'level7platform'),
-            'style' => $has_error ? 'border: 2px solid red;' : ''
+            'style' => ($has_error ? 'border: 2px solid red;' : '') . ' width: 400px'
+            )
+        );
+        
+        $value = l7p_get_settings('rest_api_url');
+        $has_error = empty($value);
+        add_settings_field(
+            'rest_api_url', // id
+            'REST API url', // setting label
+            array('L7P_Form', 'text_input'), // display callback
+            'l7p_advanced', // settings page
+            'l7p_advanced_section', // section
+            array(
+            'name' => 'rest_api_url',
+            'section' => $section_name,
+            'value' => $value,
+            'help' => __('Required for communication with Level7 REST API.', 'level7platform'),
+            'style' => ($has_error ? 'border: 2px solid red;' : '') . ' width: 400px'
             )
         );
 
@@ -370,9 +386,13 @@ class L7P_Admin
                 if (empty($advanced_data['web_product_domain']) || substr_count($advanced_data['web_product_domain'], ".") == 0) {
                     $errors[] = 'The Product domain you entered did not appear to be valid. Please enter a valid domain.';
                 }
+                if (empty($advanced_data['rest_api_url']) || substr_count($advanced_data['rest_api_url'], ".") == 0) {
+                    $errors[] = 'The REST API url you entered did not appear to be valid. Please enter a valid url.';
+                }
 
                 if (!count($errors)) {
                     l7p_update_settings('l7_tld', $advanced_data['l7_tld']);
+                    l7p_update_settings('rest_api_url', rtrim($advanced_data['rest_api_url'], '/'));
                     l7p_update_web_product_settings('domain', $advanced_data['web_product_domain']);
                 }
 

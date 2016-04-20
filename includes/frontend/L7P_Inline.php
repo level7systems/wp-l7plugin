@@ -447,6 +447,12 @@ function l7p_inline_manual_content()
     return 'l7p_get_chapter(\'content\');';
 }
 
+// REST API url
+function l7p_inline_rest_api_url()
+{
+    return 'l7p_rest_api_url()';
+}
+
 function l7p_inline_download_for_windows_url()
 {
     return 'l7p_url_for(\'download\', array(\'os\' => \'windows\'))';
@@ -490,6 +496,16 @@ function l7p_inline_form_login_action()
 function l7p_inline_form_register_action()
 {
     return 'l7p_api_url()';
+}
+
+function l7p_inline_rest_api_register_url()
+{
+    return 'sprintf("%s/customers", l7p_rest_api_url())';
+}
+
+function l7p_inline_rest_api_login_url()
+{
+    return 'sprintf("%s/login", l7p_rest_api_url())';
 }
 
 function l7p_inline_form_new_password_action()
@@ -558,12 +574,17 @@ function l7p_inline_login_url()
     return 'l7p_url_for(\'@login\')';
 }
 
-function l7_inline_product_name()
+function l7p_inline_product_name()
 {
     return 'l7p_get_web_product_settings(\'name\')';
 }
 
-function l7_inline_product_domain()
+function l7p_inline_product_domain()
 {
     return 'l7p_get_web_product_settings(\'domain\')';
+}
+
+function l7p_inline_app_key()
+{
+    return 'l7p_get_web_product_settings(\'app_key\')';
 }

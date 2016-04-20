@@ -75,7 +75,7 @@ class L7P_Content
     public static function inline($m)
     {
         $tag = $m[1];
-        $inline = "l7p_inline_" . $tag;
+        $inline = "l7p_inline_" . strtolower($tag);
         if (!is_callable($inline)) {
             return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Undefined shortcode tag:' . $tag . '</div>';
         }
@@ -86,7 +86,7 @@ class L7P_Content
     public static function block($m)
     {
         $tag = $m[1];
-        $block = "l7p_block_" . $tag;
+        $block = "l7p_block_" . strtolower($tag);
         if (!is_callable($block)) {
             return '<span L7PSyntaxError="true" style="color: balck; background: #FFA500; font-weight: bold;">Error: Undefined block:' . $tag . '</div>';
         }

@@ -69,6 +69,45 @@ function l7p_block_login_form()
     return L7P_Content::parse_content($content);
 }
 
+function l7p_block_rest_login_form()
+{
+    ob_start();
+
+    ?>
+
+    <p id="l7p-global-success">[SUCCESS_FLASH_MESSAGE]</p>
+
+    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+
+    <form id="l7p-rest-login-form" method="post" action="[REST_API_LOGIN_URL]" class="l7p-rest-login-form" data-app-key="[APP_KEY]">
+
+        [FORM_SECURITY_TOKEN]
+
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'username', 'label' => 'E-mail')) ?>
+            <?php echo L7P_Form::text_input(array('name' => 'username', 'placeholder' => 'E-mail address', 'required' => true)) ?>
+        </div>
+
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'password', 'label' => 'Password')) ?>
+            <?php echo L7P_Form::password_input(array('name' => 'password', 'placeholder' => 'Password', 'required' => true)) ?>
+        </div>
+
+        <label for="remember">
+            <input id="remember" type="checkbox" name="remember" />
+            <?php echo __('Remember Me', 'level7platform') ?>
+        </label>
+        <button id="l7p-login-button"><?php echo __('Login', 'level7platform') ?></button>
+    </fieldset>
+
+    </form>
+
+    <?php
+    $content = ob_get_clean();
+
+    return L7P_Content::parse_content($content);
+}
+
 function l7p_block_register_form()
 {
     ob_start();

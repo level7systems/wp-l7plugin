@@ -26,7 +26,6 @@ if (!String.prototype.startsWith) {
                         if (j > 0) {
                             if ($form.find('[name="' + field[j] + '"]').length == 0) {
                                 errors.push(field[j]);
-                                console.log('does not exist');
                             }
                         }
                     }
@@ -105,9 +104,9 @@ if (!String.prototype.startsWith) {
         }
 
         // LOGIN
-        if ($('form#l7p-login-form').length > 0) {
+        if ($('form.l7p-login-form').length > 0) {
             // validate login form fields
-            validateRequiredFields($('form#l7p-login-form'), [
+            validateRequiredFields($('form#l7p-login-form, form.l7p-login-form'), [
                 'username',
                 'password',
                 'remember'
@@ -129,7 +128,7 @@ if (!String.prototype.startsWith) {
                     method: 'login',
                     username: $form.find('input[name="username"]').val(),
                     password: $form.find('input[name="password"]').val(),
-                    remember_me: $form.find('#remember').is(':checked'),
+                    remember_me: $form.find('#remember').is(':checked')
                 },
                 success: function (res) {
                     if (!res.success) {
@@ -182,6 +181,91 @@ if (!String.prototype.startsWith) {
                     
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                    }
+                    
+                    jQuery(document).trigger("l7p:login:error");
+                }
+            });
+        });
+        
+        // REST login form
+        $(document).on('submit', 'form#l7p-rest-login-form, form.l7p-rest-login-form', function (e) {
+
+            var $form = $(this);
+            
+            clearErrors($form);
+
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: $form.find('input[name="username"]').val(),
+                    password: $form.find('input[name="password"]').val()
+                }),
+                contentType: 'application/json; charset=utf-8',
+                success: function (res) {
+                    
+                    if (!res) {
+                        $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
+                        return false;
+                    }
+
+                    if (!res.user_id || !res.user_token) {
+                        $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
+                        return false;
+                    }
+
+                    localStorage.setItem($form.data('appKey'), JSON.stringify({
+                        user_id: res.user_id, 
+                        user_token: res.user_token 
+                    }));
+                        
+                    // redirect user to their application url
+                    window.location.href = '/app';
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if (jqXhr.status === 400) {
+
+                        var res = jqXhr.responseJSON;
+                        
+                        $.each(res.errors, function(i, error) {
+                           
+                            if (error.field == 'email') {
+                            
+                                if (error.message.indexOf("unrecognised user name") != -1) {
+
+                                    var recover_url = '/recover-password';
+                                    if (document.location.pathname.startsWith('/en')) {
+                                        recover_url = '/en' + recover_url;
+                                    }
+
+                                    $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                                } else if (error.message.indexOf("not confirmed") != -1) {
+
+                                    var confirmation_url = '/resend-confirmation-email';
+                                    if (document.location.pathname.startsWith('/en')) {
+                                        confirmation_url = '/en' + confirmation_url;
+                                    }
+
+                                    $('#l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                                } else {
+                                    $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>')
+                                    
+                                    // $('#l7p-global-errors').html(error.message).show();
+                                }
+                            }
+                            
+                        });
+                        
+                        return false;
+                    } else {
+                        
+                        if ($('div#maintenance').length == 0) {
+                            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                        }
                     }
                     
                     jQuery(document).trigger("l7p:login:error");
@@ -335,6 +419,101 @@ if (!String.prototype.startsWith) {
                 }
             });
         });
+        
+        // REST register form
+        $(document).on('submit', 'form#l7p-rest-register-form, form.l7p-rest-register-form', function (e) {
+
+            var $form = $(this),
+                t = '';
+            
+            clearErrors($form);
+
+            if ($form.find('input[name="tc"]').prop('checked')) {
+                t = true;
+            }
+
+            var data = {
+                first_name: $form.find('input[name="firstname"]').val(),
+                last_name: $form.find('input[name="lastname"]').val(),
+                // name: $form.find('input[name="name"]').val(),
+                email: $form.find('input[name="email"]').val(),
+                password: $form.find('input[name="password"]').val(),
+                google_client_id: $form.find('input[name="google_client_id"]').val(),
+                tc: t
+            };
+            
+            if (get_cookie('xl7ppc', false)) {
+                data.xl7ppc = get_cookie('xl7ppc');
+            }
+            if (get_cookie('xl7a', false)) {
+                data.xl7a = get_cookie('xl7a');
+            }
+            if (get_cookie('xl7ref', false)) {
+                data.xl7ref = get_cookie('xl7ref');
+            }
+
+            e.preventDefault();
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify(data),
+                contentType: 'application/json; charset=utf-8',
+                success: function (res) {
+
+                    var login_url = '/login';
+                    if (document.location.pathname.startsWith('/en')) {
+                        login_url = '/en' + login_url;
+                    }
+
+                    $form.html('<p class="big center text-center">Thank You for registering.</p>'
+                            + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
+
+                    jQuery(document).trigger("l7p:registration:completed", ['customer']);
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    if (jqXhr.status === 400) {
+
+                        var res = jqXhr.responseJSON;
+                        
+                        $.each(res.errors, function(i, error) {
+                           
+                            if (error.field == 'email') {
+                                $form.find('input[name="email"]').after('<p class="small error-email">' + error.message + '</p>');
+                            }
+                            if (error.field == 'password') {
+                                $form.find('input[name="password"]').after('<p class="small error-password">' + error.message + '</p>');
+                            }
+                            if (error.field == 'first_name') {
+                                $form.find('input[name="firstname"]').after('<p class="small error-firstname">' + error.message + '</p>');
+                            }
+                            if (error.field == 'last_name') {
+                                $form.find('input[name="lastname"]').after('<p class="small error-lastname">' + error.message + '</p>');
+                            }
+                            
+                            if (error.field == 'tc') {
+                                if ($form.find('input[name="tc"]').parent().is('label')) {
+                                    $form.find('input[name="tc"]').parent().after('<p class="small error-ftc">' + error.message + '</p>');
+                                } else if ($form.find('input[name="tc"]').next()) {
+                                    $form.find('input[name="tc"]').next().after('<p class="small error-ftc">' + error.message + '</p>');
+                                }
+                            }
+                        });
+                        
+                        return false;
+                    } else {
+                    
+                        if ($('div#maintenance').length == 0) {
+                            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                        }
+                    }
+                    
+                    jQuery(document).trigger("l7p:registration:error", ['customer']);
+                }
+            });
+        });
+        
 
         // REGISTER AGENT
         if ($('form#l7p-register-agent-form, form.l7p-register-agent-form').length > 0) {

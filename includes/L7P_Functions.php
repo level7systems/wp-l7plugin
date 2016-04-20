@@ -952,6 +952,11 @@ function l7p_get_level7_domain()
     return l7p_get_settings('l7_tld');
 }
 
+function l7p_rest_api_url()
+{
+    return l7p_get_settings('rest_api_url');
+}
+
 function l7p_api_url()
 {
     return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
