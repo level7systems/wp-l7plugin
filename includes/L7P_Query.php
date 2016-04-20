@@ -291,15 +291,8 @@ class L7P_Query
         } else if ($pagename == 'reset') {
 
             if (isset($query->query_vars['token'])) {
-
-                $response = l7p_verify_reset_token($query->query_vars['token']);
-                if ($response['success']) {
-                    l7p_update_session('reset_token', $response['reset_token']);
-                    return $this->redirect_to_one_time_login();
-                }
-
-                l7p_set_error_flash_message(__($response['info']));
-                return $this->redirect_to_login();
+                l7p_setcookie('reset_token', $query->query_vars['token']);
+                return $this->redirect_to_one_time_login();
             }
             return $this->error_404();
         } else if ($pagename == 'resend') {
