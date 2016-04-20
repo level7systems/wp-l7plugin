@@ -895,46 +895,53 @@ function l7p_send_curl($url)
 
 function l7p_set_success_flash_message($message)
 {
-    return l7p_update_session('success_flash_message', $message);
+    add_flash_message('success', $message);
 }
 
 function l7p_set_error_flash_message($message)
 {
-    return l7p_update_session('error_flash_message', $message);
+    add_flash_message('error', $message);
 }
 
 function l7p_get_success_flash_message()
 {
-    $message = l7p_get_session('success_flash_message', '');
-    if ($message) {
-        l7p_update_session('success_flash_message', '');
+    $messages = l7p_get_flash_messages();
+    if (isset($messages['success'])) {
+        return $messages['success']['message'];
     }
-    return $message;
+    
+    return '';
 }
 
 function l7p_get_error_flash_message()
 {
-    $message = l7p_get_session('error_flash_message', '');
-    if ($message) {
-        l7p_update_session('error_flash_message', '');
+    $messages = l7p_get_flash_messages();
+    if (isset($messages['error'])) {
+        return $messages['error']['message'];
     }
-    return $message;
+    
+    return '';
 }
 
-// deprecated
-function l7p_set_flash_message($message)
+function add_flash_message($key, $message)
 {
-    return l7p_update_session('flash_message', $message);
+    $messages = l7p_get_session('flash_messages', $messages);;
+    $messages[$key] = array(
+        'lifetime' => 2,
+        'message' => $message
+    );
+    
+    l7p_set_flash_messages($messages);
 }
 
-// deprecated
-function l7p_get_flash_message()
+function l7p_get_flash_messages()
 {
-    $message = l7p_get_session('flash_message', '');
-    if ($message) {
-        l7p_update_session('flash_message', '');
-    }
-    return $message;
+    return l7p_get_session('flash_messages', array());
+}
+
+function l7p_set_flash_messages($messages)
+{
+    l7p_update_session('flash_messages', $messages);
 }
 
 function l7p_set_activation_message($message)

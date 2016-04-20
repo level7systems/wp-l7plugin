@@ -538,12 +538,6 @@ function l7p_inline_error_flash_message()
     return 'l7p_get_error_flash_message()';
 }
 
-// deprecated
-function l7p_inline_flash_message()
-{
-    return 'l7p_get_flash_message()';
-}
-
 function l7p_inline_activation_message()
 {
     return 'l7p_get_activation_message()';

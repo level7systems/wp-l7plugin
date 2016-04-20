@@ -36,7 +36,7 @@ function l7p_block_login_form()
 
     ?>
 
-    <p id="l7p-global-success">[SUCCESS_FLASH_MESSAGE]</p>
+    <p id="l7p-global-success" class="alert alert-success">[SUCCESS_FLASH_MESSAGE]</p>
 
     <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
 
@@ -75,9 +75,9 @@ function l7p_block_rest_login_form()
 
     ?>
 
-    <p id="l7p-global-success">[SUCCESS_FLASH_MESSAGE]</p>
+    <p id="l7p-global-success" class="alert alert-success">[SUCCESS_FLASH_MESSAGE]</p>
 
-    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
     <form id="l7p-rest-login-form" method="post" action="[REST_API_LOGIN_URL]" class="l7p-rest-login-form" data-app-key="[APP_KEY]">
 
@@ -125,9 +125,9 @@ function l7p_block_register_form()
 
     ?>
 
-    <p id="l7p-global-success">[SUCCESS_FLASH_MESSAGE]</p>
+    <p id="l7p-global-success" class="alert alert-success">[SUCCESS_FLASH_MESSAGE]</p>
 
-    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
     <form id="l7p-register-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p-register-form">
 
@@ -189,7 +189,7 @@ function l7p_block_register_agent_form()
 
     ?>
 
-    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
     <form id="l7p-register-agent-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p-register-agent-form">
 
@@ -256,9 +256,9 @@ function l7p_block_password_recover_form()
 
     ?>
 
-    <p id="l7p-global-success">[SUCCESS_FLASH_MESSAGE]</p>
+    <p id="l7p-global-success" class="alert alert-success">[SUCCESS_FLASH_MESSAGE]</p>
 
-    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
     <form id="l7p-password-recover-form" method="post" action="[FORM_PASSWORD_RECOVER_ACTION]" class="l7p-password-recover-form">
 
@@ -284,7 +284,7 @@ function l7p_block_new_password_form()
 
     ?>
 
-    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
     <form id="l7p-new-password-form" method="post" action="[FORM_NEW_PASSWORD_ACTION]" class="l7p-new-password-form">
 
@@ -315,9 +315,9 @@ function l7p_block_activation_form()
 
     ?>
 
-    <p id="l7p-global-success">[SUCCESS_FLASH_MESSAGE]</p>
+    <p id="l7p-global-success" class="alert alert-success">[SUCCESS_FLASH_MESSAGE]</p>
 
-    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
     <form id="l7p-activate-form" method="post" action="[FORM_ACTIVATION_ACTION]" class="l7p-activate-form">
 
@@ -361,9 +361,9 @@ function l7p_block_subscription_form()
 
     ?>
 
-    <p id="l7p-global-success">[SUCCESS_FLASH_MESSAGE]</p>
+    <p id="l7p-global-success" class="alert alert-success">[SUCCESS_FLASH_MESSAGE]</p>
 
-    <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
+    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
     <form id="l7p-subscription-form" method="post" action="[FORM_SUBSCRIPTION_ACTION]" class="l7p-subscription-form">
 

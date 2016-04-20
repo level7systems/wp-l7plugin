@@ -29,6 +29,8 @@ class L7P_Query
         add_action('init', array($this, 'add_rewrite_rules'));
         add_action('init', array($this, 'currency_change'));
         
+        add_action('shutdown', array($this, 'clear_flash_messages'));
+        
         add_action('template_redirect', array($this, 'currency_template_redirect'));
 
         if (!is_admin()) {
@@ -49,6 +51,27 @@ class L7P_Query
                 return L7P()->query->redirect_to_currency();
             }
         }
+    }
+    
+    /**
+     * Clear flash messages
+     */
+    public function clear_flash_messages()
+    {
+        $messages = l7p_get_flash_messages();
+        foreach ($messages as $i => $message) {
+            
+            if ($message['lifetime'] == 0) {
+                unset($messages[$i]);
+                continue;
+            }
+            
+            if ($message['lifetime'] > 0) {
+                $messages[$i]['lifetime'] -= 1;
+            }
+        }
+        
+        l7p_set_flash_messages($messages);
     }
 
     /**
@@ -265,12 +288,13 @@ class L7P_Query
             if (isset($query->query_vars['token'])) {
 
                 $response = l7p_confirm_account($query->query_vars['token']);
+                
                 if ($response['success']) {
                     l7p_set_success_flash_message($response['info']);
                 } else {
                     l7p_set_error_flash_message(__('Invalid confirmation token.'));
                 }
-
+                
                 return $this->redirect_to_login();
             }
 
