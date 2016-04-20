@@ -251,8 +251,6 @@ function l7p_block_new_password_form()
 
         [FORM_SECURITY_TOKEN]
 
-        [FORM_RESET_TOKEN]
-
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'password1', 'label' => __('New password', 'level7platform'))) ?>
     <?php echo L7P_Form::password_input(array('name' => 'password1', 'placeholder' => __('New password', 'level7platform'), 'required' => true)) ?>

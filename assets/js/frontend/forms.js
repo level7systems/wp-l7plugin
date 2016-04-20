@@ -129,7 +129,7 @@ if (!String.prototype.startsWith) {
                     method: 'login',
                     username: $form.find('input[name="username"]').val(),
                     password: $form.find('input[name="password"]').val(),
-                    remember_me: $form.find('#remember').is(':checked'),
+                    remember_me: $form.find('#remember').is(':checked')
                 },
                 success: function (res) {
                     if (!res.success) {
@@ -478,9 +478,8 @@ if (!String.prototype.startsWith) {
         if ($('form#l7p-new-password-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-new-password-form'), [
-                'reset_token',
                 'password1',
-                'password2',
+                'password2'
             ]);
         }
 
@@ -497,7 +496,7 @@ if (!String.prototype.startsWith) {
                 type: 'POST',
                 data: {
                     method: 'onetimelogin',
-                    reset_token: $form.find('#reset_token').val(),
+                    reset_token: get_cookie('reset_token', ''),
                     password1: $form.find('#password1').val(),
                     password2: $form.find('input[name="password2"]').val()
                 },
@@ -510,6 +509,9 @@ if (!String.prototype.startsWith) {
                         }
                         if (res.errors.password2) {
                             $form.find('input[name="password2"]').after('<p class="small error-email">' + res.errors.password2 + '</p>');
+                        }
+                        if (res.errors.reset_token) {
+                            $form.find('#password1').after('<p class="small error-email">' + res.errors.reset_token + '</p>');
                         }
 
                         return false;
