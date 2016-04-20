@@ -298,7 +298,7 @@ if (!String.prototype.startsWith) {
                         if (res.errors.email)
                             $form.find('input[name="email"]').after('<p class="small error-email">' + res.errors.email + '</p>');
                         if (res.errors.email2)
-                            $form.find('input[name="emai2l"]').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
+                            $form.find('input[name="email2"]').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
                         if (res.errors.password)
                             $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>');
                         if (res.errors.password2)
@@ -376,7 +376,7 @@ if (!String.prototype.startsWith) {
                     first_name: $form.find('input[name="firstname"]').val(),
                     last_name: $form.find('input[name="lastname"]').val(),
                     email: email,
-                    email2: $form.find('input[name="emai2l"]').val(),
+                    email2: $form.find('input[name="email2"]').val(),
                     password: $form.find('input[name="password"]').val(),
                     password2: confirm_pass,
                     address: $form.find('#address').val(),
@@ -394,7 +394,7 @@ if (!String.prototype.startsWith) {
                         if (res.errors.email)
                             $form.find('input[name="email"]').after('<p class="small error-email">' + res.errors.email + '</p>');
                         if (res.errors.email2)
-                            $form.find('input[name="emai2l"]').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
+                            $form.find('input[name="email2"]').after('<p class="small error-email2">' + res.errors.email2 + '</p>');
                         if (res.errors.password)
                             $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>');
                         if (res.errors.password2)
