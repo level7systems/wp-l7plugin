@@ -8,6 +8,7 @@ if (!String.prototype.startsWith) {
 (function ($, window, document) {
 
     function clearErrors($form) {
+        $form.find('[class*="-global-success"]').html("").hide();
         $form.find('[class*="-global-errors"]').html("").hide();
         $form.find('[class*="error-"]').remove();
     }
@@ -681,14 +682,15 @@ if (!String.prototype.startsWith) {
 
                     if (res.status === 403) {
 
+                        if (res.errors.reset_token) {
+                            $('#l7p-global-errors').html(res.errors.reset_token).show();
+                            return false;
+                        }
                         if (res.errors.password1) {
                             $form.find('#password1').after('<p class="small error-email">' + res.errors.password1 + '</p>');
                         }
                         if (res.errors.password2) {
                             $form.find('input[name="password2"]').after('<p class="small error-email">' + res.errors.password2 + '</p>');
-                        }
-                        if (res.errors.reset_token) {
-                            $form.find('#password1').after('<p class="small error-email">' + res.errors.reset_token + '</p>');
                         }
 
                         return false;
@@ -700,7 +702,43 @@ if (!String.prototype.startsWith) {
                         // redirect user to their application url
                         window.location.href = res.redirect;
                     }
+                    
+                    if (res.email) {
+                        
+                        $.ajax({
+                            url: $form.data('restApiLoginUrl'),
+                            type: 'POST',
+                            dataType: 'json',
+                            data: JSON.stringify({
+                                email:res.email,
+                                password: $form.find('#password1').val()
+                            }),
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (res) {
 
+                                if (!res.user_id || !res.user_token) {
+                                    $('#l7p-global-errors').html('API failed to return userId and/or userToken').show();
+                                    return false;
+                                }
+
+                                setCookie($form.data('appKey') + '.auth', {
+                                    user_id: res.user_id, 
+                                    user_token: res.user_token 
+                                });
+
+                                // redirect user to their application url
+                                window.location.href = '/app';
+                            }, 
+                            error: function(jqXhr, status) {
+
+                                if ($('div#maintenance').length == 0) {
+                                    $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                                }
+                            }
+                        });
+            
+                    }
+                    
                     return false;
                 }, 
                 error: function(jqXhr, status) {

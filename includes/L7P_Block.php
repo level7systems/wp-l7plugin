@@ -81,8 +81,6 @@ function l7p_block_rest_login_form()
 
     <form id="l7p-rest-login-form" method="post" action="[REST_API_LOGIN_URL]" class="l7p-rest-login-form" data-app-key="[APP_KEY]">
 
-        [FORM_SECURITY_TOKEN]
-
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'username', 'label' => 'E-mail')) ?>
             <?php echo L7P_Form::text_input(array('name' => 'username', 'placeholder' => 'E-mail address', 'required' => true)) ?>
@@ -289,6 +287,33 @@ function l7p_block_new_password_form()
     <form id="l7p-new-password-form" method="post" action="[FORM_NEW_PASSWORD_ACTION]" class="l7p-new-password-form">
 
         [FORM_SECURITY_TOKEN]
+
+        <div class="form-row">
+            <?php echo L7P_Form::label(array('id' => 'password1', 'label' => __('New password', 'level7platform'))) ?>
+    <?php echo L7P_Form::password_input(array('name' => 'password1', 'placeholder' => __('New password', 'level7platform'), 'required' => true)) ?>
+        </div>
+
+        <div class="form-row">
+    <?php echo L7P_Form::label(array('id' => 'password2', 'label' => __('Confirm password', 'level7platform'))) ?>
+    <?php echo L7P_Form::password_input(array('name' => 'password2', 'placeholder' => __('Confirm password', 'level7platform'), 'required' => true)) ?>
+        </div>
+
+        <button id="l7p-new-password-button"><?php echo __('Change password', 'level7platform') ?></button>
+    </form>
+
+    <?php
+    $content = ob_get_clean();
+
+    return L7P_Content::parse_content($content);
+}
+
+function l7p_block_rest_new_password_form()
+{
+    ob_start();
+
+    ?>
+
+    <form id="l7p-new-password-form" method="post" action="[FORM_NEW_PASSWORD_ACTION]" class="l7p-new-password-form" data-rest-api-login-url="[REST_API_LOGIN_URL]" data-app-key="[APP_KEY]">
 
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'password1', 'label' => __('New password', 'level7platform'))) ?>
