@@ -235,14 +235,14 @@ if (!String.prototype.startsWith) {
                            
                             if (error.field == 'email') {
                             
-                                if (error.message.indexOf("unrecognised user name") != -1) {
+                                if (error.message.indexOf("Invalid email and/or password") != -1) {
 
                                     var recover_url = '/recover-password';
                                     if (document.location.pathname.startsWith('/en')) {
                                         recover_url = '/en' + recover_url;
                                     }
 
-                                    $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                                    $('#l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
                                 } else if (error.message.indexOf("not confirmed") != -1) {
 
                                     var confirmation_url = '/resend-confirmation-email';
@@ -253,8 +253,6 @@ if (!String.prototype.startsWith) {
                                     $('#l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
                                 } else {
                                     $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>')
-                                    
-                                    // $('#l7p-global-errors').html(error.message).show();
                                 }
                             }
                             

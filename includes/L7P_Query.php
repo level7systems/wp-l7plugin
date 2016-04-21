@@ -21,7 +21,8 @@ class L7P_Query
         'os',
         'token',
         'extini',
-        'email'
+        'email',
+        'user_id'
     );
 
     public function __construct()
@@ -283,6 +284,19 @@ class L7P_Query
             }
 
             return $this->error_404();
+        } else if ($pagename == 'loginas') {
+
+            if (isset($query->query_vars['token']) && isset($query->query_vars['user_id'])) {
+
+                l7p_setcookie(sprintf("%s.auth", l7p_get_web_product_settings('app_key')), json_encode(array(
+                    'user_id' => $query->query_vars['user_id'],
+                    'user_token' => $query->query_vars['token'],
+                )));
+                
+                return $this->redirect_to_app();
+            }
+
+            return $this->error_404();
         } else if ($pagename == 'confirmation') {
 
             if (isset($query->query_vars['token'])) {
@@ -457,6 +471,11 @@ class L7P_Query
 
         return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
+    
+    public function redirect_to_app()
+    {
+        return l7p_redirect(sprintf("%s://%s/app/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST']));
+    }
 
     public function redirect_to_one_time_login()
     {
@@ -522,6 +541,8 @@ class L7P_Query
             add_rewrite_rule(sprintf("%s/([\w\-\+!]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         }
 
+        // login as
+        add_rewrite_rule("loginas/([0-9]+)/([a-zA-Z0-9]+)$", 'index.php?name=loginas&user_id=$matches[1]&token=$matches[2]', 'top');
         // account confirmation
         add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&token=$matches[1]', 'top');
         // account activation 
