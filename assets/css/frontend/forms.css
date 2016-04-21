@@ -29,3 +29,11 @@ p.small[class*="error-"] {
     font-weight: bold;
     margin: 30px;
 }
+
+#l7p-global-success, .l7p-global-success {
+    display: none;
+}
+
+#l7p-global-errors, .l7p-global-errors {
+    display: none;
+}

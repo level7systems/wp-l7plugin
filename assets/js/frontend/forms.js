@@ -40,7 +40,7 @@ if (!String.prototype.startsWith) {
         }
     }
     
-    function get_cookie(key, defaults) {
+    function getCookie(key, defaults) {
         var cookies = document.cookie ? document.cookie.split('; ') : [];
 
         for (var i = 0, l = cookies.length; i < l; i++) {
@@ -60,7 +60,7 @@ if (!String.prototype.startsWith) {
         return defaults !== undefined ? defaults : undefined;
     }
 
-    function set_cookie(name, value, options) {
+    function setCookie(name, value, options) {
         
         var options = (options === undefined) ? {} : options;
         
@@ -82,17 +82,17 @@ if (!String.prototype.startsWith) {
     $(function () {
         
         // set referer cookie
-        if (get_cookie('xl7ref', false) === false && document.referrer) {
+        if (getCookie('xl7ref', false) === false && document.referrer) {
             // cookie for one year
             var expire = new Date(),
                 time = expire.getTime() + 1000*60*60*24*365;
             expire.setTime(time);
-            set_cookie('xl7ref', document.referrer, { expires: expire });
+            setCookie('xl7ref', document.referrer, { expires: expire });
         }
         
         // set cookie on currency change
         $('#currency').change(function() {
-            set_cookie('l7p_currency', $(this).val());
+            setCookie('l7p_currency', $(this).val());
         });
 
         if (!$('#l7p-global-errors').is(':empty')) {
@@ -217,11 +217,11 @@ if (!String.prototype.startsWith) {
                         return false;
                     }
 
-                    localStorage.setItem($form.data('appKey'), JSON.stringify({
+                    setCookie($form.data('appKey') + '.auth', {
                         user_id: res.user_id, 
                         user_token: res.user_token 
-                    }));
-                        
+                    });
+                    
                     // redirect user to their application url
                     window.location.href = '/app';
                 }, 
@@ -296,8 +296,8 @@ if (!String.prototype.startsWith) {
                 var currencies = { EU: "EUR", US: "USD", JP: "JPY", GB: "GBP", PL: "PLN" };
                 currency = l7_geoip.country_code in currencies ? currencies[l7_geoip.country_code] : currency;
             }
-            if (get_cookie('l7p_currency', false) !== false) {
-                currency = get_cookie('l7p_currency');
+            if (getCookie('l7p_currency', false) !== false) {
+                currency = getCookie('l7p_currency');
             }
             
             $('select#package_type, form.l7p-register-form select.package_type').html();
@@ -355,14 +355,14 @@ if (!String.prototype.startsWith) {
                 tc: t
             };
             
-            if (get_cookie('xl7ppc', false)) {
-                data.xl7ppc = get_cookie('xl7ppc');
+            if (getCookie('xl7ppc', false)) {
+                data.xl7ppc = getCookie('xl7ppc');
             }
-            if (get_cookie('xl7a', false)) {
-                data.xl7a = get_cookie('xl7a');
+            if (getCookie('xl7a', false)) {
+                data.xl7a = getCookie('xl7a');
             }
-            if (get_cookie('xl7ref', false)) {
-                data.xl7ref = get_cookie('xl7ref');
+            if (getCookie('xl7ref', false)) {
+                data.xl7ref = getCookie('xl7ref');
             }
 
             e.preventDefault();
@@ -442,14 +442,14 @@ if (!String.prototype.startsWith) {
                 tc: t
             };
             
-            if (get_cookie('xl7ppc', false)) {
-                data.xl7ppc = get_cookie('xl7ppc');
+            if (getCookie('xl7ppc', false)) {
+                data.xl7ppc = getCookie('xl7ppc');
             }
-            if (get_cookie('xl7a', false)) {
-                data.xl7a = get_cookie('xl7a');
+            if (getCookie('xl7a', false)) {
+                data.xl7a = getCookie('xl7a');
             }
-            if (get_cookie('xl7ref', false)) {
-                data.xl7ref = get_cookie('xl7ref');
+            if (getCookie('xl7ref', false)) {
+                data.xl7ref = getCookie('xl7ref');
             }
 
             e.preventDefault();
@@ -675,7 +675,7 @@ if (!String.prototype.startsWith) {
                 type: 'POST',
                 data: {
                     method: 'onetimelogin',
-                    reset_token: get_cookie('reset_token', ''),
+                    reset_token: getCookie('reset_token', ''),
                     password1: $form.find('#password1').val(),
                     password2: $form.find('input[name="password2"]').val()
                 },

@@ -447,6 +447,12 @@ function l7p_inline_manual_content()
     return 'l7p_get_chapter(\'content\');';
 }
 
+// API url
+function l7p_inline_api_url()
+{
+    return 'l7p_api_url()';
+}
+
 // REST API url
 function l7p_inline_rest_api_url()
 {
