@@ -660,10 +660,15 @@ function l7p_get_chapter($attr)
 {
     $chapters = l7p_get_chapters();
     $name = l7p_get_chapter_name_from_query();
-    $parts = explode("_", $name);
-    $manual_type = array_shift($parts);
-    $name = implode("_", $parts);
     
+    if (strpos($name, "_")) {
+        $parts = explode("_", $name);
+        $manual_type = array_shift($parts);
+        $name = implode("_", $parts);
+    } else {
+        $manual_type = 'Manual';
+    }
+
     if ($attr == 'toc') {
         return isset($chapters[$manual_type]['index']) ? $chapters[$manual_type]['index'] : '';
     }
