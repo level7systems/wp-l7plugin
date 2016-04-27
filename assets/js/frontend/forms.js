@@ -299,16 +299,16 @@ if (!String.prototype.startsWith) {
                 currency = getCookie('l7p_currency');
             }
             
-            $('select#package_type, form.l7p-register-form select.package_type').html();
+            $('select#package_type, form.l7p-register-form select[name="package_type"]').html();
             var options = package_type_options[currency];
             for(var value in options) {
-                $('select#package_type, form.l7p-register-form select.package_type').append($('<option>').attr('value', value).text(options[value]));
+                $('select#package_type, form.l7p-register-form select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
             };
         }
         
-        $('select#package_type, form.l7p-register-form select.package_type').on('change', function () {
+        $('select#package_type, form.l7p-register-form select[name="package_type"]').on('change', function () {
 
-            var $form = $(this).parent('form:first'),
+            var $form = $(this).parents('form:first'),
                 $select = $form.find('select[name="package_route_id"]');
             
             if (this.value == "S") {
