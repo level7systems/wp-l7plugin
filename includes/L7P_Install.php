@@ -263,7 +263,7 @@ class L7P_Install
             'pricing' => <<<CONTENT
 
 <div>
-  <h1>Choose a plan that fits You the most</h1>
+  <h1>Choose a plan that fits you the most</h1>
     [block currency_form]
 </div>
 
@@ -943,7 +943,7 @@ CONTENT
 		
 <div>
     <h3>Not sure which VoIPstudio Plan</h3>
-    <p><span>is most suitable</span> for Your Company?</p>
+    <p><span>is most suitable</span> for your Company?</p>
         <a href="/pricing">Check Our Pricing</a>
 </div>
 	
@@ -1001,7 +1001,7 @@ CONTENT
   
 <div>
   <h3>Not sure which VoIPstudio Plan</h3>
-  <p><span>is most suitable</span> for Your Company?</p>
+  <p><span>is most suitable</span> for your Company?</p>
     <a href="/pricing">Check Our Pricing</a>
 </div>
 
@@ -1046,7 +1046,7 @@ CONTENT
 		
 <div>
     <h3>Not sure which VoIPstudio Plan</h3>
-    <p><span>is most suitable</span> for Your Company?</p>
+    <p><span>is most suitable</span> for your Company?</p>
         <a href="/pricing">Check Our Pricing</a>
 </div>
 	

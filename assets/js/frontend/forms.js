@@ -402,8 +402,8 @@ if (!String.prototype.startsWith) {
                             login_url = '/en' + login_url;
                         }
                         
-                        $form.html('<p class="big center text-center">Thank You for registering.</p>'
-                                + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
+                        $form.html('<p class="big center text-center">Thank you for registering.</p>'
+                                + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
 
                         jQuery(document).trigger("l7p:registration:completed", ['customer']);
                     }
@@ -465,8 +465,8 @@ if (!String.prototype.startsWith) {
                         login_url = '/en' + login_url;
                     }
 
-                    $form.html('<p class="big center text-center">Thank You for registering.</p>'
-                            + '<p class="big center text-center text-grey">Check Your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
+                    $form.html('<p class="big center text-center">Thank you for registering.</p>'
+                            + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
 
                     jQuery(document).trigger("l7p:registration:completed", ['customer']);
                 }, 
@@ -587,7 +587,7 @@ if (!String.prototype.startsWith) {
                         return false;
                     } else {
 
-                        $form.html('<p class="big center text-center">Thank You for registering.</p>'
+                        $form.html('<p class="big center text-center">Thank you for registering.</p>'
                                 + '<p class="big center text-center text-grey">For security purposes, we have sent a confirmation email to <strong>' + email + '</strong>. </p>');
                         
                         jQuery(document).trigger("l7p:registration:completed", ['agent']);
