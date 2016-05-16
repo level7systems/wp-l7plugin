@@ -460,15 +460,24 @@ if (!String.prototype.startsWith) {
                 contentType: 'application/json; charset=utf-8',
                 success: function (res) {
 
-                    var login_url = '/login';
-                    if (document.location.pathname.startsWith('/en')) {
-                        login_url = '/en' + login_url;
-                    }
-
-                    $form.html('<p class="big center text-center">Thank you for registering.</p>'
-                            + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
-
                     jQuery(document).trigger("l7p:registration:completed", ['customer']);
+                    
+                    if ($form.data('appKey') == 'gotrunk') {
+                        
+                        setCookie($form.data('appKey') + '.register', data);
+                        // redirect user to their application url
+                        window.location.href = '/app';
+                    } else {
+                        
+                        var login_url = '/login';
+                        if (document.location.pathname.startsWith('/en')) {
+                            login_url = '/en' + login_url;
+                        }
+
+                        $form.html('<p class="big center text-center">Thank you for registering.</p>'
+                                + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
+                    }
+                    
                 }, 
                 error: function(jqXhr, status) {
                     
@@ -492,8 +501,9 @@ if (!String.prototype.startsWith) {
                             }
                             
                             if (error.field == 'tc') {
-                                if ($form.find('input[name="tc"]').parent().is('label')) {
-                                    $form.find('input[name="tc"]').parent().after('<p class="small error-ftc">' + error.message + '</p>');
+                                var $parent = $form.find('input[name="tc"]').parents('label:first');
+                                if ($parent.is('label')) {
+                                    $parent.after('<p class="small error-ftc">' + error.message + '</p>');
                                 } else if ($form.find('input[name="tc"]').next()) {
                                     $form.find('input[name="tc"]').next().after('<p class="small error-ftc">' + error.message + '</p>');
                                 }

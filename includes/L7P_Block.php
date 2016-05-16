@@ -16,7 +16,7 @@ function l7p_block_currency_form()
     ob_start();
 
     ?>
-    <form id="l7p-currency-form" method="post" action="" class="l7p-currency-form">
+    <form id="l7p-currency-form" method="post" action="" class="l7p l7p-currency-form">
         <select name="currency" id="currency" onchange="this.form.submit()">
             <?php foreach ($currencies as $currency_iso): ?>
                 <option value="<?php echo $currency_iso ?>"<?php if ($selected_currency == $currency_iso): ?>selected="selected"<?php endif; ?>><?php echo l7p_currency_name($currency_iso) ?></option>
@@ -40,7 +40,7 @@ function l7p_block_login_form()
 
     <p id="l7p-global-errors">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-login-form" method="post" action="[FORM_LOGIN_ACTION]" class="l7p-login-form">
+    <form id="l7p-login-form" method="post" action="[FORM_LOGIN_ACTION]" class="l7p l7p-login-form">
 
         [FORM_SECURITY_TOKEN]
 
@@ -59,7 +59,6 @@ function l7p_block_login_form()
             <?php echo __('Remember Me', 'level7platform') ?>
         </label>
         <button id="l7p-login-button"><?php echo __('Login', 'level7platform') ?></button>
-    </fieldset>
 
     </form>
 
@@ -79,7 +78,7 @@ function l7p_block_rest_login_form()
 
     <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-rest-login-form" method="post" action="[REST_API_LOGIN_URL]" class="l7p-rest-login-form" data-app-key="[APP_KEY]">
+    <form id="l7p-rest-login-form" method="post" action="[REST_API_LOGIN_URL]" class="l7p l7p-rest-login-form" data-app-key="[APP_KEY]">
 
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'username', 'label' => 'E-mail')) ?>
@@ -96,7 +95,6 @@ function l7p_block_rest_login_form()
             <?php echo __('Remember Me', 'level7platform') ?>
         </label>
         <button id="l7p-login-button"><?php echo __('Login', 'level7platform') ?></button>
-    </fieldset>
 
     </form>
 
@@ -127,7 +125,7 @@ function l7p_block_register_form()
 
     <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-register-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p-register-form">
+    <form id="l7p-register-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p l7p-register-form">
 
         [FORM_SECURITY_TOKEN]
 
@@ -189,7 +187,7 @@ function l7p_block_register_agent_form()
 
     <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-register-agent-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p-register-agent-form">
+    <form id="l7p-register-agent-form" method="post" action="[FORM_REGISTER_ACTION]" class="l7p l7p-register-agent-form">
 
         [FORM_SECURITY_TOKEN]
 
@@ -258,7 +256,7 @@ function l7p_block_password_recover_form()
 
     <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-password-recover-form" method="post" action="[FORM_PASSWORD_RECOVER_ACTION]" class="l7p-password-recover-form">
+    <form id="l7p-password-recover-form" method="post" action="[FORM_PASSWORD_RECOVER_ACTION]" class="l7p l7p-password-recover-form">
 
         [FORM_SECURITY_TOKEN]
 
@@ -284,7 +282,7 @@ function l7p_block_new_password_form()
 
     <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-new-password-form" method="post" action="[FORM_NEW_PASSWORD_ACTION]" class="l7p-new-password-form">
+    <form id="l7p-new-password-form" method="post" action="[FORM_NEW_PASSWORD_ACTION]" class="l7p l7p-new-password-form">
 
         [FORM_SECURITY_TOKEN]
 
@@ -313,7 +311,7 @@ function l7p_block_rest_new_password_form()
 
     ?>
 
-    <form id="l7p-new-password-form" method="post" action="[FORM_NEW_PASSWORD_ACTION]" class="l7p-new-password-form" data-rest-api-login-url="[REST_API_LOGIN_URL]" data-app-key="[APP_KEY]">
+    <form id="l7p-new-password-form" method="post" action="[FORM_NEW_PASSWORD_ACTION]" class="l7p l7p-new-password-form" data-rest-api-login-url="[REST_API_LOGIN_URL]" data-app-key="[APP_KEY]">
 
         <div class="form-row">
             <?php echo L7P_Form::label(array('id' => 'password1', 'label' => __('New password', 'level7platform'))) ?>
@@ -344,7 +342,7 @@ function l7p_block_activation_form()
 
     <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-activate-form" method="post" action="[FORM_ACTIVATION_ACTION]" class="l7p-activate-form">
+    <form id="l7p-activate-form" method="post" action="[FORM_ACTIVATION_ACTION]" class="l7p l7p-activate-form">
 
         [FORM_SECURITY_TOKEN]
 
@@ -390,7 +388,7 @@ function l7p_block_subscription_form()
 
     <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
 
-    <form id="l7p-subscription-form" method="post" action="[FORM_SUBSCRIPTION_ACTION]" class="l7p-subscription-form">
+    <form id="l7p-subscription-form" method="post" action="[FORM_SUBSCRIPTION_ACTION]" class="l7p l7p-subscription-form">
 
         [FORM_SECURITY_TOKEN]
 
