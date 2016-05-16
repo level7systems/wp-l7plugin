@@ -224,7 +224,7 @@ if (!String.prototype.startsWith) {
                     });
                     
                     // redirect user to their application url
-                    window.location.href = '/app';
+                    window.location.href = '/app/';
                 }, 
                 error: function(jqXhr, status) {
                     
@@ -466,7 +466,7 @@ if (!String.prototype.startsWith) {
                         
                         setCookie($form.data('appKey') + '.register', data);
                         // redirect user to their application url
-                        window.location.href = '/app';
+                        window.location.href = '/app/';
                     } else {
                         
                         var login_url = '/login';
@@ -737,7 +737,7 @@ if (!String.prototype.startsWith) {
                                 });
 
                                 // redirect user to their application url
-                                window.location.href = '/app';
+                                window.location.href = '/app/';
                             }, 
                             error: function(jqXhr, status) {
 
