@@ -552,7 +552,8 @@ if (!String.prototype.startsWith) {
                 t = true;
 
             var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val(),
-                    email = $form.find('input[name="email"]').val();
+                email = $form.find('input[name="email"]').val(),
+                confirm_email = $form.find('input[name="email2"]').val() || email;
 
             e.preventDefault();
             $.jsonp({
@@ -564,7 +565,7 @@ if (!String.prototype.startsWith) {
                     first_name: $form.find('input[name="firstname"]').val(),
                     last_name: $form.find('input[name="lastname"]').val(),
                     email: email,
-                    email2: $form.find('input[name="email2"]').val(),
+                    email2: confirm_email,
                     password: $form.find('input[name="password"]').val(),
                     password2: confirm_pass,
                     address: $form.find('#address').val(),
