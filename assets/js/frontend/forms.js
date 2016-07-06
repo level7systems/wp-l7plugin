@@ -551,8 +551,10 @@ if (!String.prototype.startsWith) {
             if ($form.find('input[name="tc"]').prop('checked'))
                 t = true;
 
-            var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val(),
-                    email = $form.find('input[name="email"]').val();
+            var email = $form.find('input[name="email"]').val();
+            var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val();
+            
+            var confirm_email = $form.find('input[name="email2"]').val() || $form.find('input[name="email"]').val();
 
             e.preventDefault();
             $.jsonp({
@@ -564,7 +566,7 @@ if (!String.prototype.startsWith) {
                     first_name: $form.find('input[name="firstname"]').val(),
                     last_name: $form.find('input[name="lastname"]').val(),
                     email: email,
-                    email2: $form.find('input[name="email2"]').val(),
+                    email2: confirm_email,
                     password: $form.find('input[name="password"]').val(),
                     password2: confirm_pass,
                     address: $form.find('#address').val(),
