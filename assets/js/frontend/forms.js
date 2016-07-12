@@ -338,7 +338,7 @@ if (!String.prototype.startsWith) {
             }
 
             var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val();
-            var package_type = $form.find('input[name="package_type"]').val() || "P";
+            var package_type = $form.find('select[name="package_type"]').val() || "P";
 
             var data = {
                 method: 'register',
@@ -349,7 +349,7 @@ if (!String.prototype.startsWith) {
                 password: $form.find('input[name="password"]').val(),
                 password2: confirm_pass,
                 package_type: package_type,
-                package_route_id: $form.find('input[name="package_route_id"]').val(),
+                package_route_id: $form.find('select[name="package_route_id"]').val(),
                 google_client_id: $form.find('input[name="google_client_id"]').val(),
                 tc: t
             };
