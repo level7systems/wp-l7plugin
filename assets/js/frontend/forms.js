@@ -122,7 +122,7 @@ if (!String.prototype.startsWith) {
 
             e.preventDefault();
             $.jsonp({
-                url: $form.attr('action'),
+                url: $form.attr('action') + '?rest_login',
                 callbackParameter: "callback",
                 type: 'POST',
                 data: {
