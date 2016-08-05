@@ -535,6 +535,8 @@ if (!String.prototype.startsWith) {
                     'email',
                     'password',
                     'address',
+                    'city',
+                    'postcode',
                     'country',
                     'tc'
                 ]);
@@ -569,6 +571,8 @@ if (!String.prototype.startsWith) {
                     password: $form.find('input[name="password"]').val(),
                     password2: confirm_pass,
                     address: $form.find('#address').val(),
+                    city: $form.find('#city').val(),
+                    postcode: $form.find('#postcode').val(),
                     country: $form.find('#country').val(),
                     tc: t
                 },
@@ -590,6 +594,10 @@ if (!String.prototype.startsWith) {
                             $form.find('input[name="password2"]').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
                         if (res.errors.address)
                             $form.find('#address').after('<p class="small error-address">' + res.errors.address + '</p>');
+                        if (res.errors.city)
+                            $form.find('#city').after('<p class="small error-city">' + res.errors.city + '</p>');
+                        if (res.errors.postcode)
+                            $form.find('#postcode').after('<p class="small error-postcode">' + res.errors.postcode + '</p>');
                         if (res.errors.country)
                             $form.find('#country').after('<p class="small error-country">' + res.errors.country + '</p>');
                         if (res.errors.tc)
