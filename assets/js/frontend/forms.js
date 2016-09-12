@@ -405,7 +405,7 @@ if (!String.prototype.startsWith) {
                         $form.html('<p class="big center text-center">Thank you for registering.</p>'
                                 + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
 
-                        jQuery(document).trigger("l7p:registration:completed", ['customer']);
+                        jQuery(document).trigger("l7p:registration:completed", ['customer', $form.attr('data-l7p-event')]);
                     }
                 }, 
                 error: function(jqXhr, status) {
@@ -460,7 +460,7 @@ if (!String.prototype.startsWith) {
                 contentType: 'application/json; charset=utf-8',
                 success: function (res) {
 
-                    jQuery(document).trigger("l7p:registration:completed", ['customer']);
+                    jQuery(document).trigger("l7p:registration:completed", ['customer', $form.attr('data-l7p-event')]);
                     
                     if ($form.data('appKey') == 'gotrunk') {
                         
