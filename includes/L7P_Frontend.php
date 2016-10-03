@@ -34,9 +34,12 @@ class L7P_Frontend
         wp_enqueue_style(
             'level7-forms', plugins_url('/assets/css/frontend/forms.css', L7P_PLUGIN_FILE)
         );
-
+        
         wp_enqueue_style(
             'level7-jquery-ui-css', plugins_url('/assets/css/jquery-ui.css', L7P_PLUGIN_FILE)
+        );
+        wp_enqueue_style(
+            'jquery-loading-indicator', plugins_url('/assets/css/frontend/jquery.loading-indicator.css', L7P_PLUGIN_FILE)
         );
     }
 
@@ -50,6 +53,9 @@ class L7P_Frontend
         );
         wp_enqueue_script(
             'level7-forms', plugins_url('/assets/js/frontend/forms.js', L7P_PLUGIN_FILE), array('jquery', 'jquery-ui-dialog')
+        );
+        wp_enqueue_script(
+            'jquery-loading-indicator', plugins_url('/assets/js/frontend/jquery.loading-indicator.min.js', L7P_PLUGIN_FILE), array('jquery')
         );
     }
     
@@ -71,7 +77,6 @@ class L7P_Frontend
             $country_name = l7p_get_country_name_from_query();
             return sprintf("%s Telephone Numbers - %s", $product_name, $country_name);
         }
-        
         return $title;
     }
 

@@ -25,7 +25,7 @@ class L7P_Form
         $type = isset($args['type'])? esc_attr($args['type']) : 'text';
         $section = isset($args['section']) ? esc_attr($args['section']) : false;
         $value = isset($args['value']) ? esc_attr($args['value']) : '';
-        $placeholder = isset($args['placeholder']) ? esc_attr($args['placeholder']) : '';
+        $placeholder = isset($args['placeholder']) ? 'placeholder="' . esc_attr($args['placeholder']) . '"' : '';
         $pre = isset($args['pre']) ? esc_attr($args['pre']) : false;
         $post = isset($args['post']) ? esc_attr($args['post']) : false;
         $required = isset($args['required']) && $args['required'] ? ' required' : '';
