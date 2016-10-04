@@ -98,8 +98,8 @@ if (!String.prototype.startsWith) {
             setCookie('l7p_currency', $(this).val());
         });
 
-        if (!$('#l7p-global-errors').is(':empty')) {
-            $('#l7p-global-errors').show();
+        if (!$('#l7p-global-errors, .l7p-global-errors').is(':empty')) {
+            $('#l7p-global-errors, .l7p-global-errors').show();
         }
 
         if (!$('#l7p-global-success').is(':empty')) {
@@ -117,7 +117,9 @@ if (!String.prototype.startsWith) {
         }
 
         $(document).on('submit', 'form#l7p-login-form, form.l7p-login-form', function (e) {
+
             var $form = $(this);
+            
             clearErrors($form);
 
             e.preventDefault();
@@ -149,7 +151,7 @@ if (!String.prototype.startsWith) {
                                     recover_url = '/en' + recover_url;
                                 }
                         
-                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
                             } else if (res.errors.email.indexOf("not confirmed") != -1) {
                                 
                                 var confirmation_url = '/resend-confirmation-email';
@@ -157,9 +159,9 @@ if (!String.prototype.startsWith) {
                                     confirmation_url = '/en' + confirmation_url;
                                 }
                         
-                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
                             } else {
-                                $('#l7p-global-errors').html(res.errors.email).show();
+                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email).show();
                             }
                         }
 
@@ -182,7 +184,7 @@ if (!String.prototype.startsWith) {
                     window.location.href = redirection;
                 }, 
                 error: function(jqXhr, status) {
-                    loader.hide();
+                    
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
@@ -252,7 +254,7 @@ if (!String.prototype.startsWith) {
                                         recover_url = '/en' + recover_url;
                                     }
 
-                                    $('#l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                                    $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
                                 } else if (error.message.indexOf("not confirmed") != -1) {
 
                                     var confirmation_url = '/resend-confirmation-email';
@@ -260,7 +262,7 @@ if (!String.prototype.startsWith) {
                                         confirmation_url = '/en' + confirmation_url;
                                     }
 
-                                    $('#l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                                    $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
                                 } else {
                                     $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>')
                                 }
@@ -350,7 +352,7 @@ if (!String.prototype.startsWith) {
             }
 
             var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val();
-            var package_type = $form.find('input[name="package_type"]').val() || "P";
+            var package_type = $form.find('select[name="package_type"]').val() || "P";
 
             var data = {
                 method: 'register',
@@ -361,7 +363,7 @@ if (!String.prototype.startsWith) {
                 password: $form.find('input[name="password"]').val(),
                 password2: confirm_pass,
                 package_type: package_type,
-                package_route_id: $form.find('input[name="package_route_id"]').val(),
+                package_route_id: $form.find('select[name="package_route_id"]').val(),
                 google_client_id: $form.find('input[name="google_client_id"]').val(),
                 tc: t
             };
@@ -420,7 +422,7 @@ if (!String.prototype.startsWith) {
                         $form.html('<p class="big center text-center">Thank you for registering.</p>'
                                 + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
 
-                        jQuery(document).trigger("l7p:registration:completed", ['customer']);
+                        jQuery(document).trigger("l7p:registration:completed", ['customer', $form.attr('data-l7p-event')]);
                     }
                 }, 
                 error: function(jqXhr, status) {
@@ -481,7 +483,7 @@ if (!String.prototype.startsWith) {
                 },
                 success: function (res) {
 
-                    jQuery(document).trigger("l7p:registration:completed", ['customer']);
+                    jQuery(document).trigger("l7p:registration:completed", ['customer', $form.attr('data-l7p-event')]);
                     
                     if ($form.data('appKey') == 'gotrunk') {
                         
@@ -559,6 +561,8 @@ if (!String.prototype.startsWith) {
                     'email',
                     'password',
                     'address',
+                    'city',
+                    'postcode',
                     'country',
                     'tc'
                 ]);
@@ -576,7 +580,8 @@ if (!String.prototype.startsWith) {
                 t = true;
 
             var confirm_pass = $form.find('input[name="password2"]').val() || $form.find('input[name="password"]').val(),
-                    email = $form.find('input[name="email"]').val();
+                email = $form.find('input[name="email"]').val(),
+                confirm_email = $form.find('input[name="email2"]').val() || email;
 
             e.preventDefault();
             $.jsonp({
@@ -588,10 +593,12 @@ if (!String.prototype.startsWith) {
                     first_name: $form.find('input[name="firstname"]').val(),
                     last_name: $form.find('input[name="lastname"]').val(),
                     email: email,
-                    email2: $form.find('input[name="email2"]').val(),
+                    email2: confirm_email,
                     password: $form.find('input[name="password"]').val(),
                     password2: confirm_pass,
                     address: $form.find('#address').val(),
+                    city: $form.find('#city').val(),
+                    postcode: $form.find('#postcode').val(),
                     country: $form.find('#country').val(),
                     tc: t
                 },
@@ -616,6 +623,10 @@ if (!String.prototype.startsWith) {
                             $form.find('input[name="password2"]').after('<p class="small error-password2">' + res.errors.password2 + '</p>');
                         if (res.errors.address)
                             $form.find('#address').after('<p class="small error-address">' + res.errors.address + '</p>');
+                        if (res.errors.city)
+                            $form.find('#city').after('<p class="small error-city">' + res.errors.city + '</p>');
+                        if (res.errors.postcode)
+                            $form.find('#postcode').after('<p class="small error-postcode">' + res.errors.postcode + '</p>');
                         if (res.errors.country)
                             $form.find('#country').after('<p class="small error-country">' + res.errors.country + '</p>');
                         if (res.errors.tc)
@@ -732,7 +743,7 @@ if (!String.prototype.startsWith) {
                     if (res.status === 403) {
 
                         if (res.errors.reset_token) {
-                            $('#l7p-global-errors').html(res.errors.reset_token).show();
+                            $('#l7p-global-errors, .l7p-global-errors').html(res.errors.reset_token).show();
                             return false;
                         }
                         if (res.errors.password1) {
@@ -769,7 +780,7 @@ if (!String.prototype.startsWith) {
                             success: function (res) {
 
                                 if (!res.user_id || !res.user_token) {
-                                    $('#l7p-global-errors').html('API failed to return userId and/or userToken').show();
+                                    $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
                                     return false;
                                 }
 
