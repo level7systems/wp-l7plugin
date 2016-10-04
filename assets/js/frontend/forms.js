@@ -98,8 +98,8 @@ if (!String.prototype.startsWith) {
             setCookie('l7p_currency', $(this).val());
         });
 
-        if (!$('#l7p-global-errors').is(':empty')) {
-            $('#l7p-global-errors').show();
+        if (!$('#l7p-global-errors, .l7p-global-errors').is(':empty')) {
+            $('#l7p-global-errors, .l7p-global-errors').show();
         }
 
         if (!$('#l7p-global-success').is(':empty')) {
@@ -136,30 +136,31 @@ if (!String.prototype.startsWith) {
                 },
                 success: function (res) {
                     if (!res.success) {
-
                         if (res.errors.username)
                             $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>')
                         if (res.errors.password)
                             $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>')
                         if (res.errors.email) {
+                            console.log(1);
                             if (res.errors.email.indexOf("unrecognised user name") != -1) {
-                                
+                                console.log(2);
                                 var recover_url = '/recover-password';
                                 if (document.location.pathname.startsWith('/en')) {
                                     recover_url = '/en' + recover_url;
                                 }
                         
-                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
                             } else if (res.errors.email.indexOf("not confirmed") != -1) {
-                                
+                                console.log(3);
                                 var confirmation_url = '/resend-confirmation-email';
                                 if (document.location.pathname.startsWith('/en')) {
                                     confirmation_url = '/en' + confirmation_url;
                                 }
                         
-                                $('#l7p-global-errors').html(res.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
                             } else {
-                                $('#l7p-global-errors').html(res.errors.email).show();
+                                console.log(4);
+                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email).show();
                             }
                         }
 
@@ -182,7 +183,6 @@ if (!String.prototype.startsWith) {
                     window.location.href = redirection;
                 }, 
                 error: function(jqXhr, status) {
-                    loader.hide();
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
@@ -252,7 +252,7 @@ if (!String.prototype.startsWith) {
                                         recover_url = '/en' + recover_url;
                                     }
 
-                                    $('#l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                                    $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
                                 } else if (error.message.indexOf("not confirmed") != -1) {
 
                                     var confirmation_url = '/resend-confirmation-email';
@@ -260,7 +260,7 @@ if (!String.prototype.startsWith) {
                                         confirmation_url = '/en' + confirmation_url;
                                     }
 
-                                    $('#l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                                    $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
                                 } else {
                                     $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>')
                                 }
@@ -732,7 +732,7 @@ if (!String.prototype.startsWith) {
                     if (res.status === 403) {
 
                         if (res.errors.reset_token) {
-                            $('#l7p-global-errors').html(res.errors.reset_token).show();
+                            $('#l7p-global-errors, .l7p-global-errors').html(res.errors.reset_token).show();
                             return false;
                         }
                         if (res.errors.password1) {
@@ -769,7 +769,7 @@ if (!String.prototype.startsWith) {
                             success: function (res) {
 
                                 if (!res.user_id || !res.user_token) {
-                                    $('#l7p-global-errors').html('API failed to return userId and/or userToken').show();
+                                    $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
                                     return false;
                                 }
 
