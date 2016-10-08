@@ -138,6 +138,8 @@ if (!String.prototype.startsWith) {
                 },
                 success: function (res) {
                     if (!res.success) {
+                        
+                        loader.hide();
 
                         if (res.errors.username)
                             $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>')
@@ -184,15 +186,14 @@ if (!String.prototype.startsWith) {
                     window.location.href = redirection;
                 }, 
                 error: function(jqXhr, status) {
+
+                    loader.hide();
                     
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
                     jQuery(document).trigger("l7p:login:error");
-                },
-                complete: function(){
-                    loader.hide();
                 }
             });
         });
@@ -220,11 +221,13 @@ if (!String.prototype.startsWith) {
                 success: function (res) {
                     
                     if (!res) {
+                        loader.hide();
                         $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
                         return false;
                     }
 
                     if (!res.user_id || !res.user_token) {
+                        loader.hide();
                         $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
                         return false;
                     }
@@ -238,6 +241,8 @@ if (!String.prototype.startsWith) {
                     window.location.href = '/app/';
                 }, 
                 error: function(jqXhr, status) {
+
+                    loader.hide();
                     
                     if (jqXhr.status === 400) {
 
@@ -279,9 +284,6 @@ if (!String.prototype.startsWith) {
                     }
                     
                     jQuery(document).trigger("l7p:login:error");
-                },
-                complete: function(){
-                    loader.hide();
                 }
             });
         });
@@ -491,7 +493,7 @@ if (!String.prototype.startsWith) {
                         // redirect user to their application url
                         window.location.href = '/app/';
                     } else {
-                        
+                        loader.hide();
                         var login_url = '/login';
                         if (document.location.pathname.startsWith('/en')) {
                             login_url = '/en' + login_url;
@@ -503,7 +505,7 @@ if (!String.prototype.startsWith) {
                     
                 }, 
                 error: function(jqXhr, status) {
-                    
+                    loader.hide();
                     if (jqXhr.status === 400) {
 
                         var res = jqXhr.responseJSON;
@@ -542,9 +544,6 @@ if (!String.prototype.startsWith) {
                     }
                     
                     jQuery(document).trigger("l7p:registration:error", ['customer']);
-                },
-                complete: function(){
-                    loader.hide();
                 }
             });
         });
@@ -741,7 +740,7 @@ if (!String.prototype.startsWith) {
                 success: function (res) {
 
                     if (res.status === 403) {
-
+                        loader.hide();
                         if (res.errors.reset_token) {
                             $('#l7p-global-errors, .l7p-global-errors').html(res.errors.reset_token).show();
                             return false;
@@ -774,12 +773,10 @@ if (!String.prototype.startsWith) {
                                 password: $form.find('#password1').val()
                             }),
                             contentType: 'application/json; charset=utf-8',
-                            beforeSend: function(){
-                                loader.show();
-                            },
                             success: function (res) {
 
                                 if (!res.user_id || !res.user_token) {
+                                    loader.hide();
                                     $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
                                     return false;
                                 }
@@ -793,27 +790,23 @@ if (!String.prototype.startsWith) {
                                 window.location.href = '/app/';
                             }, 
                             error: function(jqXhr, status) {
-
+                                loader.hide();
                                 if ($('div#maintenance').length == 0) {
                                     $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                                 }
                             }
                         });
-            
                     }
                     
                     return false;
                 }, 
                 error: function(jqXhr, status) {
-                    
+                    loader.hide();
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
                     jQuery(document).trigger("l7p:password:error");
-                },
-                complete: function(){
-                    loader.hide();
                 }
             });
         });
