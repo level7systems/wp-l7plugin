@@ -81,9 +81,6 @@ if (!String.prototype.startsWith) {
     }
 
     $(function () {
-        //Call plugin loading-indicator
-        var loadingIndicator = $('body').loadingIndicator({useImage: false, showOnInit: false});
-        var loader = loadingIndicator.data("loadingIndicator");
         // set referer cookie
         if (getCookie('xl7ref', false) === false && document.referrer) {
             // cookie for one year
@@ -134,12 +131,12 @@ if (!String.prototype.startsWith) {
                     remember_me: $form.find('#remember').is(':checked')
                 },
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
                     if (!res.success) {
                         
-                        loader.hide();
+                        jQuery(document).trigger("l7p:form:completed");
 
                         if (res.errors.username)
                             $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>')
@@ -186,13 +183,10 @@ if (!String.prototype.startsWith) {
                     window.location.href = redirection;
                 }, 
                 error: function(jqXhr, status) {
-
-                    loader.hide();
-                    
+                    jQuery(document).trigger("l7p:form:completed");
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
-                    
                     jQuery(document).trigger("l7p:login:error");
                 }
             });
@@ -216,18 +210,18 @@ if (!String.prototype.startsWith) {
                 }),
                 contentType: 'application/json; charset=utf-8',
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
                     
                     if (!res) {
-                        loader.hide();
+                        jQuery(document).trigger("l7p:form:completed");
                         $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
                         return false;
                     }
 
                     if (!res.user_id || !res.user_token) {
-                        loader.hide();
+                        jQuery(document).trigger("l7p:form:completed");
                         $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
                         return false;
                     }
@@ -242,7 +236,7 @@ if (!String.prototype.startsWith) {
                 }, 
                 error: function(jqXhr, status) {
 
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                     
                     if (jqXhr.status === 400) {
 
@@ -387,7 +381,7 @@ if (!String.prototype.startsWith) {
                 type: 'POST',
                 data: data,
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
@@ -436,7 +430,7 @@ if (!String.prototype.startsWith) {
                     jQuery(document).trigger("l7p:registration:error", ['customer']);
                 },
                 complete: function(){
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                 }
             });
         });
@@ -481,7 +475,7 @@ if (!String.prototype.startsWith) {
                 data: JSON.stringify(data),
                 contentType: 'application/json; charset=utf-8',
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
@@ -493,7 +487,7 @@ if (!String.prototype.startsWith) {
                         // redirect user to their application url
                         window.location.href = '/app/';
                     } else {
-                        loader.hide();
+                        jQuery(document).trigger("l7p:form:completed");
                         var login_url = '/login';
                         if (document.location.pathname.startsWith('/en')) {
                             login_url = '/en' + login_url;
@@ -505,7 +499,7 @@ if (!String.prototype.startsWith) {
                     
                 }, 
                 error: function(jqXhr, status) {
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                     if (jqXhr.status === 400) {
 
                         var res = jqXhr.responseJSON;
@@ -602,7 +596,7 @@ if (!String.prototype.startsWith) {
                     tc: t
                 },
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
@@ -649,7 +643,7 @@ if (!String.prototype.startsWith) {
                     jQuery(document).trigger("l7p:registration:error", ['agent']);
                 },
                 complete: function(){
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                 }
             });
         });
@@ -678,7 +672,7 @@ if (!String.prototype.startsWith) {
                     email: $form.find('input[name="email"]').val()
                 },
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
@@ -703,7 +697,7 @@ if (!String.prototype.startsWith) {
                     jQuery(document).trigger("l7p:password:error");
                 },
                 complete: function(){
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                 }
             });
         });
@@ -735,12 +729,12 @@ if (!String.prototype.startsWith) {
                     password2: $form.find('input[name="password2"]').val()
                 },
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
                     if (res.status === 403) {
-                        loader.hide();
+                        jQuery(document).trigger("l7p:form:completed");
                         if (res.errors.reset_token) {
                             $('#l7p-global-errors, .l7p-global-errors').html(res.errors.reset_token).show();
                             return false;
@@ -776,7 +770,7 @@ if (!String.prototype.startsWith) {
                             success: function (res) {
 
                                 if (!res.user_id || !res.user_token) {
-                                    loader.hide();
+                                    jQuery(document).trigger("l7p:form:completed");
                                     $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
                                     return false;
                                 }
@@ -790,7 +784,7 @@ if (!String.prototype.startsWith) {
                                 window.location.href = '/app/';
                             }, 
                             error: function(jqXhr, status) {
-                                loader.hide();
+                                jQuery(document).trigger("l7p:form:completed");
                                 if ($('div#maintenance').length == 0) {
                                     $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                                 }
@@ -801,7 +795,7 @@ if (!String.prototype.startsWith) {
                     return false;
                 }, 
                 error: function(jqXhr, status) {
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                     if ($('div#maintenance').length == 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
@@ -841,7 +835,7 @@ if (!String.prototype.startsWith) {
                     conf_link: $form.find('#subscription_token').val()
                 },
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
@@ -866,7 +860,7 @@ if (!String.prototype.startsWith) {
                     jQuery(document).trigger("l7p:subscription:error");
                 },
                 complete: function(){
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                 }
             });
         });
@@ -913,7 +907,7 @@ if (!String.prototype.startsWith) {
                     tc: t
                 },
                 beforeSend: function(){
-                    loader.show();
+                    jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
@@ -944,7 +938,7 @@ if (!String.prototype.startsWith) {
                     jQuery(document).trigger("l7p:activation:error");
                 },
                 complete: function(){
-                    loader.hide();
+                    jQuery(document).trigger("l7p:form:completed");
                 }
             });
         });
