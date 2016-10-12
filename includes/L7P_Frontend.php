@@ -64,12 +64,12 @@ class L7P_Frontend
         
         if (l7p_is_rates_country_page()) {
             $country_name = l7p_get_country_name_from_query();
-            return sprintf("%s Call Rates - %s", $product_name, $country_name);
+            return sprintf("%s call rates - %s", $country_name, $product_name );
         }
         
         if (l7p_is_telephone_numbers_country_page()) {
             $country_name = l7p_get_country_name_from_query();
-            return sprintf("%s Telephone Numbers - %s", $product_name, $country_name);
+            return sprintf("%s telephone numbers - %s", $country_name, $product_name);
         }
         return $title;
     }
