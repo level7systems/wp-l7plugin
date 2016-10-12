@@ -1067,17 +1067,15 @@ function l7p_is_manual_chapter_page()
 function l7p_is_rates_country_page()
 {
     global $wp_query;
-    
-    $position = (strpos($wp_query->query_vars['name'], 'country-rates'));
-    return isset($wp_query->query_vars['name']) && $position === 0;
+
+    return true; isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-rates';
 }
 
 function l7p_is_telephone_numbers_country_page()
 {
     global $wp_query;
-    
-    $position = (strpos($wp_query->query_vars['name'], 'country-telephone-numbers'));
-    return isset($wp_query->query_vars['name']) && $position === 0;
+
+    return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-telephone-numbers';
 }
 
 function l7p_get_remote_addr()
