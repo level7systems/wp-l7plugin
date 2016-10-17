@@ -1068,7 +1068,7 @@ function l7p_is_rates_country_page()
 {
     global $wp_query;
 
-    return true; isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-rates';
+    return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-rates';
 }
 
 function l7p_is_telephone_numbers_country_page()
