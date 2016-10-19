@@ -25,13 +25,13 @@ if (!String.prototype.startsWith) {
                     // check each field
                     for (var j in field) {
                         if (j > 0) {
-                            if ($form.find('[name="' + field[j] + '"]').length == 0) {
+                            if ($form.find('[name="' + field[j] + '"]').length === 0) {
                                 errors.push(field[j]);
                             }
                         }
                     }
                 }
-            } else if ($form.find('[name="' + field + '"]').length == 0) {
+            } else if ($form.find('[name="' + field + '"]').length === 0) {
                 errors.push(field);
             }
         }
@@ -63,7 +63,7 @@ if (!String.prototype.startsWith) {
 
     function setCookie(name, value, options) {
         
-        var options = (options === undefined) ? {} : options;
+        options = (options === undefined) ? {} : options;
         
         if (typeof options.expires === 'number') {
             var days = options.expires, t = options.expires = new Date();
@@ -139,9 +139,9 @@ if (!String.prototype.startsWith) {
                         jQuery(document).trigger("l7p:form:completed");
 
                         if (res.errors.username)
-                            $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>')
+                            $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>');
                         if (res.errors.password)
-                            $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>')
+                            $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>');
                         if (res.errors.email) {
                             if (res.errors.email.indexOf("unrecognised user name") != -1) {
                                 
@@ -184,7 +184,7 @@ if (!String.prototype.startsWith) {
                 }, 
                 error: function(jqXhr, status) {
                     jQuery(document).trigger("l7p:form:completed");
-                    if ($('div#maintenance').length == 0) {
+                    if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     jQuery(document).trigger("l7p:login:error");
@@ -263,7 +263,7 @@ if (!String.prototype.startsWith) {
 
                                     $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
                                 } else {
-                                    $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>')
+                                    $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>');
                                 }
                             }
                             
@@ -272,7 +272,7 @@ if (!String.prototype.startsWith) {
                         return false;
                     } else {
                         
-                        if ($('div#maintenance').length == 0) {
+                        if ($('div#maintenance').length === 0) {
                             $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                         }
                     }
@@ -313,7 +313,7 @@ if (!String.prototype.startsWith) {
             var options = package_type_options[currency];
             for(var value in options) {
                 $('select#package_type, form.l7p-register-form select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
-            };
+            }
         }
         
         $('select#package_type, form.l7p-register-form select[name="package_type"]').on('change', function () {
@@ -415,15 +415,15 @@ if (!String.prototype.startsWith) {
                             login_url = '/en' + login_url;
                         }
                         
-                        $form.html('<p class="big center text-center">Thank you for registering.</p>'
-                                + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
+                        $form.html('<p class="big center text-center">Thank you for registering.</p>' +
+                                '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
 
                         jQuery(document).trigger("l7p:registration:completed", ['customer', $form.attr('data-l7p-event')]);
                     }
                 }, 
                 error: function(jqXhr, status) {
                     
-                    if ($('div#maintenance').length == 0) {
+                    if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
@@ -493,8 +493,8 @@ if (!String.prototype.startsWith) {
                             login_url = '/en' + login_url;
                         }
 
-                        $form.html('<p class="big center text-center">Thank you for registering.</p>'
-                                + '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
+                        $form.html('<p class="big center text-center">Thank you for registering.</p>' +
+                                '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
                     }
                     
                 }, 
@@ -532,7 +532,7 @@ if (!String.prototype.startsWith) {
                         return false;
                     } else {
                     
-                        if ($('div#maintenance').length == 0) {
+                        if ($('div#maintenance').length === 0) {
                             $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                         }
                     }
@@ -628,15 +628,15 @@ if (!String.prototype.startsWith) {
                         return false;
                     } else {
 
-                        $form.html('<p class="big center text-center">Thank you for registering.</p>'
-                                + '<p class="big center text-center text-grey">For security purposes, we have sent a confirmation email to <strong>' + email + '</strong>. </p>');
+                        $form.html('<p class="big center text-center">Thank you for registering.</p>' +
+                                '<p class="big center text-center text-grey">For security purposes, we have sent a confirmation email to <strong>' + email + '</strong>. </p>');
                         
                         jQuery(document).trigger("l7p:registration:completed", ['agent']);
                     }
                 }, 
                 error: function(jqXhr, status) {
                     
-                    if ($('div#maintenance').length == 0) {
+                    if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
@@ -690,7 +690,7 @@ if (!String.prototype.startsWith) {
                 }, 
                 error: function(jqXhr, status) {
                     
-                    if ($('div#maintenance').length == 0) {
+                    if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
@@ -785,7 +785,7 @@ if (!String.prototype.startsWith) {
                             }, 
                             error: function(jqXhr, status) {
                                 jQuery(document).trigger("l7p:form:completed");
-                                if ($('div#maintenance').length == 0) {
+                                if ($('div#maintenance').length === 0) {
                                     $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                                 }
                             }
@@ -796,7 +796,7 @@ if (!String.prototype.startsWith) {
                 }, 
                 error: function(jqXhr, status) {
                     jQuery(document).trigger("l7p:form:completed");
-                    if ($('div#maintenance').length == 0) {
+                    if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
@@ -853,7 +853,7 @@ if (!String.prototype.startsWith) {
                 }, 
                 error: function(jqXhr, status) {
                     
-                    if ($('div#maintenance').length == 0) {
+                    if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
@@ -931,7 +931,7 @@ if (!String.prototype.startsWith) {
                 }, 
                 error: function(jqXhr, status) {
                     
-                    if ($('div#maintenance').length == 0) {
+                    if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
                     
@@ -945,8 +945,3 @@ if (!String.prototype.startsWith) {
     });
 
 }(window.jQuery, window, document));
-
-
-
-
-
