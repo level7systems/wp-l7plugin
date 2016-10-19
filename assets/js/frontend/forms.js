@@ -138,10 +138,14 @@ if (!String.prototype.startsWith) {
                         
                         jQuery(document).trigger("l7p:form:completed");
 
-                        if (res.errors.username)
+                        if (res.errors.username) {
                             $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>');
-                        if (res.errors.password)
+                        }
+
+                        if (res.errors.password) {
                             $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>');
+                        }
+
                         if (res.errors.email) {
                             if (res.errors.email.indexOf("unrecognised user name") != -1) {
                                 
@@ -162,6 +166,10 @@ if (!String.prototype.startsWith) {
                             } else {
                                 $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email).show();
                             }
+                        }
+
+                        if (res.errors.web_product_activation) {
+                            jQuery(document).trigger("l7p:web_product:activation", [ res.errors.web_product_activation ]);
                         }
 
                         return false;
@@ -243,10 +251,12 @@ if (!String.prototype.startsWith) {
                         var res = jqXhr.responseJSON;
                         
                         $.each(res.errors, function(i, error) {
-                           
+                            
                             if (error.field == 'email') {
                             
-                                if (error.message.indexOf("Invalid email and/or password") != -1) {
+                                if (error.code == 'AU1001') {
+                                    jQuery(document).trigger("l7p:web_product:activation", [ error.message ]);
+                                } else if (error.message.indexOf("Invalid email and/or password") != -1) {
 
                                     var recover_url = '/recover-password';
                                     if (document.location.pathname.startsWith('/en')) {
@@ -387,6 +397,11 @@ if (!String.prototype.startsWith) {
 
                     if (res.status === 403) {
 
+                        if (res.errors.web_product_activation) {
+                            jQuery(document).trigger("l7p:web_product:activation", [ res.errors.web_product_activation ]);
+                            return false;
+                        }
+
                         if (res.errors.first_name)
                             $form.find('input[name="firstname"]').after('<p class="small error-firstname">' + res.errors.first_name + '</p>');
                         if (res.errors.last_name)
@@ -505,6 +520,11 @@ if (!String.prototype.startsWith) {
                         var res = jqXhr.responseJSON;
                         
                         $.each(res.errors, function(i, error) {
+
+                            if (error.code == 'CU1001') {
+                                jQuery(document).trigger("l7p:web_product:activation", [ error.message ]);
+                                return;
+                            }
                            
                             if (error.field == 'email') {
                                 $form.find('input[name="email"]').after('<p class="small error-email">' + error.message + '</p>');
@@ -887,58 +907,86 @@ if (!String.prototype.startsWith) {
                     
             clearErrors($form);
 
-            if ($form.find('input[name="tc"]').prop('checked'))
+            if ($form.find('input[name="tc"]').prop('checked')) {
                 t = true;
+            }
+
+            var data = {
+                email: $form.find('input[name="email"]').val(),
+                password: $form.find('input[name="password"]').val(),
+                tc: t
+            };
+            
+            if (getCookie('xl7ppc', false)) {
+                data.xl7ppc = getCookie('xl7ppc');
+            }
+            if (getCookie('xl7a', false)) {
+                data.xl7a = getCookie('xl7a');
+            }
+            if (getCookie('xl7ref', false)) {
+                data.xl7ref = getCookie('xl7ref');
+            }
 
             e.preventDefault();
-            $.jsonp({
+            $.ajax({
                 url: $form.attr('action'),
-                callbackParameter: "callback",
                 type: 'POST',
-                data: {
-                    method: 'activate',
-                    user_id: $form.find('#activation_token').val(),
-                    company: $form.find('#company').val(),
-                    address: $form.find('#address').val(),
-                    postcode: $form.find('#postcode').val(),
-                    city: $form.find('#city').val(),
-                    country: $form.find('#country').val(),
-                    state: $form.find('#state').val(),
-                    tc: t
-                },
+                dataType: 'json',
+                data: JSON.stringify(data),
+                contentType: 'application/json; charset=utf-8',
                 beforeSend: function(){
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
-                    if (res.status === 403) {
-
-                        if (res.errors.tc)
-                            $form.find('input[name="tc"]').next().after('<p class="small error-ftc">' + res.errors.tc + '</p>');
-
-                        return false;
+                    if ($form.data('appKey') == 'gotrunk') {
+                        
+                        setCookie($form.data('appKey') + '.register', data);
+                        // redirect user to their application url
+                        window.location.href = '/app/';
+                    } else {
+                        jQuery(document).trigger("l7p:form:completed");
+                        var login_url = '/login';
+                        if (document.location.pathname.startsWith('/en')) {
+                            login_url = '/en' + login_url;
+                        }
                     }
                     
-                    jQuery(document).trigger("l7p:activation:completed");
-
-                    var redirection = res.info;
-                    if ($('form#l7p-login-form #extini').val()) {
-                        redirection += '?extini=' + $('form#l7p-login-form #extini').val();
-                    }
-
-                    // redirect user to their application url
-                    window.location.href = redirection;
                 }, 
                 error: function(jqXhr, status) {
+                    jQuery(document).trigger("l7p:form:completed");
+                    if (jqXhr.status === 400) {
+
+                        var res = jqXhr.responseJSON;
+                        
+                        $.each(res.errors, function(i, error) {
+                           
+                            if (error.field == 'email') {
+                                $form.find('input[name="email"]').after('<p class="small error-email">' + error.message + '</p>');
+                            }
+                            if (error.field == 'password') {
+                                $form.find('input[name="password"]').after('<p class="small error-password">' + error.message + '</p>');
+                            }
+                            
+                            if (error.field == 'tc') {
+                                var $parent = $form.find('input[name="tc"]').parents('label:first');
+                                if ($parent.is('label')) {
+                                    $parent.after('<p class="small error-ftc">' + error.message + '</p>');
+                                } else if ($form.find('input[name="tc"]').next()) {
+                                    $form.find('input[name="tc"]').next().after('<p class="small error-ftc">' + error.message + '</p>');
+                                }
+                            }
+                        });
+                        
+                        return false;
+                    } else {
                     
-                    if ($('div#maintenance').length === 0) {
-                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                        if ($('div#maintenance').length === 0) {
+                            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                        }
                     }
                     
-                    jQuery(document).trigger("l7p:activation:error");
-                },
-                complete: function(){
-                    jQuery(document).trigger("l7p:form:completed");
+                    jQuery(document).trigger("l7p:registration:error", ['customer']);
                 }
             });
         });
