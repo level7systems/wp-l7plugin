@@ -1078,6 +1078,22 @@ function l7p_is_telephone_numbers_country_page()
     return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-telephone-numbers';
 }
 
+function l7p_is_hardware_group_page()
+{
+    global $wp_query;
+    
+    $position = (strpos($wp_query->query_vars['name'], 'hardware-group'));
+    return isset($wp_query->query_vars['name']) && $position === 0;
+}
+
+function l7p_is_hardware_phone_details_page()
+{
+    global $wp_query;
+
+    $position = (strpos($wp_query->query_vars['name'], 'hardware-model'));
+    return isset($wp_query->query_vars['name']) && $position === 0;
+}
+
 function l7p_get_remote_addr()
 {
     if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {

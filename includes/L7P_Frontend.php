@@ -71,6 +71,13 @@ class L7P_Frontend
             $country_name = l7p_get_country_name_from_query();
             return sprintf("%s Telephone Numbers - %s", $country_name, $product_name);
         }
+        
+        if (l7p_is_hardware_phone_details_page()) {
+            $group_name = l7p_get_phone_group_name_from_query();
+            $phone_name = l7p_get_phone_name_from_query();
+            return sprintf("%s - %s - %s", $group_name, $phone_name, $product_name);
+        }
+        
         return $title;
     }
 
