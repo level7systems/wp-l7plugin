@@ -498,7 +498,7 @@ if (!String.prototype.startsWith) {
                     
                     if ($form.data('appKey') == 'gotrunk') {
                         
-                        setCookie($form.data('appKey') + '.register', data);
+                        setCookie($form.data('appKey') + '.register', { email: data.email, first_name: data.first_name, last_name: data.last_name });
                         // redirect user to their application url
                         window.location.href = '/app/';
                     } else {
