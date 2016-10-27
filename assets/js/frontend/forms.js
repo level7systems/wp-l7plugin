@@ -239,8 +239,16 @@ if (!String.prototype.startsWith) {
                         user_token: res.user_token 
                     });
                     
+                    var url_suffix = '';
+                    if ($form.find('#extini').val()) {
+                        var match = $form.find('#extini').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
+                        if (match[1]) {
+                            url_suffix = '#support,support:' + match[1];
+                        }
+                    }
+
                     // redirect user to their application url
-                    window.location.href = '/app/';
+                    window.location.href = '/app/' + url_suffix;
                 }, 
                 error: function(jqXhr, status) {
 
