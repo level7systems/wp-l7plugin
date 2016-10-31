@@ -509,6 +509,11 @@ function l7p_inline_rest_api_register_url()
     return 'sprintf("%s/customers", l7p_rest_api_url())';
 }
 
+function l7p_inline_rest_api_activate_url()
+{
+    return 'sprintf("%s/customerhaswebproducts", l7p_rest_api_url())';
+}
+
 function l7p_inline_rest_api_login_url()
 {
     return 'sprintf("%s/login", l7p_rest_api_url())';
