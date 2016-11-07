@@ -59,7 +59,8 @@ class L7P_Frontend
         
         if (l7p_is_manual_chapter_page()) {
             $chapter_title = l7p_get_chapter('chapter');
-            return sprintf("%s Manual - %s", $product_name, $chapter_title);
+            $chapter_name = l7p_get_chapter('name');
+            return sprintf("%s %s - %s", $product_name, $chapter_name,  $chapter_title);
         }
         
         if (l7p_is_rates_country_page()) {
