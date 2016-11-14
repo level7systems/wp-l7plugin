@@ -249,6 +249,11 @@ function l7p_inline_ddi_state_name()
 {
     return '(isset($state_data) && isset($state_data[\'state_name\'])) ? $state_data[\'state_name\'] : \' \'';
 }
+// displays buy DDI in selected U.S. state url
+function l7p_inline_ddi_country_state_name()
+{
+    return '\'\'; $state = (isset($state_data) && isset($state_data[\'state_name\'])) ? $state_data[\'state_name\'] : (l7p_get_state_name_from_query()); if($state){echo $state . \', \';} echo isset($ddi_data[\'country_code\']) ? l7p_country_name($ddi_data[\'country_code\']) : l7p_get_country_name_from_query();';
+}
 # Phones
 // Phone - desk category page URL
 

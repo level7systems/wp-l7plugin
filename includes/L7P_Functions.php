@@ -1067,15 +1067,16 @@ function l7p_is_manual_chapter_page()
 function l7p_is_rates_country_page()
 {
     global $wp_query;
-
-    return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-rates';
+    $position = (strpos($wp_query->query_vars['name'], 'country-rates'));
+    return isset($wp_query->query_vars['name']) && $position === 0;
 }
 
 function l7p_is_telephone_numbers_country_page()
 {
     global $wp_query;
-
-    return isset($wp_query->query_vars['name']) && $wp_query->query_vars['name'] == 'country-telephone-numbers';
+    
+    $position = (strpos($wp_query->query_vars['name'], 'country-telephone-numbers'));
+    return isset($wp_query->query_vars['name']) && $position === 0;
 }
 
 function l7p_is_hardware_group_page()

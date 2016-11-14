@@ -95,7 +95,7 @@ class L7P_Form
             echo $pre;
         }
 
-        echo "<select id='$id' name='$name' $style />";
+        echo "<select id='$id' name='$name' $style >";
         foreach ($choices as $id => $label) {
             echo "<option value='$id'>$label</option>";
         }

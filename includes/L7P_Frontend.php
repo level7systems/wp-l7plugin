@@ -59,7 +59,8 @@ class L7P_Frontend
         
         if (l7p_is_manual_chapter_page()) {
             $chapter_title = l7p_get_chapter('chapter');
-            return sprintf("%s Manual - %s", $product_name, $chapter_title);
+            $chapter_name = l7p_get_chapter('name');
+            return sprintf("%s %s - %s", $product_name, $chapter_name,  $chapter_title);
         }
         
         if (l7p_is_rates_country_page()) {
@@ -69,7 +70,12 @@ class L7P_Frontend
         
         if (l7p_is_telephone_numbers_country_page()) {
             $country_name = l7p_get_country_name_from_query();
-            return sprintf("%s Telephone Numbers - %s", $country_name, $product_name);
+            $state_name = l7p_get_state_name_from_query();
+            if($state_name) {
+                return sprintf("%s, %s Telephone Numbers - %s", $state_name, $country_name, $product_name);
+            } else {
+                return sprintf("%s Telephone Numbers - %s", $country_name, $product_name);
+            }
         }
         
         if (l7p_is_hardware_phone_details_page()) {
