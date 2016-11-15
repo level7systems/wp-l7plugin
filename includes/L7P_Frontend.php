@@ -34,10 +34,6 @@ class L7P_Frontend
         wp_enqueue_style(
             'level7-forms', plugins_url('/assets/css/frontend/forms.css', L7P_PLUGIN_FILE)
         );
-        
-        wp_enqueue_style(
-            'level7-jquery-ui-css', plugins_url('/assets/css/jquery-ui.css', L7P_PLUGIN_FILE)
-        );
     }
 
     /**
