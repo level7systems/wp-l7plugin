@@ -76,7 +76,8 @@ class L7P_Form
     public static function select($args)
     {
         $name = isset($args['name']) ? esc_attr($args['name']) : 'undefined';
-        $id = isset($args['id']) ? esc_attr($args['id']) : $name;
+        $id = isset($args['id']) ?  ( $args['id']?"id='" .esc_attr($args['id'])."'":"" ) : "id='".$name."'" ;
+        $class = isset($args['class']) ? esc_attr($args['class']) : $name;
         $section = isset($args['section']) ? esc_attr($args['section']) : false;
         $choices = isset($args['choices']) ? $args['choices'] : array();
         $value = isset($args['value']) ? esc_attr($args['value']) : '';
@@ -95,7 +96,7 @@ class L7P_Form
             echo $pre;
         }
 
-        echo "<select id='$id' name='$name' $style >";
+        echo "<select $id class='$class' name='$name' $style >";
         foreach ($choices as $id => $label) {
             echo "<option value='$id'>$label</option>";
         }
