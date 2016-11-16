@@ -434,3 +434,30 @@ function l7p_block_javascript_package_type_select()
 
     return L7P_Content::parse_content($content);
 }
+function l7p_block_javascript_package_type_select_class()
+{
+    $register_settings = l7p_get_settings('register');
+    $package_types = isset($register_settings['package_types']) ? $register_settings['package_types'] : array();
+    
+    $options = array();
+    foreach ($package_types as $currency => $types) {
+        $currency_options = array(); 
+        foreach ($types as $type => $label) {
+            $currency_options[] = sprintf("%s: '%s'", $type, $label);
+        }
+        $options[] = sprintf("%s: {%s}", $currency, implode(", ", $currency_options));
+    }
+    
+    ob_start();
+
+    ?>
+    
+    <?php echo L7P_Form::select(array('name' => 'package_type', 'id' =>false, 'choices' => array())) ?>
+    
+    <script type="text/javascript">var package_type_options = {<?php echo implode(", ", $options) ?>};</script>
+    
+    <?php
+    $content = ob_get_clean();
+
+    return L7P_Content::parse_content($content);
+}
