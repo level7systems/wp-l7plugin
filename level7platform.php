@@ -113,6 +113,7 @@ class Level7Platform
     private function includes()
     {
         // common functions
+        include_once('includes/L7P_Exceptions.php');
         include_once('includes/L7P_Functions.php');
         include_once('includes/L7P_Form.php');
         include_once('includes/L7P_Block.php');

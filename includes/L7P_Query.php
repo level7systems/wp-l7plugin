@@ -301,11 +301,12 @@ class L7P_Query
 
             if (isset($query->query_vars['token'])) {
 
-                $response = l7p_confirm_account($query->query_vars['token']);
-                
-                if ($response['success']) {
-                    l7p_set_success_flash_message($response['info']);
-                } else {
+                try {
+                    l7p_confirm_account($query->query_vars['token']);
+                    l7p_set_success_flash_message("Your account is now confirmed. Please use your email address and password to login.");
+                } catch (RestException $e) {
+                    l7p_set_error_flash_message($e->getMessage());
+                } catch (Exception $e) {
                     l7p_set_error_flash_message(__('Invalid confirmation token.'));
                 }
                 

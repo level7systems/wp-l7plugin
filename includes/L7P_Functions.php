@@ -799,12 +799,12 @@ function l7p_do_shortcode($content)
 
 function l7p_confirm_account($token)
 {
-    $url = strtr(':url/:token', array(
-        ':url' => l7p_form_confirm_action(),
+    $url = strtr(':url/customers/:token/confirmation', array(
+        ':url' => l7p_rest_api_url(),
         ':token' => $token
     ));
 
-    return l7p_send_curl($url);
+    return l7p_send_curl($url, "POST");
 }
 
 function l7p_verify_reset_token($token)
@@ -867,12 +867,13 @@ function l7p_register_agent_click($token)
     return l7p_send_curl($url);
 }
 
-function l7p_send_curl($url)
+function l7p_send_curl($url, $method = "GET")
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_URL => $url,
+        CURLOPT_CUSTOMREQUEST => $method,
         CURLOPT_SSL_VERIFYHOST => false,
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_USERAGENT => 'Level7 WP plugin',
@@ -885,6 +886,14 @@ function l7p_send_curl($url)
     if (!in_array($json[0], array('[', '{'))) {
         $json = substr(trim($json, '();'), strpos($json, '(') + 1);
     }
+    
+    // decode JSON response
+    $json = json_decode($json, true);
+    
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if (!in_array($httpCode, array(200, 201, 204))) {
+        throw new RestException($json['message']);
+    }
 
     if (!$json) {
         return array(
@@ -895,7 +904,7 @@ function l7p_send_curl($url)
 
     curl_close($curl);
 
-    return json_decode($json, true);
+    return $json;
 }
 
 function l7p_set_success_flash_message($message)
