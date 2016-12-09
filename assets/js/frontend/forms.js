@@ -480,6 +480,15 @@ if (!String.prototype.startsWith) {
                 tc: t
             };
             
+            // business voip
+            if ($form.data('appKey') == 'voipstudio') {
+                data.package_type = $form.find('select[name="package_type"]').val() || "P";
+                
+                if (data.package_type != "P") {
+                    data.package_route_id = $form.find('select[name="package_route_id"]').val();
+                }
+            }
+            
             if (getCookie('xl7ppc', false)) {
                 data.xl7ppc = getCookie('xl7ppc');
             }
