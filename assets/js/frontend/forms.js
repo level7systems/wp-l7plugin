@@ -79,7 +79,109 @@ if (!String.prototype.startsWith) {
             options.secure || window.location.protocol == "https:" ? '; secure' : ''
         ].join('');
     }
+    
+    var onLoginSuccess = function (response) {
 
+        var $form = this;
+        
+        if (!response) {
+            jQuery(document).trigger("l7p:form:completed");
+            $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
+            return false;
+        }
+
+        if (!response.user_id || !response.user_token) {
+            jQuery(document).trigger("l7p:form:completed");
+            $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
+            return false;
+        }
+
+        setCookie($form.data('appKey') + '.auth', {
+            user_id: response.user_id, 
+            user_token: response.user_token 
+        });
+
+        var url_suffix = '';
+        if ($form.find('#extini').val()) {
+            var match = $form.find('#extini').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
+            if (match[1]) {
+                url_suffix = '#support,support:' + match[1];
+            }
+        }
+
+        // redirect user to their application url
+        window.location.href = '/app/' + url_suffix;
+    };
+            
+    var onLoginError = function(jqXhr, status) {
+
+        var $form = this;
+        
+        jQuery(document).trigger("l7p:form:completed");
+
+        if (jqXhr.status === 400) {
+
+            var res = jqXhr.responseJSON;
+            $.each(res.errors, function(i, error) {
+
+                if (error.field == 'email') {
+
+                    if (error.code == 'AU1001') {
+                        jQuery(document).trigger("l7p:web_product:activation", [ error.message ]);
+                    } else if (error.message.indexOf("Invalid email and/or password") != -1) {
+
+                        var recover_url = '/recover-password';
+                        if (document.location.pathname.startsWith('/en')) {
+                            recover_url = '/en' + recover_url;
+                        }
+
+                        $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                    } else if (error.message.indexOf("not confirmed") != -1) {
+
+                        var confirmation_url = '/resend-confirmation-email';
+                        if (document.location.pathname.startsWith('/en')) {
+                            confirmation_url = '/en' + confirmation_url;
+                        }
+
+                        $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                    } else {
+                        $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>');
+                    }
+                }
+
+            });
+
+            return false;
+        }
+
+        if ($('div#maintenance').length === 0) {
+            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+        }
+
+        jQuery(document).trigger("l7p:login:error");
+    };
+            
+    function login($form, username, password) {
+        
+        clearErrors($form);
+
+        $.ajax({
+            url: $form.data('restApiUrl') + '/login',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({
+                email: username,
+                password: password
+            }),
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function(){
+                jQuery(document).trigger("l7p:form:processing");
+            },
+            success: onLoginSuccess.bind($form),
+            error: onLoginError.bind($form)
+        });
+    }
+    
     $(function () {
         // set referer cookie
         if (getCookie('xl7ref', false) === false && document.referrer) {
@@ -203,101 +305,13 @@ if (!String.prototype.startsWith) {
         // REST login form
         $(document).on('submit', 'form#l7p-rest-login-form, form.l7p-rest-login-form', function (e) {
 
-            var $form = $(this);
-            
-            clearErrors($form);
-
             e.preventDefault();
-            $.ajax({
-                url: $form.attr('action'),
-                type: 'POST',
-                dataType: 'json',
-                data: JSON.stringify({
-                    email: $form.find('input[name="username"]').val(),
-                    password: $form.find('input[name="password"]').val()
-                }),
-                contentType: 'application/json; charset=utf-8',
-                beforeSend: function(){
-                    jQuery(document).trigger("l7p:form:processing");
-                },
-                success: function (res) {
-                    
-                    if (!res) {
-                        jQuery(document).trigger("l7p:form:completed");
-                        $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
-                        return false;
-                    }
 
-                    if (!res.user_id || !res.user_token) {
-                        jQuery(document).trigger("l7p:form:completed");
-                        $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
-                        return false;
-                    }
-
-                    setCookie($form.data('appKey') + '.auth', {
-                        user_id: res.user_id, 
-                        user_token: res.user_token 
-                    });
-                    
-                    var url_suffix = '';
-                    if ($form.find('#extini').val()) {
-                        var match = $form.find('#extini').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
-                        if (match[1]) {
-                            url_suffix = '#support,support:' + match[1];
-                        }
-                    }
-
-                    // redirect user to their application url
-                    window.location.href = '/app/' + url_suffix;
-                }, 
-                error: function(jqXhr, status) {
-
-                    jQuery(document).trigger("l7p:form:completed");
-                    
-                    if (jqXhr.status === 400) {
-
-                        var res = jqXhr.responseJSON;
-                        
-                        $.each(res.errors, function(i, error) {
-                            
-                            if (error.field == 'email') {
-                            
-                                if (error.code == 'AU1001') {
-                                    jQuery(document).trigger("l7p:web_product:activation", [ error.message ]);
-                                } else if (error.message.indexOf("Invalid email and/or password") != -1) {
-
-                                    var recover_url = '/recover-password';
-                                    if (document.location.pathname.startsWith('/en')) {
-                                        recover_url = '/en' + recover_url;
-                                    }
-
-                                    $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
-                                } else if (error.message.indexOf("not confirmed") != -1) {
-
-                                    var confirmation_url = '/resend-confirmation-email';
-                                    if (document.location.pathname.startsWith('/en')) {
-                                        confirmation_url = '/en' + confirmation_url;
-                                    }
-
-                                    $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
-                                } else {
-                                    $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>');
-                                }
-                            }
-                            
-                        });
-                        
-                        return false;
-                    } else {
-                        
-                        if ($('div#maintenance').length === 0) {
-                            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
-                        }
-                    }
-                    
-                    jQuery(document).trigger("l7p:login:error");
-                }
-            });
+            var $form = $(this),
+                username = $form.find('input[name="username"]').val(),
+                password = $form.find('input[name="password"]').val();
+            
+            login($form, username, password);
         });
 
         // REGISTER
@@ -310,7 +324,7 @@ if (!String.prototype.startsWith) {
                     'lastname',
                     'email',
                     'password',
-                    ['package_type', 'package_route_id'],
+                    ['package_type', 'package_country'],
                     'tc'
                 ]);
             });
@@ -337,7 +351,7 @@ if (!String.prototype.startsWith) {
         $('select#package_type, form.l7p-register-form select[name="package_type"]').on('change', function () {
 
             var $form = $(this).parents('form:first'),
-                $select = $form.find('select[name="package_route_id"]');
+                $select = $form.find('select[name="package_country"]');
             
             if (this.value == "S") {
                 $select.show();
@@ -377,7 +391,7 @@ if (!String.prototype.startsWith) {
                 password: $form.find('input[name="password"]').val(),
                 password2: confirm_pass,
                 package_type: package_type,
-                package_route_id: $form.find('select[name="package_route_id"]').val(),
+                package_country: $form.find('select[name="package_country"]').val(),
                 google_client_id: $form.find('input[name="google_client_id"]').val(),
                 tc: t
             };
@@ -484,8 +498,8 @@ if (!String.prototype.startsWith) {
             if ($form.data('appKey') == 'voipstudio') {
                 data.package_type = $form.find('select[name="package_type"]').val() || "P";
                 
-                if (data.package_type != "P") {
-                    data.package_route_id = $form.find('select[name="package_route_id"]').val();
+                if (data.package_type == "S") {
+                    data.package_country = $form.find('select[name="package_country"]').val();
                 }
             }
             
@@ -902,7 +916,7 @@ if (!String.prototype.startsWith) {
             });
         });
 
-        // ACTIVATE
+        // ACTIVATE: to be removed as legacy
         if ($('form#l7p-activate-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-activate-form'), [
@@ -916,75 +930,61 @@ if (!String.prototype.startsWith) {
                 'tc'
             ]);
         }
+        
+        var onActivationSuccess = function (response) {
 
-        $(document).on('submit', 'form#l7p-activate-form, form.l7p-activate-form', function (e) {
+            var $form = this;
             
-            var $form = $(this),
-                    t = '';
-                    
-            clearErrors($form);
-
-            if ($form.find('input[name="tc"]').prop('checked')) {
-                t = true;
+            if (!response) {
+                jQuery(document).trigger("l7p:form:completed");
+                $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
+                return false;
             }
 
+            if (!response.user_id || !response.user_token) {
+                jQuery(document).trigger("l7p:form:completed");
+                $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
+                return false;
+            }
+            
             var data = {
-                email: $form.find('input[name="email"]').val(),
-                password: $form.find('input[name="password"]').val(),
-                tc: t
+                web_product_id: $form.find('input[name="web_product_id"]').val(),
+                tc: $form.find('input[name="tc"]').prop('checked') ? true : false
             };
-            
-            if (getCookie('xl7ppc', false)) {
-                data.xl7ppc = getCookie('xl7ppc');
-            }
-            if (getCookie('xl7a', false)) {
-                data.xl7a = getCookie('xl7a');
-            }
-            if (getCookie('xl7ref', false)) {
-                data.xl7ref = getCookie('xl7ref');
-            }
 
-            e.preventDefault();
+            // web product activation
             $.ajax({
                 url: $form.attr('action'),
                 type: 'POST',
                 dataType: 'json',
                 data: JSON.stringify(data),
                 contentType: 'application/json; charset=utf-8',
-                beforeSend: function(){
+                beforeSend: function(jqXhr) {
                     jQuery(document).trigger("l7p:form:processing");
+                    jqXhr.setRequestHeader("Authorization", "Basic " + btoa(response.user_id + ":" + response.user_token));
                 },
-                success: function (res) {
-
-                    if ($form.data('appKey') == 'gotrunk') {
-                        
-                        setCookie($form.data('appKey') + '.register', data);
-                        // redirect user to their application url
-                        window.location.href = '/app/';
-                    } else {
-                        jQuery(document).trigger("l7p:form:completed");
-                        var login_url = '/login';
-                        if (document.location.pathname.startsWith('/en')) {
-                            login_url = '/en' + login_url;
-                        }
-                    }
-                    
+                success: function (response) {
+                    // login to just activate app
+                    var username = $form.find('input[name="username"]').val(),
+                        password = $form.find('input[name="password"]').val();
+                
+                    login($form, username, password);
                 }, 
                 error: function(jqXhr, status) {
                     jQuery(document).trigger("l7p:form:completed");
                     if (jqXhr.status === 400) {
 
                         var res = jqXhr.responseJSON;
-                        
+
                         $.each(res.errors, function(i, error) {
-                           
+
                             if (error.field == 'email') {
                                 $form.find('input[name="email"]').after('<p class="small error-email">' + error.message + '</p>');
                             }
                             if (error.field == 'password') {
                                 $form.find('input[name="password"]').after('<p class="small error-password">' + error.message + '</p>');
                             }
-                            
+
                             if (error.field == 'tc') {
                                 var $parent = $form.find('input[name="tc"]').parents('label:first');
                                 if ($parent.is('label')) {
@@ -994,18 +994,49 @@ if (!String.prototype.startsWith) {
                                 }
                             }
                         });
-                        
+
                         return false;
                     } else {
-                    
+
                         if ($('div#maintenance').length === 0) {
                             $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                         }
                     }
-                    
+
                     jQuery(document).trigger("l7p:registration:error", ['customer']);
                 }
             });
+        };
+        
+        var onActivationError = onLoginError;
+
+        $(document).on('submit', 'form#l7p-activate-form, form.l7p-activate-form', function (e) {
+            
+            e.preventDefault();
+            
+            var $form = $(this),
+                username = $form.find('input[name="username"]').val(),
+                password = $form.find('input[name="password"]').val();
+                    
+            clearErrors($form);
+
+            // login first
+            $.ajax({
+                url: $form.attr('action').replace('/customerhaswebproducts', '/login'),
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: username,
+                    password: password
+                }),
+                contentType: 'application/json; charset=utf-8',
+                beforeSend: function(){
+                    jQuery(document).trigger("l7p:form:processing");
+                },
+                success: onActivationSuccess.bind($form),
+                error: onActivationError.bind($form)
+            });
+            
         });
     });
 

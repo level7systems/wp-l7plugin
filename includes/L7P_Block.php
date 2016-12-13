@@ -114,9 +114,9 @@ function l7p_block_register_form()
     $package_types = isset($register_settings['package_types'][$currency]) ? $register_settings['package_types'][$currency] : array();
     $term_routes = isset($register_settings['routes']) ? $register_settings['routes'] : array();
 
-    $routes = array();
+    $countries = array();
     foreach ($term_routes as $id => $country_code) {
-        $routes[$id] = l7p_country_name($country_code);
+        $countries[$country_code] = l7p_country_name($country_code);
     }
 
     ?>
@@ -154,7 +154,7 @@ function l7p_block_register_form()
             <?php echo L7P_Form::select(array('name' => 'package_type', 'choices' => $package_types)) ?>
         </div>
         <div class="form-row">
-            <?php echo L7P_Form::select(array('name' => 'package_route_id', 'choices' => $routes, 'style' => 'display: none;')) ?>
+            <?php echo L7P_Form::select(array('name' => 'package_country', 'choices' => $countries, 'style' => 'display: none;')) ?>
 
             <label for="tc">
                 <input id="tc" type="checkbox" value="1" name="tc">

@@ -516,7 +516,12 @@ function l7p_inline_rest_api_register_url()
 
 function l7p_inline_rest_api_activate_url()
 {
-    return 'sprintf("%s/customerhaswebproducts", l7p_rest_api_url())';
+    $appKey = l7p_get_web_product_settings('app_key');
+    if ($appKey == 'voipstudio') {
+        return 'sprintf("%s/customerhaswebproducts", strtr(l7p_rest_api_url(), [\'voipstudio\' => \'gotrunk\']))';
+    }
+    
+    return 'sprintf("%s/customerhaswebproducts", strtr(l7p_rest_api_url(), [\'gotrunk\' => \'voipstudio\']))';
 }
 
 function l7p_inline_rest_api_login_url()
@@ -569,14 +574,26 @@ function l7p_inline_package_type_label()
     return 'isset($package_type_label) ? $package_type_label : \'<!-- PACKAGE_TYPE_LABEL not defined -->\'';
 }
 
+// deprecated
 function l7p_inline_package_route_value()
 {
     return 'isset($package_route_value) ? $package_route_value : \'<!-- PACKAGE_ROUTE_VALUE not defined -->\'';
 }
 
+function l7p_inline_package_country_value()
+{
+    return 'isset($package_country_value) ? $package_country_value : \'<!-- PACKAGE_COUNTRY_VALUE not defined -->\'';
+}
+
+// deprecated
 function l7p_inline_package_route_label()
 {
     return 'isset($package_route_label) ? $package_route_label : \'<!-- PACKAGE_ROUTE_LABEL not defined -->\'';
+}
+
+function l7p_inline_package_country_label()
+{
+    return 'isset($package_country_label) ? $package_country_label : \'<!-- PACKAGE_COUNTRY_LABEL not defined -->\'';
 }
 
 function l7p_inline_login_url()
@@ -587,6 +604,13 @@ function l7p_inline_login_url()
 function l7p_inline_product_name()
 {
     return 'l7p_get_web_product_settings(\'name\')';
+}
+
+function l7p_inline_product_id()
+{
+    // l7p_update_web_product_settings('id', 102);
+    
+    return 'l7p_get_web_product_settings(\'id\')';
 }
 
 function l7p_inline_product_domain()

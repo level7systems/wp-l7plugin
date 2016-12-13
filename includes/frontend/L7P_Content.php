@@ -204,9 +204,17 @@ class L7P_Content
         switch ($condition) {
 
             // forms
+            
+            // deprecated
             case 'package_route_selected':
                 return '<?php '
                     . '$country_code = isset($package_route_value) ? substr($package_route_value, 0, stripos($package_route_value, "-")) : "";'
+                    . 'if ($country_code == l7p_get_geo()): '
+                    . '?>';
+                
+            case 'package_country_selected':
+                return '<?php '
+                    . '$country_code = isset($package_country_value) ? $package_route_value : "";'
                     . 'if ($country_code == l7p_get_geo()): '
                     . '?>';
                 
@@ -358,6 +366,7 @@ class L7P_Content
                     . 'foreach ($countries as $country_code => $country_name): '
                     . ' ?>';
                 
+            // depreacted
             case 'package_route_options':
                 return '<?php '
                     . '$register_settings = l7p_get_settings(\'register\');'
@@ -366,6 +375,16 @@ class L7P_Content
                     . 'foreach ($term_routes as $id => $country_code) { $package_routes[$id] = l7p_country_name($country_code);} '
                     . 'asort($package_routes);'
                     . 'foreach ($package_routes as $package_route_value => $package_route_label):'
+                    . ' ?>';
+                
+            case 'package_country_options':
+                return '<?php '
+                    . '$register_settings = l7p_get_settings(\'register\');'
+                    . '$term_routes = isset($register_settings[\'routes\']) ? $register_settings[\'routes\'] : array();'
+                    . '$package_countries = array();'
+                    . 'foreach ($term_routes as $id => $country_code) { $package_countries[$country_code] = l7p_country_name($country_code);} '
+                    . 'asort($package_countries);'
+                    . 'foreach ($package_countries as $package_country_value => $package_country_label):'
                     . ' ?>';
 
             case 'package_type_options':
