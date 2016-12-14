@@ -161,12 +161,15 @@ if (!String.prototype.startsWith) {
         jQuery(document).trigger("l7p:login:error");
     };
             
-    function login($form, username, password) {
+    function login($form) {
         
         clearErrors($form);
+        
+        var username = $form.find('input[name="username"]').val(),
+            password = $form.find('input[name="password"]').val();
 
         $.ajax({
-            url: $form.data('restApiUrl') + '/login',
+            url: $form.attr('action'),
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
@@ -307,11 +310,7 @@ if (!String.prototype.startsWith) {
 
             e.preventDefault();
 
-            var $form = $(this),
-                username = $form.find('input[name="username"]').val(),
-                password = $form.find('input[name="password"]').val();
-            
-            login($form, username, password);
+            login($(this));
         });
 
         // REGISTER
@@ -534,13 +533,9 @@ if (!String.prototype.startsWith) {
                         window.location.href = '/app/';
                     } else {
                         jQuery(document).trigger("l7p:form:completed");
-                        var login_url = '/login';
-                        if (document.location.pathname.startsWith('/en')) {
-                            login_url = '/en' + login_url;
-                        }
 
                         $form.html('<p class="big center text-center">Thank you for registering.</p>' +
-                                '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="' + login_url + '">Login</a>.</p>');
+                                '<p class="big center text-center text-grey">Check your email for confirmation link and <a href="/login">Login</a>.</p>');
                     }
                     
                 }, 
@@ -964,11 +959,11 @@ if (!String.prototype.startsWith) {
                     jqXhr.setRequestHeader("Authorization", "Basic " + btoa(response.user_id + ":" + response.user_token));
                 },
                 success: function (response) {
-                    // login to just activate app
-                    var username = $form.find('input[name="username"]').val(),
-                        password = $form.find('input[name="password"]').val();
-                
-                    login($form, username, password);
+                    // set form action to login
+                    var login_url = $form.attr('action').replace('/customerhaswebproducts', '/login');
+                    $form.attr('action', login_url);
+                    // login to new web product
+                    login($form);
                 }, 
                 error: function(jqXhr, status) {
                     jQuery(document).trigger("l7p:form:completed");
