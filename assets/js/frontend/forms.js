@@ -329,6 +329,22 @@ if (!String.prototype.startsWith) {
             });
         }
         
+        // REST REGISTER
+        if ($('form.l7p-rest-register-form').length > 0) {
+            
+            $('form.l7p-rest-register-form').each(function(index, form) {
+                
+                validateRequiredFields($(form), [
+                    'firstname',
+                    'lastname',
+                    'email',
+                    'password',
+                    ['package_type', 'package_country'],
+                    'tc'
+                ]);
+            });
+        }
+        
         if (typeof package_type_options != 'undefined') {
             
             var currency = 'USD';
