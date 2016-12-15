@@ -490,23 +490,17 @@ if (!String.prototype.startsWith) {
         // REST register form
         $(document).on('submit', 'form#l7p-rest-register-form, form.l7p-rest-register-form', function (e) {
 
-            var $form = $(this),
-                t = '';
+            var $form = $(this);
             
             clearErrors($form);
-
-            if ($form.find('input[name="tc"]').prop('checked')) {
-                t = true;
-            }
 
             var data = {
                 first_name: $form.find('input[name="firstname"]').val(),
                 last_name: $form.find('input[name="lastname"]').val(),
-                // name: $form.find('input[name="name"]').val(),
                 email: $form.find('input[name="email"]').val(),
                 password: $form.find('input[name="password"]').val(),
                 google_client_id: $form.find('input[name="google_client_id"]').val(),
-                tc: t
+                tc: $form.find('input[name="tc"]').prop('checked')
             };
             
             // business voip
