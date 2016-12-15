@@ -314,9 +314,9 @@ if (!String.prototype.startsWith) {
         });
 
         // REGISTER
-        if ($('form#l7p-register-form, form.l7p-register-form').length > 0) {
+        if ($('form.l7p-register-form').length > 0) {
             
-            $('form#l7p-register-form, form.l7p-register-form').each(function(index, form) {
+            $('form.l7p-register-form').each(function(index, form) {
                 
                 validateRequiredFields($(form), [
                     'firstname',
@@ -356,14 +356,14 @@ if (!String.prototype.startsWith) {
                 currency = getCookie('l7p_currency');
             }
             
-            $('select#package_type, form.l7p-register-form select[name="package_type"]').html();
+            $('select[name="package_type"]').html();
             var options = package_type_options[currency];
             for(var value in options) {
-                $('select#package_type, form.l7p-register-form select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
+                $('select#package_type, select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
             }
         }
         
-        $('select#package_type, form.l7p-register-form select[name="package_type"]').on('change', function () {
+        $('select[name="package_type"]').on('change', function () {
 
             var $form = $(this).parents('form:first'),
                 $select = $form.find('select[name="package_country"]');
