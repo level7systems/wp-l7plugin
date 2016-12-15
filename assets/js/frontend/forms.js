@@ -323,7 +323,7 @@ if (!String.prototype.startsWith) {
                     'lastname',
                     'email',
                     'password',
-                    ['package_type', 'package_country'],
+                    ['package_type', 'package_route_id'],
                     'tc'
                 ]);
             });
@@ -390,7 +390,7 @@ if (!String.prototype.startsWith) {
                 password: $form.find('input[name="password"]').val(),
                 password2: confirm_pass,
                 package_type: package_type,
-                package_country: $form.find('select[name="package_country"]').val(),
+                package_route_id: $form.find('select[name="package_route_id"]').val(),
                 google_client_id: $form.find('input[name="google_client_id"]').val(),
                 tc: t
             };
