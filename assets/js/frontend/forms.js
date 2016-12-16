@@ -220,21 +220,40 @@ if (!String.prototype.startsWith) {
 
         jQuery(document).trigger("l7p:login:error");
     };
+    
+    function loginLegacy($form) {
+        
+        clearErrors($form);
+    
+        $.jsonp({
+            url: $form.attr('action'),
+            callbackParameter: "callback",
+            type: 'POST',
+            data: {
+                method: 'login',
+                username: $form.find('input[name="username"]').val(),
+                password: $form.find('input[name="password"]').val(),
+                remember_me: $form.find('#remember').is(':checked')
+            },
+            beforeSend: function() {
+                jQuery(document).trigger("l7p:form:processing");
+            },
+            success:  onLoginSuccess.bind($form), 
+            error: onLoginError.bind($form)
+        });
+    }
             
     function login($form) {
         
         clearErrors($form);
-        
-        var username = $form.find('input[name="username"]').val(),
-            password = $form.find('input[name="password"]').val();
 
         $.ajax({
             url: $form.attr('action'),
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
-                email: username,
-                password: password
+                email: $form.find('input[name="username"]').val(),
+                password: $form.find('input[name="password"]').val()
             }),
             contentType: 'application/json; charset=utf-8',
             beforeSend: function(){
@@ -268,7 +287,7 @@ if (!String.prototype.startsWith) {
             $('#l7p-global-success').show();
         }
 
-        // LOGIN
+        // validate login
         if ($('form.l7p-login-form').length > 0) {
             // validate login form fields
             validateRequiredFields($('form#l7p-login-form, form.l7p-login-form'), [
@@ -278,29 +297,12 @@ if (!String.prototype.startsWith) {
             ]);
         }
 
+        // legacy login form
         $(document).on('submit', 'form#l7p-login-form, form.l7p-login-form', function (e) {
 
-            var $form = $(this);
-            
-            clearErrors($form);
-
             e.preventDefault();
-            $.jsonp({
-                url: $form.attr('action'),
-                callbackParameter: "callback",
-                type: 'POST',
-                data: {
-                    method: 'login',
-                    username: $form.find('input[name="username"]').val(),
-                    password: $form.find('input[name="password"]').val(),
-                    remember_me: $form.find('#remember').is(':checked')
-                },
-                beforeSend: function() {
-                    jQuery(document).trigger("l7p:form:processing");
-                },
-                success:  onLoginSuccess.bind($form), 
-                error: onLoginError.bind($form)
-            });
+            
+            loginLegacy($(this));
         });
         
         // REST login form
@@ -977,10 +979,17 @@ if (!String.prototype.startsWith) {
                 },
                 success: function (response) {
                     // set form action to login
-                    var login_url = $form.attr('action').replace('/customerhaswebproducts', '/login');
-                    $form.attr('action', login_url);
-                    // login to new web product
-                    login($form);
+                    if ($form.data('appKey') == 'voipstudio') {
+                        var login_url = $('form.l7p-login-form').attr('action');
+                        $form.attr('action', login_url);
+                        // login to new web product
+                        loginLegacy($form);
+                    } else {
+                        var login_url = $form.data('restApiUrl') + '/login';
+                        $form.attr('action', login_url);
+                        // login to new web product
+                        login($form);
+                    }
                 }, 
                 error: function(jqXhr, status) {
                     jQuery(document).trigger("l7p:form:completed");
