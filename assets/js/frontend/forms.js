@@ -84,33 +84,93 @@ if (!String.prototype.startsWith) {
 
         var $form = this;
         
-        if (!response) {
-            jQuery(document).trigger("l7p:form:completed");
-            $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
-            return false;
-        }
+        if ($form.data('appKey') == 'gotrunk') {
+            
+            if (!response) {
+                jQuery(document).trigger("l7p:form:completed");
+                $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
+                return false;
+            }
 
-        if (!response.user_id || !response.user_token) {
-            jQuery(document).trigger("l7p:form:completed");
-            $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
-            return false;
-        }
+            if (!response.user_id || !response.user_token) {
+                jQuery(document).trigger("l7p:form:completed");
+                $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
+                return false;
+            }
 
-        setCookie($form.data('appKey') + '.auth', {
-            user_id: response.user_id, 
-            user_token: response.user_token 
-        });
+            setCookie($form.data('appKey') + '.auth', {
+                user_id: response.user_id, 
+                user_token: response.user_token 
+            });
 
-        var url_suffix = '';
-        if ($form.find('#extini').val()) {
-            var match = $form.find('#extini').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
-            if (match[1]) {
-                url_suffix = '#support,support:' + match[1];
+            var url_suffix = '';
+            if ($form.find('#extini').val()) {
+                var match = $form.find('#extini').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
+                if (match[1]) {
+                    url_suffix = '#support,support:' + match[1];
+                }
+            }
+            
+            var redirection = '/app/' + url_suffix;
+            
+        } else {
+        
+            if (!response.success) {
+
+                jQuery(document).trigger("l7p:form:completed");
+
+                if (response.errors.username) {
+                    $form.find('input[name="username"]').after('<p class="small error-username">' + response.errors.username + '</p>');
+                }
+
+                if (response.errors.password) {
+                    $form.find('input[name="password"]').after('<p class="small error-password">' + response.errors.password + '</p>');
+                }
+
+                if (response.errors.email) {
+                    if (response.errors.email.indexOf("unrecognised user name") != -1) {
+
+                        var recover_url = '/recover-password';
+                        if (document.location.pathname.startsWith('/en')) {
+                            recover_url = '/en' + recover_url;
+                        }
+
+                        $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
+                    } else if (response.errors.email.indexOf("not confirmed") != -1) {
+
+                        var confirmation_url = '/resend-confirmation-email';
+                        if (document.location.pathname.startsWith('/en')) {
+                            confirmation_url = '/en' + confirmation_url;
+                        }
+
+                        $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                    } else {
+                        $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email).show();
+                    }
+                }
+
+                if (response.errors.web_product_activation) {
+                    jQuery(document).trigger("l7p:web_product:activation", [ response.errors.web_product_activation ]);
+                }
+
+                return false;
+            }
+
+            if (response.redirect) {
+                // redirect user to their application url
+                window.location.href = response.redirect + '?message=' + response.info;
+
+                return false;
+            }
+
+            var redirection = response.info;
+            if ($form.find('#extini').val()) {
+                redirection += '?extini=' + $form.find('#extini').val();
             }
         }
 
         // redirect user to their application url
-        window.location.href = '/app/' + url_suffix;
+        window.location.href = redirection;
     };
             
     var onLoginError = function(jqXhr, status) {
@@ -121,8 +181,8 @@ if (!String.prototype.startsWith) {
 
         if (jqXhr.status === 400) {
 
-            var res = jqXhr.responseJSON;
-            $.each(res.errors, function(i, error) {
+            var response = jqXhr.responseJSON;
+            $.each(response.errors, function(i, error) {
 
                 if (error.field == 'email') {
 
@@ -153,7 +213,7 @@ if (!String.prototype.startsWith) {
 
             return false;
         }
-
+        
         if ($('div#maintenance').length === 0) {
             $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
         }
@@ -235,73 +295,11 @@ if (!String.prototype.startsWith) {
                     password: $form.find('input[name="password"]').val(),
                     remember_me: $form.find('#remember').is(':checked')
                 },
-                beforeSend: function(){
+                beforeSend: function() {
                     jQuery(document).trigger("l7p:form:processing");
                 },
-                success: function (res) {
-                    if (!res.success) {
-                        
-                        jQuery(document).trigger("l7p:form:completed");
-
-                        if (res.errors.username) {
-                            $form.find('input[name="username"]').after('<p class="small error-username">' + res.errors.username + '</p>');
-                        }
-
-                        if (res.errors.password) {
-                            $form.find('input[name="password"]').after('<p class="small error-password">' + res.errors.password + '</p>');
-                        }
-
-                        if (res.errors.email) {
-                            if (res.errors.email.indexOf("unrecognised user name") != -1) {
-                                
-                                var recover_url = '/recover-password';
-                                if (document.location.pathname.startsWith('/en')) {
-                                    recover_url = '/en' + recover_url;
-                                }
-                        
-                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
-                            } else if (res.errors.email.indexOf("not confirmed") != -1) {
-                                
-                                var confirmation_url = '/resend-confirmation-email';
-                                if (document.location.pathname.startsWith('/en')) {
-                                    confirmation_url = '/en' + confirmation_url;
-                                }
-                        
-                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
-                            } else {
-                                $('#l7p-global-errors, .l7p-global-errors').html(res.errors.email).show();
-                            }
-                        }
-
-                        if (res.errors.web_product_activation) {
-                            jQuery(document).trigger("l7p:web_product:activation", [ res.errors.web_product_activation ]);
-                        }
-
-                        return false;
-                    }
-
-                    if (res.redirect) {
-                        // redirect user to their application url
-                        window.location.href = res.redirect + '?message=' + res.info;
-
-                        return false;
-                    }
-
-                    var redirection = res.info;
-                    if ($form.find('#extini').val()) {
-                        redirection += '?extini=' + $form.find('#extini').val();
-                    }
-
-                    // redirect user to their application url
-                    window.location.href = redirection;
-                }, 
-                error: function(jqXhr, status) {
-                    jQuery(document).trigger("l7p:form:completed");
-                    if ($('div#maintenance').length === 0) {
-                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
-                    }
-                    jQuery(document).trigger("l7p:login:error");
-                }
+                success:  onLoginSuccess.bind($form), 
+                error: onLoginError.bind($form)
             });
         });
         
@@ -956,6 +954,15 @@ if (!String.prototype.startsWith) {
                 web_product_id: $form.find('input[name="web_product_id"]').val(),
                 tc: $form.find('input[name="tc"]').prop('checked') ? true : false
             };
+            
+            // business voip
+            if ($form.data('appKey') == 'voipstudio') {
+                data.package_type = $form.find('select[name="package_type"]').val() || "P";
+                
+                if (data.package_type == "S") {
+                    data.package_country = $form.find('select[name="package_country"]').val();
+                }
+            }
 
             // web product activation
             $.ajax({
