@@ -892,6 +892,15 @@ function l7p_send_curl($url, $method = "GET")
     
     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     if (!in_array($httpCode, array(200, 201, 204))) {
+        
+        if (isset($json['errors']) && !empty($json['errors'])) {
+            
+            $messages = [];
+            foreach ($json['errors'] as $field) {
+                $messages[] = $field['message'];
+            }
+            throw new RestException(implode("<br/>", $messages));
+        }
         throw new RestException($json['message']);
     }
 
