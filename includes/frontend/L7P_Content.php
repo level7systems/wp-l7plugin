@@ -214,7 +214,7 @@ class L7P_Content
                 
             case 'package_country_selected':
                 return '<?php '
-                    . '$country_code = isset($package_country_value) ? $package_route_value : "";'
+                    . '$country_code = isset($package_country_value) ? $package_country_value : "";'
                     . 'if ($country_code == l7p_get_geo()): '
                     . '?>';
                 
