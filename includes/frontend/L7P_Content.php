@@ -381,7 +381,7 @@ class L7P_Content
                 return '<?php '
                     . '$register_settings = l7p_get_settings(\'register\');'
                     . '$term_routes = isset($register_settings[\'routes\']) ? $register_settings[\'routes\'] : array();'
-                    . '$package_countries = array();'
+                    . '$package_countries = array(\'\' => "Please select one...");'
                     . 'foreach ($term_routes as $id => $country_code) { $package_countries[$country_code] = l7p_country_name($country_code);} '
                     . 'asort($package_countries);'
                     . 'foreach ($package_countries as $package_country_value => $package_country_label):'

@@ -18,21 +18,16 @@ if (!String.prototype.startsWith) {
         
         for (var i in fields) {
             var field = fields[i];
-            // if fields depend on other fields
-            if ($.isArray(field)) {
-                // if first exists - other are required to exist
-                if ($form.find('[name="' + field[0] +'"]').length > 0) {
-                    // check each field
-                    for (var j in field) {
-                        if (j > 0) {
-                            if ($form.find('[name="' + field[j] + '"]').length === 0) {
-                                errors.push(field[j]);
-                            }
-                        }
-                    }
-                }
-            } else if ($form.find('[name="' + field + '"]').length === 0) {
+            if ($form.find('[name="' + field + '"]').length === 0) {
                 errors.push(field);
+            }
+            
+            // if form has package_type filed
+            if ((field == 'package_type') && ($form.find('select[name="package_type"]').length > 0)) {
+                
+                if ($form.find('[name="package_country"]').length === 0) {
+                    errors.push(field);
+                }
             }
         }
 
@@ -323,7 +318,7 @@ if (!String.prototype.startsWith) {
                     'lastname',
                     'email',
                     'password',
-                    ['package_type', 'package_route_id'],
+                    'package_type',
                     'tc'
                 ]);
             });
@@ -339,7 +334,7 @@ if (!String.prototype.startsWith) {
                     'lastname',
                     'email',
                     'password',
-                    ['package_type', 'package_country'],
+                    'package_type',
                     'tc'
                 ]);
             });
@@ -359,7 +354,16 @@ if (!String.prototype.startsWith) {
             $('select[name="package_type"]').html();
             var options = package_type_options[currency];
             for(var value in options) {
-                $('select#package_type, select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
+                $('select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
+            }
+        }
+        
+        // select package_country based on geoip
+        if (l7_geoip.country_code && $('select[name="package_type"]')) {
+            
+            var exists = $('select[name="package_country"] option[value=' + l7_geoip.country_code + ']').length != 0;
+            if (exists) {
+                $('select[name="package_country"]').val(l7_geoip.country_code);
             }
         }
         

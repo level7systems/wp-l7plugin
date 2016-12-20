@@ -1172,3 +1172,16 @@ function l7p_is_ssl()
     
     return is_ssl();
 }
+
+function l7p_get_package_country_options()
+{
+    $register_settings = l7p_get_settings('register');
+    $term_routes = isset($register_settings['routes']) ? $register_settings['routes'] : array();
+    $package_countries = array();
+    foreach ($term_routes as $country_code) { 
+        $package_countries[$country_code] = l7p_country_name($country_code);
+    }
+    asort($package_countries);
+    
+    return $package_countries;
+}

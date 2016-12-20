@@ -98,7 +98,11 @@ class L7P_Form
 
         echo "<select $id class='$class' name='$name' $style >";
         foreach ($choices as $id => $label) {
-            echo "<option value='$id'>$label</option>";
+            if (strlen($id) == 0) {
+                echo "<option value='$id' disabled selected>$label</option>";
+            } else {
+                echo "<option value='$id'>$label</option>";
+            }
         }
         echo "</select>";
         
