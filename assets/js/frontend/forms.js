@@ -5,7 +5,101 @@ if (!String.prototype.startsWith) {
   };
 }
 
+function getCookie(key, defaults) {
+    var cookies = document.cookie ? document.cookie.split('; ') : [];
+
+    for (var i = 0, l = cookies.length; i < l; i++) {
+        var parts = cookies[i].split('=');
+        var name = decodeURIComponent(parts.shift());
+        var cookie = parts.join('=');
+
+        if (key && key === name) {
+            try {
+               return JSON.parse(cookie);
+            } catch (error) {
+               return cookie;
+            }
+        }
+    }
+
+    return defaults !== undefined ? defaults : undefined;
+}
+
+function setCookie(name, value, options) {
+
+    options = (options === undefined) ? {} : options;
+
+    if (typeof options.expires === 'number') {
+        var days = options.expires, t = options.expires = new Date();
+        t.setTime(t.getTime() + days * 24*60*60*1000);
+    }
+
+    document.cookie = [
+        // storage of JOSN objects - serialize
+        name, '=', JSON.stringify(value),
+        options.expires ? '; expires=' + options.expires.toGMTString() : '', // use expires attribute, max-age is not supported by IE
+        '; path=' + (options.path ? options.path : '/'),
+        options.domain  ? '; domain=' + options.domain : '',
+        options.secure || window.location.protocol == "https:" ? '; secure' : ''
+    ].join('');
+}
+
 (function ($, window, document) {
+    
+    function setPackageTypeAndCountry(l7_geoip) {
+        
+        if (typeof package_type_options != 'undefined') {
+
+            var currencies = { EU: "EUR", US: "USD", JP: "JPY", GB: "GBP", PL: "PLN" },
+                currency = l7_geoip.country_code in currencies ? currencies[l7_geoip.country_code] : 'USD';
+
+            if (getCookie('l7p_currency', false) !== false) {
+                currency = getCookie('l7p_currency');
+            }
+
+            $('select[name="package_type"]').html();
+            var options = package_type_options[currency];
+            for(var value in options) {
+                $('select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
+            }
+        }
+
+        // select package_country based on geoip
+        if (l7_geoip.country_code && $('select[name="package_type"]')) {
+
+            var exists = $('select[name="package_country"] option[value=' + l7_geoip.country_code + ']').length != 0;
+            if (exists) {
+                $('select[name="package_country"]').val(l7_geoip.country_code);
+            }
+        }
+    }
+
+    function getGeoIp() {
+        
+        if (getCookie('l7_geoip', false)) {
+            l7_geoip = getCookie('l7_geoip');
+            jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+        } else {
+            var date = new Date();
+            $.getJSON('https://ssl7.net/js/geo-ip.js?_tc' + date.getTime(), function(response) {
+                l7_geoip = response;
+                // cookie expires in 1 day
+                setCookie('l7_geoip', l7_geoip, { expires: 1 });
+                jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+            }).fail(function() {
+                // display global errors
+                $('#l7p-global-errors, .l7p-global-errors').html("Your browser does not support C").show();
+            
+                jQuery(document).trigger("l7p:geoip:error");
+                
+                
+            });
+        }
+    }
+    
+    $(document).on("l7p:geoip:loaded", function(event, l7p_geoip) {
+        setPackageTypeAndCountry(l7_geoip);
+    });
 
     function clearErrors($form) {
         $form.find('[class*="-global-success"]').html("").hide();
@@ -34,45 +128,6 @@ if (!String.prototype.startsWith) {
         if (errors.length > 0) {
             alert('Your are missing the following fields in your form:\n - ' + errors.join("\n - "));
         }
-    }
-    
-    function getCookie(key, defaults) {
-        var cookies = document.cookie ? document.cookie.split('; ') : [];
-
-        for (var i = 0, l = cookies.length; i < l; i++) {
-            var parts = cookies[i].split('=');
-            var name = decodeURIComponent(parts.shift());
-            var cookie = parts.join('=');
-
-            if (key && key === name) {
-                try {
-                   return JSON.parse(cookie);
-                } catch (error) {
-                   return cookie;
-                }
-            }
-        }
-
-        return defaults !== undefined ? defaults : undefined;
-    }
-
-    function setCookie(name, value, options) {
-        
-        options = (options === undefined) ? {} : options;
-        
-        if (typeof options.expires === 'number') {
-            var days = options.expires, t = options.expires = new Date();
-            t.setTime(+t + days * 864e+5);
-        }
-            
-        document.cookie = [
-            // storage of JOSN objects - serialize
-            name, '=', JSON.stringify(value),
-            options.expires ? '; expires=' + options.expires.toGMTString() : '', // use expires attribute, max-age is not supported by IE
-            '; path=' + (options.path ? options.path : '/'),
-            options.domain  ? '; domain=' + options.domain : '',
-            options.secure || window.location.protocol == "https:" ? '; secure' : ''
-        ].join('');
     }
     
     var onLoginSuccess = function (response) {
@@ -260,6 +315,9 @@ if (!String.prototype.startsWith) {
     }
     
     $(function () {
+        
+        getGeoIp();
+        
         // set referer cookie
         if (getCookie('xl7ref', false) === false && document.referrer) {
             // cookie for one year
@@ -329,42 +387,27 @@ if (!String.prototype.startsWith) {
             
             $('form.l7p-rest-register-form').each(function(index, form) {
                 
-                validateRequiredFields($(form), [
-                    'firstname',
-                    'lastname',
-                    'email',
-                    'password',
-                    'package_type',
-                    'tc'
-                ]);
+                if ($(form).data('appKey') == 'voipstudio') {
+                    // voipstudio
+                    validateRequiredFields($(form), [
+                        'firstname',
+                        'lastname',
+                        'email',
+                        'password',
+                        'package_type',
+                        'tc'
+                    ]);
+                } else {
+                    // gotrunk
+                    validateRequiredFields($(form), [
+                        'firstname',
+                        'lastname',
+                        'email',
+                        'password',
+                        'tc'
+                    ]);
+                }
             });
-        }
-        
-        if (typeof package_type_options != 'undefined') {
-            
-            var currency = 'USD';
-            if (typeof l7_geoip != 'undefined') {
-                var currencies = { EU: "EUR", US: "USD", JP: "JPY", GB: "GBP", PL: "PLN" };
-                currency = l7_geoip.country_code in currencies ? currencies[l7_geoip.country_code] : currency;
-            }
-            if (getCookie('l7p_currency', false) !== false) {
-                currency = getCookie('l7p_currency');
-            }
-            
-            $('select[name="package_type"]').html();
-            var options = package_type_options[currency];
-            for(var value in options) {
-                $('select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
-            }
-        }
-        
-        // select package_country based on geoip
-        if (l7_geoip.country_code && $('select[name="package_type"]')) {
-            
-            var exists = $('select[name="package_country"] option[value=' + l7_geoip.country_code + ']').length != 0;
-            if (exists) {
-                $('select[name="package_country"]').val(l7_geoip.country_code);
-            }
         }
         
         $('select[name="package_type"]').on('change', function () {
