@@ -21,7 +21,7 @@ class L7P_Form
     public static function input($args)
     {
         $name = isset($args['name']) ? esc_attr($args['name']) : 'undefined';
-        $id = isset($args['id']) ? esc_attr($args['id']) : $name;
+        $id = isset($args['id']) ? esc_attr($args['id']) : '';
         $type = isset($args['type'])? esc_attr($args['type']) : 'text';
         $section = isset($args['section']) ? esc_attr($args['section']) : false;
         $value = isset($args['value']) ? esc_attr($args['value']) : '';
@@ -76,7 +76,7 @@ class L7P_Form
     public static function select($args)
     {
         $name = isset($args['name']) ? esc_attr($args['name']) : 'undefined';
-        $id = isset($args['id']) ?  ( $args['id']?"id='" .esc_attr($args['id'])."'":"" ) : "id='".$name."'" ;
+        $id = isset($args['id']) ?  "id='" .esc_attr($args['id']) : '';
         $class = isset($args['class']) ? esc_attr($args['class']) : $name;
         $section = isset($args['section']) ? esc_attr($args['section']) : false;
         $choices = isset($args['choices']) ? $args['choices'] : array();

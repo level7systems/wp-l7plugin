@@ -434,6 +434,7 @@ function l7p_block_javascript_package_type_select()
     return L7P_Content::parse_content($content);
 }
 
+// deprecated
 function l7p_block_javascript_package_type_select_class()
 {
     $register_settings = l7p_get_settings('register');
