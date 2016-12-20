@@ -376,7 +376,6 @@ function setCookie(name, value, options) {
                     'lastname',
                     'email',
                     'password',
-                    'package_type',
                     'tc'
                 ]);
             });
