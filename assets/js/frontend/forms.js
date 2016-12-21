@@ -75,6 +75,7 @@ function setCookie(name, value, options) {
                     var exists = $form.find('select[name="package_country"] option[value=' + l7_geoip.country_code + ']').length != 0;
                     if (exists) {
                         $form.find('select[name="package_type"]').val('S');
+                        $form.find('select[name="package_type"]').trigger('change');
                         $form.find('select[name="package_country"]').val(l7_geoip.country_code);
                     }
                     
@@ -91,6 +92,7 @@ function setCookie(name, value, options) {
                     var exists = package_countries.indexOf(l7_geoip.country_code) > -1;
                     if (exists) {
                         $form.find('input[name="package_type"]').val('S');
+                        $form.find('input[name="package_type"]').trigger('change');
                         $form.find('input[name="package_country"]').val(l7_geoip.country_code);
                     }
                 }
@@ -122,7 +124,7 @@ function setCookie(name, value, options) {
     $(document).on("l7p:geoip:loaded", function(event, l7p_geoip) {
         setPackageTypeAndCountry(l7_geoip);
     });
-
+    
     function clearErrors($form) {
         $form.find('[class*="-global-success"]').html("").hide();
         $form.find('[class*="-global-errors"]').html("").hide();
@@ -338,6 +340,21 @@ function setCookie(name, value, options) {
     
     $(function () {
         
+        $('select[name="package_type"]').on('change', function () {
+
+            var $form = $(this).parents('form:first'),
+                $select = $form.find('select[name="package_country"]'),
+                $label = $select.prev();
+            
+            if (this.value == 'S') {
+                $select.show();
+                $label.show();
+            } else {
+                $select.hide();
+                $label.hide();
+            }
+        });
+        
         getGeoIp();
         
         // set referer cookie
@@ -431,18 +448,6 @@ function setCookie(name, value, options) {
             });
         }
         
-        $('select[name="package_type"]').on('change', function () {
-
-            var $form = $(this).parents('form:first'),
-                $select = $form.find('select[name="package_country"]');
-            
-            if (this.value == 'S') {
-                $select.show();
-            } else {
-                $select.hide();
-            }
-        });
-
         if ($('select[name="package_type"]')) {
 
             var hash = window.location.hash.substring(1);
