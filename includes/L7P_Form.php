@@ -21,7 +21,7 @@ class L7P_Form
     public static function input($args)
     {
         $name = isset($args['name']) ? esc_attr($args['name']) : 'undefined';
-        $id = isset($args['id']) ? esc_attr($args['id']) : '';
+        $id = isset($args['id']) ? "id='" . esc_attr($args['id']) . "'" : '';
         $type = isset($args['type'])? esc_attr($args['type']) : 'text';
         $section = isset($args['section']) ? esc_attr($args['section']) : false;
         $value = isset($args['value']) ? esc_attr($args['value']) : '';
@@ -43,7 +43,7 @@ class L7P_Form
             echo $pre;
         }
 
-        echo "<input type='$type' id='$id' name='$name' value='$value' $placeholder $required $class $style />";
+        echo "<input type='$type' name='$name' value='$value' $id $placeholder $required $class $style />";
 
         // post field
         if ($post) {
