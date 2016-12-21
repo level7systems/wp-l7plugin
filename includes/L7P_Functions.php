@@ -219,19 +219,27 @@ function l7p_get_currencies()
 
 function l7p_get_currency($auto_discover = false)
 {
-    $currency = l7p_get_session('currency', false);
+    if ($currency = l7p_get_session('currency', false)) {
+        return $currency;
+    }
 
     // if geoip module enabled
-    if (!$currency && function_exists('geoip_country_code_by_name')) {
+    if (function_exists('geoip_country_code_by_name')) {
         // try go country by addr
         $country_code = l7p_get_geo();
         $country_code = strtolower($country_code);
+        // available currencies
         $currencies = l7p_get_currencies();
         if ($country_code && array_key_exists($country_code, $currencies)) {
-            $currency = $currencies[$country_code];
+            return $currencies[$country_code];
+        }
+        
+        // return EUR for eu countries
+        if ($country_code && l7p_is_eu_country($country_code)) {
+            return 'EUR';
         }
     }
-
+    
     return $currency ? : 'USD';
 }
 
@@ -1184,4 +1192,9 @@ function l7p_get_package_country_options()
     asort($package_countries);
     
     return $package_countries;
+}
+
+function l7p_is_eu_country($country_code)
+{
+    return in_array($country_code, array("BE", "BG", "CZ", "DK", "DE", "EE", "IE", "GR", "ES", "FR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE", "GB", "RU", "UA", "TR", "EG", "GI", "GE", "BY", "MD", "RS", "HR", "BA", "AL", "AZ", "AM", "MC", "AD", "IS", "KZ", "LI", "MK", "ME", "NO", "SM", "CH", "VA", "MA", "DZ", "IR", "SY", "IL", "JO", "IQ", "SA", "AE", "OM", "YE"));
 }
