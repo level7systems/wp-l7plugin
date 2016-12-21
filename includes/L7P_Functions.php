@@ -1194,6 +1194,11 @@ function l7p_get_package_country_options()
     return $package_countries;
 }
 
+function l7p_get_package_country_codes()
+{
+    return array_keys(l7p_get_package_country_options());
+}
+
 function l7p_is_eu_country($country_code)
 {
     return in_array($country_code, array("BE", "BG", "CZ", "DK", "DE", "EE", "IE", "GR", "ES", "FR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE", "GB", "RU", "UA", "TR", "EG", "GI", "GE", "BY", "MD", "RS", "HR", "BA", "AL", "AZ", "AM", "MC", "AD", "IS", "KZ", "LI", "MK", "ME", "NO", "SM", "CH", "VA", "MA", "DZ", "IR", "SY", "IL", "JO", "IQ", "SA", "AE", "OM", "YE"));

@@ -80,7 +80,7 @@ class L7P_Form
         $class = isset($args['class']) ? esc_attr($args['class']) : $name;
         $section = isset($args['section']) ? esc_attr($args['section']) : false;
         $choices = isset($args['choices']) ? $args['choices'] : array();
-        $value = isset($args['value']) ? esc_attr($args['value']) : '';
+        $value = isset($args['value']) ? esc_attr($args['value']) : false;
         $pre = isset($args['pre']) ? esc_attr($args['pre']) : false;
         $post = isset($args['post']) ? esc_attr($args['post']) : false;
         $help = isset($args['help']) ? esc_attr($args['help']) : false;
@@ -98,8 +98,10 @@ class L7P_Form
 
         echo "<select $id class='$class' name='$name' $style >";
         foreach ($choices as $id => $label) {
-            if (strlen($id) == 0) {
+            if (!$value && strlen($id) == 0) {
                 echo "<option value='$id' disabled selected>$label</option>";
+            } else if ($value == $id) {
+                echo "<option value='$id' selected>$label</option>";
             } else {
                 echo "<option value='$id'>$label</option>";
             }

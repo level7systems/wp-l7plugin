@@ -596,6 +596,11 @@ function l7p_inline_package_country_label()
     return 'isset($package_country_label) ? $package_country_label : \'<!-- PACKAGE_COUNTRY_LABEL not defined -->\'';
 }
 
+function l7p_inline_package_country_codes()
+{
+    return 'implode(\',\', l7p_get_package_country_codes());';
+}
+
 function l7p_inline_login_url()
 {
     return 'l7p_url_for(\'@login\')';

@@ -63,14 +63,38 @@ function setCookie(name, value, options) {
                 $('select[name="package_type"]').append($('<option>').attr('value', value).text(options[value]));
             }
         }
-
+        
         // select package_country based on geoip
-        if (l7_geoip.country_code && $('select[name="package_type"]')) {
+        if (l7_geoip.country_code) {
+            
+            $('form.l7p-rest-register-form').each(function(index, form) {
+                
+                var $form = $(form);
+                
+                if ($form.find('select[name="package_type"]').length > 0) {
+                    var exists = $form.find('select[name="package_country"] option[value=' + l7_geoip.country_code + ']').length != 0;
+                    if (exists) {
+                        $form.find('select[name="package_type"]').val('S');
+                        $form.find('select[name="package_country"]').val(l7_geoip.country_code);
+                    }
+                    
+                    return ;
+                }
 
-            var exists = $('select[name="package_country"] option[value=' + l7_geoip.country_code + ']').length != 0;
-            if (exists) {
-                $('select[name="package_country"]').val(l7_geoip.country_code);
-            }
+                if (!$form.data('packageCountries')) {
+                    return ;
+                }
+                
+                var package_countries = $form.data('packageCountries').split(",");
+                
+                if ($form.find('input[name="package_type"]') && $form.find('input[name="package_country"]')) {
+                    var exists = package_countries.indexOf(l7_geoip.country_code) > -1;
+                    if (exists) {
+                        $form.find('input[name="package_type"]').val('S');
+                        $form.find('input[name="package_country"]').val(l7_geoip.country_code);
+                    }
+                }
+            });
         }
     }
 
@@ -89,10 +113,8 @@ function setCookie(name, value, options) {
             }).fail(function() {
                 // display global errors
                 $('#l7p-global-errors, .l7p-global-errors').html("Your browser does not support C").show();
-            
+                
                 jQuery(document).trigger("l7p:geoip:error");
-                
-                
             });
         }
     }
@@ -414,7 +436,7 @@ function setCookie(name, value, options) {
             var $form = $(this).parents('form:first'),
                 $select = $form.find('select[name="package_country"]');
             
-            if (this.value == "S") {
+            if (this.value == 'S') {
                 $select.show();
             } else {
                 $select.hide();
@@ -553,7 +575,7 @@ function setCookie(name, value, options) {
             if ($form.data('appKey') == 'voipstudio') {
                 data.package_type = $form.find('select[name="package_type"]').val() || "P";
                 
-                if (data.package_type == "S") {
+                if (data.package_type == 'S') {
                     data.package_country = $form.find('select[name="package_country"]').val();
                 }
             }
@@ -1007,7 +1029,7 @@ function setCookie(name, value, options) {
             if ($form.data('appKey') == 'voipstudio') {
                 data.package_type = $form.find('select[name="package_type"]').val() || "P";
                 
-                if (data.package_type == "S") {
+                if (data.package_type == 'S') {
                     data.package_country = $form.find('select[name="package_country"]').val();
                 }
             }
