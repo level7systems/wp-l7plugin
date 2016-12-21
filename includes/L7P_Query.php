@@ -367,21 +367,15 @@ class L7P_Query
 
             if (isset($query->query_vars['token'])) {
 
-                try {
-                    $response = l7p_register_ppc_click($query->query_vars['token']);
-                    if ($response['success']) {
-                        l7p_setcookie('xl7ppc', $response['ppc_click_id']);
-                        $redirect_url = $response['redirect'];
-                        if (isset($_GET['gclid'])) {
-                            $redirect_url .= '?gclid=' . $_GET['gclid'];
-                        }
+                $response = l7p_register_ppc_click($query->query_vars['token']);
+                if ($response['success']) {
+                    l7p_setcookie('xl7ppc', $response['ppc_click_id']);
+                    $redirect_url = $response['redirect'];
+                    if (isset($_GET['gclid'])) {
+                        $redirect_url .= '?gclid=' . $_GET['gclid'];
                     }
-                } catch (RestException $e) {
-                    l7p_set_error_flash_message($e->getMessage());
-                    return $this->redirect_to_login();
+                    return l7p_redirect($redirect_url);
                 }
-                
-                return l7p_redirect($redirect_url);
             }
             return $this->error_404();
         } else if ($pagename == 'agentclick') {
