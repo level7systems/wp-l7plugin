@@ -378,6 +378,7 @@ class L7P_Query
                     }
                 } catch (RestException $e) {
                     l7p_set_error_flash_message($e->getMessage());
+                    return $this->redirect_to_login();
                 }
                 
                 return l7p_redirect($redirect_url);
