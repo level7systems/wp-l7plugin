@@ -176,8 +176,8 @@ function setCookie(name, value, options) {
             });
 
             var url_suffix = '';
-            if ($form.find('#extini').val()) {
-                var match = $form.find('#extini').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
+            if ($form.find('input[name="extini"]').val()) {
+                var match = $form.find('input[name="extini"]').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
                 if (match[1]) {
                     url_suffix = '#support,support:' + match[1];
                 }
@@ -236,8 +236,8 @@ function setCookie(name, value, options) {
             }
 
             var redirection = response.info;
-            if ($form.find('#extini').val()) {
-                redirection += '?extini=' + $form.find('#extini').val();
+            if ($form.find('input[name="extini"]').val()) {
+                redirection += '?extini=' + $form.find('input[name="extini"]').val();
             }
         }
 
