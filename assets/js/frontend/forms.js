@@ -44,17 +44,27 @@ function setCookie(name, value, options) {
     ].join('');
 }
 
+function isEuCountry(country_code)
+{   
+    var eu_countries = ["BE", "BG", "CZ", "DK", "DE", "EE", "IE", "GR", "ES", "FR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE", "GB", "RU", "UA", "TR", "EG", "GI", "GE", "BY", "MD", "RS", "HR", "BA", "AL", "AZ", "AM", "MC", "AD", "IS", "KZ", "LI", "MK", "ME", "NO", "SM", "CH", "VA", "MA", "DZ", "IR", "SY", "IL", "JO", "IQ", "SA", "AE", "OM", "YE"];
+    return eu_countries.indexOf(country_code.toUpperCase()) > -1;
+}
+
 (function ($, window, document) {
     
     function setPackageTypeAndCountry(l7_geoip) {
         
-        if (typeof package_type_options != 'undefined') {
+        if (typeof package_type_options != 'undefined') { 
 
             var currencies = { EU: "EUR", US: "USD", JP: "JPY", GB: "GBP", PL: "PLN" },
-                currency = l7_geoip.country_code in currencies ? currencies[l7_geoip.country_code] : 'USD';
-
-            if (getCookie('l7p_currency', false) !== false) {
-                currency = getCookie('l7p_currency');
+                currency = getCookie('l7p_currency', false);
+        
+            if (!currency) {
+                l7_geoip.country_code in currencies ? currencies[l7_geoip.country_code] : false;
+            }
+            
+            if (!currency) {
+                currency = isEuCountry(l7_geoip.country_code) ? 'EUR' : 'USD';
             }
 
             $('select[name="package_type"]').html();
