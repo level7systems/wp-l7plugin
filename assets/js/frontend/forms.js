@@ -272,6 +272,8 @@ function isEuCountry(country_code)
 
                     if (error.code == 'AU1001') {
                         jQuery(document).trigger("l7p:web_product:activation", [ error.message ]);
+                    } else if ($form.hasClass('l7p-activate-form')) {
+                        $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>');
                     } else if (error.message.indexOf("Invalid email and/or password") != -1) {
 
                         var recover_url = '/recover-password';
