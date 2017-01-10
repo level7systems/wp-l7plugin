@@ -1006,21 +1006,6 @@ function isEuCountry(country_code)
             });
         });
 
-        // ACTIVATE: to be removed as legacy
-        if ($('form#l7p-activate-form').length > 0) {
-            // validate login form fields
-            validateRequiredFields($('form#l7p-activate-form'), [
-                'activation_token',
-                'company',
-                'address',
-                'postcode',
-                'city',
-                'country',
-                'state',
-                'tc'
-            ]);
-        }
-        
         var onActivationSuccess = function (response) {
 
             var $form = this;

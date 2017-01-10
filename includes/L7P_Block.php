@@ -332,52 +332,6 @@ function l7p_block_rest_new_password_form()
     return L7P_Content::parse_content($content);
 }
 
-function l7p_block_activation_form()
-{
-    ob_start();
-
-    ?>
-
-    <p id="l7p-global-success" class="alert alert-success">[SUCCESS_FLASH_MESSAGE]</p>
-
-    <p id="l7p-global-errors" class="alert alert-danger">[ERROR_FLASH_MESSAGE]</p>
-
-    <form id="l7p-activate-form" method="post" action="[FORM_ACTIVATION_ACTION]" class="l7p l7p-activate-form">
-
-        [FORM_SECURITY_TOKEN]
-
-        [FORM_ACTIVATION_TOKEN]
-
-    <?php echo L7P_Form::hidden_input(array('name' => 'company', 'value' => 'TBC')) ?>
-    <?php echo L7P_Form::hidden_input(array('name' => 'address', 'value' => 'TBC')) ?>
-    <?php echo L7P_Form::hidden_input(array('name' => 'postcode', 'value' => 'TBC')) ?>
-    <?php echo L7P_Form::hidden_input(array('name' => 'city', 'value' => 'TBC')) ?>
-                <?php echo L7P_Form::hidden_input(array('name' => 'country', 'value' => l7p_get_geo())) ?>
-                <?php echo L7P_Form::hidden_input(array('name' => 'state', 'value' => l7p_get_geo_state())) ?>
-
-        <div class="form-row">
-
-            <label for="tc">
-                <input id="tc" type="checkbox" value="1" name="tc">
-    <?php
-    echo strtr(__('I have read and agree to the [a]Terms and Conditions[/a]', 'level7platform'), array(
-        '[a]' => '<a href="' . l7p_url_for('@terms') . '" target="_blank">',
-        '[/a]' => '</a>'
-    ));
-
-    ?>
-            </label>
-
-            <button id="l7p-activate-button"><?php echo __('Activate an account', 'level7platform') ?></button>
-        </div>
-    </form>
-
-    <?php
-    $content = ob_get_clean();
-
-    return L7P_Content::parse_content($content);
-}
-
 function l7p_block_subscription_form()
 {
     ob_start();

@@ -63,7 +63,6 @@ class L7P_Install
         wp_delete_post(l7p_get_option('login_page_id'));
         wp_delete_post(l7p_get_option('one_time_login_page_id'));
         wp_delete_post(l7p_get_option('recover_page_id'));
-        wp_delete_post(l7p_get_option('activation_page_id'));
         wp_delete_post(l7p_get_option('subscription_page_id'));
         wp_delete_post(l7p_get_option('register_page_id'));
         wp_delete_post(l7p_get_option('affiliate_page_id'));
@@ -138,12 +137,6 @@ class L7P_Install
                 'slug'      => 'recover-password',
                 'title'     => 'Recover password',
                 'content'   => $pages_contents['recover'],
-                'post_type' => 'page',
-            ),
-            'activation' => array(
-                'slug'      => 'activation',
-                'title'     => 'Activation',
-                'content'   => $pages_contents['activation'],
                 'post_type' => 'page',
             ),
             'subscription' => array(
@@ -1113,15 +1106,6 @@ CONTENT
 
 </div>
             
-CONTENT
-            
-            ,'activation'                => <<<CONTENT
-<div id="l7p-activation">
-
-    [block activation_form]
-
-</div>
-
 CONTENT
             
             ,'subscription'              => <<<CONTENT

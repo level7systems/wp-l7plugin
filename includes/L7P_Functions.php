@@ -975,16 +975,6 @@ function l7p_set_flash_messages($messages)
     l7p_update_session('flash_messages', $messages);
 }
 
-function l7p_set_activation_message($message)
-{
-    return l7p_update_session('activation_message', $message);
-}
-
-function l7p_get_activation_message()
-{
-    return l7p_get_session('activation_message', '');
-}
-
 function l7p_get_level7_domain()
 {
     return l7p_get_settings('l7_tld');
