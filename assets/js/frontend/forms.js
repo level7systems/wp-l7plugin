@@ -310,9 +310,13 @@ function isEuCountry(country_code)
     function loginLegacy($form) {
         
         clearErrors($form);
-    
+        var url = $form.attr('action');
+            
+        if($form.attr('data-api-url')){
+            url = $form.attr('data-api-url');
+        }
         $.jsonp({
-            url: $form.attr('action'),
+            url: url,
             callbackParameter: "callback",
             type: 'POST',
             data: {
@@ -332,9 +336,13 @@ function isEuCountry(country_code)
     function login($form) {
         
         clearErrors($form);
-
+        var url = $form.attr('action');
+            
+        if($form.attr('data-api-url')){
+            url = $form.attr('data-api-url');
+        }
         $.ajax({
-            url: $form.attr('action'),
+            url: url,
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
@@ -505,10 +513,15 @@ function isEuCountry(country_code)
             if (getCookie('xl7ref', false)) {
                 data.xl7ref = getCookie('xl7ref');
             }
-
+            
+            var url = $form.attr('action');
+            
+            if($form.attr('data-api-url')){
+                url = $form.attr('data-api-url');
+            }
             e.preventDefault();
             $.jsonp({
-                url: $form.attr('action'),
+                url: url,
                 callbackParameter: "callback",
                 type: 'POST',
                 data: data,
@@ -606,10 +619,15 @@ function isEuCountry(country_code)
             if (getCookie('xl7ref', false)) {
                 data.xl7ref = getCookie('xl7ref');
             }
+            
+            var url = $form.attr('action');
+            if($form.attr('data-api-url')){
+                url = $form.attr('data-api-url');
+            }
 
             e.preventDefault();
             $.ajax({
-                url: $form.attr('action'),
+                url: url,
                 type: 'POST',
                 dataType: 'json',
                 data: JSON.stringify(data),
@@ -790,22 +808,25 @@ function isEuCountry(country_code)
         });
 
         // PASSWORD RECOVERY
-        if ($('form#l7p-password-recover-form').length > 0) {
+        if ($('form#l7p-password-recover-form, form.l7p-password-recover-form').length > 0) {
             // validate login form fields
-            validateRequiredFields($('form#l7p-password-recover-form'), [
+            validateRequiredFields($('form#l7p-password-recover-form, form.l7p-password-recover-form'), [
                 'email'
             ]);
         }
 
-        $(document).on('submit', 'form#l7p-password-recover-form', function (e) {
-
+        $(document).on('submit', 'form#l7p-password-recover-form, form.l7p-password-recover-form', function (e) {
             var $form = $(this);
-
             clearErrors($form);
-
+            
+            var url = $form.attr('action');
+            if($form.attr('data-api-url')){
+                url = $form.attr('data-api-url');
+            }
+            
             e.preventDefault();
             $.jsonp({
-                url: $form.attr('action'),
+                url: url,
                 callbackParameter: "callback",
                 type: 'POST',
                 data: {
@@ -844,9 +865,9 @@ function isEuCountry(country_code)
         });
 
         // NEW PASSWORD
-        if ($('form#l7p-new-password-form').length > 0) {
+        if ($('form#l7p-new-password-form, form.l7p-new-password-form').length > 0) {
             // validate login form fields
-            validateRequiredFields($('form#l7p-new-password-form'), [
+            validateRequiredFields($('form#l7p-new-password-form, form.l7p-new-password-form'), [
                 'password1',
                 'password2'
             ]);
@@ -857,10 +878,13 @@ function isEuCountry(country_code)
             var $form = $(this);
             
             clearErrors($form);
-
+            var url = $form.attr('action');
+            if($form.attr('data-api-url')){
+                url = $form.attr('data-api-url');
+            }
             e.preventDefault();
             $.jsonp({
-                url: $form.attr('action'),
+                url: url,
                 callbackParameter: "callback",
                 type: 'POST',
                 data: {
@@ -1006,21 +1030,6 @@ function isEuCountry(country_code)
             });
         });
 
-        // ACTIVATE: to be removed as legacy
-        if ($('form#l7p-activate-form').length > 0) {
-            // validate login form fields
-            validateRequiredFields($('form#l7p-activate-form'), [
-                'activation_token',
-                'company',
-                'address',
-                'postcode',
-                'city',
-                'country',
-                'state',
-                'tc'
-            ]);
-        }
-        
         var onActivationSuccess = function (response) {
 
             var $form = this;
@@ -1125,10 +1134,13 @@ function isEuCountry(country_code)
                 password = $form.find('input[name="password"]').val();
                     
             clearErrors($form);
-
+            var url = $form.attr('action');
+            if($form.attr('data-api-url')){
+                url = $form.attr('data-api-url');
+            }
             // login first
             $.ajax({
-                url: $form.attr('action').replace('/customerhaswebproducts', '/login'),
+                url: url.replace('/customerhaswebproducts', '/login'),
                 type: 'POST',
                 dataType: 'json',
                 data: JSON.stringify({

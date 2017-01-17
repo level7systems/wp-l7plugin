@@ -314,19 +314,6 @@ class L7P_Query
             }
 
             return $this->error_404();
-        } else if ($pagename == 'activation') {
-
-            if (isset($query->query_vars['token'])) {
-
-                l7p_update_session('activation_token', $query->query_vars['token']);
-                if (isset($_GET['message'])) {
-                    l7p_set_success_flash_message($_GET['message']);
-                }
-
-                return $this->redirect_activation();
-            } else {
-                return $this->error_404();
-            }
         } else if ($pagename == 'reset') {
 
             if (isset($query->query_vars['token'])) {
@@ -492,13 +479,6 @@ class L7P_Query
         return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
 
-    public function redirect_activation()
-    {
-        $page = get_post(l7p_get_option('activation_page_id'));
-
-        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
-    }
-
     /**
      * Add endpoints for query vars
      */
@@ -546,8 +526,6 @@ class L7P_Query
         add_rewrite_rule("loginas/([0-9]+)/([a-zA-Z0-9]+)$", 'index.php?name=loginas&user_id=$matches[1]&token=$matches[2]', 'top');
         // account confirmation
         add_rewrite_rule("c/([a-zA-Z0-9]{6,})$", 'index.php?name=confirmation&token=$matches[1]', 'top');
-        // account activation 
-        add_rewrite_rule("activate/([a-zA-Z0-9]{6,})$", 'index.php?name=activation&token=$matches[1]', 'top');
         // password reset
         add_rewrite_rule("reset/([a-zA-Z0-9]{20,})$", 'index.php?name=reset&token=$matches[1]', 'top');
         // resend confirmation email

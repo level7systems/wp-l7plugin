@@ -489,11 +489,6 @@ function l7p_inline_form_reset_token()
     return 'L7P_Form::hidden_input(array(\'name\' => \'reset_token\', \'value\' => l7p_get_session(\'reset_token\')))';
 }
 
-function l7p_inline_form_activation_token()
-{
-    return 'L7P_Form::hidden_input(array(\'name\' => \'activation_token\', \'value\' => l7p_get_session(\'activation_token\')))';
-}
-
 function l7p_inline_form_subscription_token()
 {
     return 'L7P_Form::hidden_input(array(\'name\' => \'subscription_token\', \'value\' => l7p_get_session(\'subscription_token\')))';
@@ -544,11 +539,6 @@ function l7p_inline_form_subscription_action()
     return 'l7p_api_url()';
 }
 
-function l7p_inline_form_activation_action()
-{
-    return 'l7p_api_url()';
-}
-
 function l7p_inline_success_flash_message()
 {
     return 'l7p_get_success_flash_message()';
@@ -557,11 +547,6 @@ function l7p_inline_success_flash_message()
 function l7p_inline_error_flash_message()
 {
     return 'l7p_get_error_flash_message()';
-}
-
-function l7p_inline_activation_message()
-{
-    return 'l7p_get_activation_message()';
 }
 
 function l7p_inline_package_type_value()

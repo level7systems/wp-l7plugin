@@ -270,11 +270,9 @@ class L7P_Admin
             'telephone_numbers_page_id',
             'hardware_page_id',
             'support_page_id',
-            'activation_page_id',
             'login_page_id',
             'one_time_login_page_id',
             'recover_page_id',
-            'activation_page_id',
             'subscription_page_id',
             'register_page_id',
             'affiliate_page_id'
