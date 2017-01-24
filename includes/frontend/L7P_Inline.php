@@ -141,6 +141,12 @@ function l7p_inline_term_route_country()
     return 'isset($country_name) ? $country_name : l7p_get_country_name_from_query()';
 }
 
+// display country name as css class name
+function l7p_inline_term_route_country_as_classes()
+{
+    return 'str_replace(" ", "",isset($country_name) ? $country_name : l7p_get_country_name_from_query())';
+}
+
 // termination route name
 function l7p_inline_term_route_name()
 {
