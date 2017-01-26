@@ -76,7 +76,7 @@ class L7P_Form
     public static function select($args)
     {
         $name = isset($args['name']) ? esc_attr($args['name']) : 'undefined';
-        $id = isset($args['id']) ?  "id='" .esc_attr($args['id']) : '';
+        $id = isset($args['id']) && $args['id'] ?  "id='" .esc_attr($args['id']) ."'" : '';
         $class = isset($args['class']) ? esc_attr($args['class']) : $name;
         $section = isset($args['section']) ? esc_attr($args['section']) : false;
         $choices = isset($args['choices']) ? $args['choices'] : array();
