@@ -141,6 +141,12 @@ function l7p_inline_term_route_country()
     return 'isset($country_name) ? $country_name : l7p_get_country_name_from_query()';
 }
 
+// display country name as css class name
+function l7p_inline_term_route_country_as_classes()
+{
+    return 'str_replace(" ", "",isset($country_name) ? $country_name : l7p_get_country_name_from_query())';
+}
+
 // termination route name
 function l7p_inline_term_route_name()
 {
@@ -183,7 +189,11 @@ function l7p_inline_ddi_country_name()
 {
     return 'isset($ddi_data[\'country_code\']) ? l7p_country_name($ddi_data[\'country_code\']) : l7p_get_country_name_from_query()';
 }
-
+// display country name as css class name
+function l7p_inline_ddi_country_name_as_classes()
+{
+    return 'str_replace(" ", "",isset($ddi_data[\'country_code\']) ? l7p_country_name($ddi_data[\'country_code\']) : l7p_get_country_name_from_query())';
+}
 // displays DDI country telephone code
 function l7p_inline_ddi_country_tel_code()
 {

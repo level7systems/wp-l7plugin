@@ -248,7 +248,8 @@ class L7P_Content
                     . '$package_routes = l7p_get_pricelist(\'package_routes\'); '
                     . 'if (in_array(l7p_get_geo()."-L",$package_routes)): '
                     . '?>';
-
+            case 'term_is_mobile_free':
+                return '<?php if (isset($term_data) && $term_data["mobile-package"]) : ?>';
             case 'term_is_unlimited':
                 return '<?php if (isset($term_data) && $term_data["fixed-package"]) : ?>';
 
