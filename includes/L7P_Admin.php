@@ -275,7 +275,8 @@ class L7P_Admin
             'recover_page_id',
             'subscription_page_id',
             'register_page_id',
-            'affiliate_page_id'
+            'affiliate_page_id',
+            'manual_search_page_id'
         );
         $section_name = 'l7p_mappings';
         foreach ($pages as $pagename) {

@@ -142,7 +142,7 @@ function l7p_inline_term_route_country()
 }
 
 // display country name as css class name
-function l7p_inline_term_route_country_as_classes()
+function l7p_inline_term_route_country_as_classes() 
 {
     return 'str_replace(" ", "",isset($country_name) ? $country_name : l7p_get_country_name_from_query())';
 }
@@ -461,7 +461,11 @@ function l7p_inline_manual_content()
 {
     return 'l7p_get_chapter(\'content\');';
 }
-
+// Manual - keywords
+function l7p_inline_manual_keywords()
+{
+    return 'json_encode(l7p_get_chapters_keywords());';
+}
 // API url
 function l7p_inline_api_url()
 {
@@ -547,6 +551,11 @@ function l7p_inline_form_password_recover_action()
 function l7p_inline_form_subscription_action()
 {
     return 'l7p_api_url()';
+}
+
+function l7p_inline_form_search_action()
+{
+    return 'l7p_url_for(\'@manual_search\')';
 }
 
 function l7p_inline_success_flash_message()

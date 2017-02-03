@@ -127,9 +127,9 @@ function l7p_get_permalinks($culture = null)
         'rates' => 'voip-call-rates',
         'telephone_numbers' => 'telephone-numbers',
         'manual' => 'manual',
-        'terms' => 'terms-and-conditions'
+        'terms' => 'terms-and-conditions',
+        'manual_search' => 'manual-search'
     );
-
     // if web product has shop enabled
     if (l7p_get_web_product_settings('has_shop')) {
         $defaults['hardware'] = 'hardware';
@@ -141,7 +141,6 @@ function l7p_get_permalinks($culture = null)
             $result[$culture][$name] = isset($permalinks[$culture . '_' . $name]) ? $permalinks[$culture . '_' . $name] : $defaults[$name];
         }
     }
-
     return $result;
 }
 
@@ -683,13 +682,33 @@ function l7p_get_chapter($attr)
     return isset($chapters[$manual_type][$name][$attr]) ? $chapters[$manual_type][$name][$attr] : '';
 }
 
+function l7p_get_chapters_keywords()
+{
+    $chapters = l7p_get_chapters();
+    $keywords = array();
+    $indexes = '';
+    foreach($chapters as $chapter){
+        $indexes .= $chapter['index'];
+    }
+    $rows = explode("\n",(str_replace(array("\r\n\r\n", "\n\n", "\r\r"),"\r\n",strip_tags($indexes, '<a>'))));
+    foreach($rows as $row){
+        $row = trim($row);
+        if($row){
+            $a = new SimpleXMLElement($row);
+            preg_match('/^\/.*\/(.*)_([a-zA-Z0-9\-]*).*$/', (string)$a['href'], $matches);
+            $keywords[] = array('value' => $matches[1] . ' - ' . $matches[2] . ' - ' . (string)$a[0], 'key' => (string)$a['href']);
+        }
+    }
+    return $keywords;
+}
+
 function l7p_get_routes()
 {
     $login_page = get_post(l7p_get_option('login_page_id'));
 
     return array(
         'login' => sprintf('/%s/', $login_page->post_name),
-        'country_rates' => '/:permalink_rates/:country/:currency/',
+        'country_rates'=> '/:permalink_rates/:country/:currency/',
         'numbers' => '/:permalink_telephone_numbers/:country/:currency/',
         'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency/',
         'number_buy' => '/:permalink_telephone_numbers/:country/:city/buy/:currency/',
@@ -699,7 +718,8 @@ function l7p_get_routes()
         'phone_buy' => '/:permalink_hardware/:group/:model/buy/:currency/',
         'manual' => '/:permalink_manual/:chapter/',
         'terms' => '/:permalink_terms/',
-        'download' => '/download-for-:os/'
+        'download' => '/download-for-:os/',
+        'manual_search' => '/:permalink_manual_search/',
     );
 }
 
@@ -727,12 +747,10 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
         $param = l7p_urlize($param);
         $replace_pairs[':' . $key] = $param;
     }
-
     // add currency id not set
     if (!isset($replace_pairs[':currency'])) {
         $replace_pairs[':currency'] = strtolower(l7p_get_currency());
     }
-
     $url = strtr($routes[$route_name], $replace_pairs);
 
     // WPML integration
@@ -746,7 +764,6 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
         $base_url = network_site_url();
         $url = $base_url . $url;
     }
-
     return $url;
 }
 
@@ -1010,6 +1027,11 @@ function l7p_form_subscription_action()
     return sprintf("https://%s/%s/en/profile", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
+function l7p_form_search_action()
+{
+    return '';
+}
+
 function l7p_image_tag($source, array $options = array())
 {
     if (!$source) {
@@ -1055,6 +1077,7 @@ function l7p_image_path($source, $absolute = true)
 
 function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
 {
+    var_dump($name, $value, $expire);
     setcookie($name, $value, $expire, $path, $domain, $secure);
 }
 

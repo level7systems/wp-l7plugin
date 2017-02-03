@@ -1156,6 +1156,16 @@ function isEuCountry(country_code)
             });
             
         });
+        
+        $( ".l7p-manual-search-form input" ).autocomplete({
+                minLength: 2,
+                select: function( event, ui ) {
+                    window.location = ui.item.key;
+                },
+                source: availableTags
+        });
+        
+        
     });
 
 }(window.jQuery, window, document));
