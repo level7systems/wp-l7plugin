@@ -398,7 +398,7 @@ function l7p_block_manual_search_form()
         <div class="form-row col-xs-8">
             <?php echo L7P_Form::text_input(array('name' => 'search', 'placeholder' => 'search...', 'required' => true)) ?>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-1">
             <button class="l7p-search-button "><span class="fa fa-search fa-6"></span></button>
         </div>
         </div>
@@ -434,7 +434,7 @@ function l7p_block_manual_search_results()
                     $result['name'] = $subchapter['name'];
                     $searchCaseInsensitive = substr($search_in, $position, strlen($search));
                     $result['content'] = str_replace($searchCaseInsensitive,'<strong>' . $searchCaseInsensitive .'</strong>',substr($search_in, $start, 300)); 
-                    $result['url'] = '/manual/' . $key . '_' . str_replace(' ', '-', $result['chapter']); // @todo pobieranie ładne linku
+                    $result['url'] = l7p_url_for('manual',array('chapter' => $key . '_' . str_replace(' ', '-', $result['chapter'])));
                     $results[] = $result; 
                 }
             }
