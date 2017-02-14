@@ -408,7 +408,7 @@ function l7p_block_manual_search_form()
 function l7p_block_manual_search_results()
 {
     $search = sanitize_text_field(get_query_var('search'));
-    if(strlen($search) > 3){
+    if(strlen($search) >= 2){
         $chapters = l7p_get_chapters();
         $results = array();
         foreach($chapters as $key => $chapter){
@@ -418,7 +418,6 @@ function l7p_block_manual_search_results()
                 $search_in_chapter = str_replace(array("\r\n", "\n", "\r"), ' ', strip_tags($subchapter['chapter']));
                 $position = strpos(strtolower($search_in), strtolower($search));
                 $position_chapter = strpos(strtolower($search_in_chapter), strtolower($search));
-                
                 if($position !== false || $position_chapter !== false){
                     $start = 0;
                     if($position > 150){
