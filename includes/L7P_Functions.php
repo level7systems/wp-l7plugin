@@ -682,7 +682,7 @@ function l7p_get_chapter($attr)
     return isset($chapters[$manual_type][$name][$attr]) ? $chapters[$manual_type][$name][$attr] : '';
 }
 
-function l7p_get_chapters_keywords()
+function l7p_get_chapters_keywords($term = '')
 {
     $chapters = l7p_get_chapters();
     $keywords = array();
@@ -697,6 +697,13 @@ function l7p_get_chapters_keywords()
             $a = new SimpleXMLElement($row);
             preg_match('/^\/.*\/(.*)_([a-zA-Z0-9\-]*).*$/', (string)$a['href'], $matches);
             $keywords[] = array('value' => $matches[1] . ' - ' . $matches[2] . ' - ' . (string)$a[0], 'key' => (string)$a['href']);
+        }
+    }
+    if($term){
+        foreach($keywords as $key => $keyword){
+            if(strpos(strtolower($keyword['value']), strtolower($term)) === false) {
+                unset($keywords[$key]);
+            }
         }
     }
     return $keywords;

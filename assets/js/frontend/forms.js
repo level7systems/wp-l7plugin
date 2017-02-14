@@ -1165,11 +1165,20 @@ function isEuCountry(country_code)
         };
         if($('.l7p-manual-search-form').length){
             $( ".l7p-manual-search-form input" ).autocomplete({
-                    minLength: 2,
                     select: function( event, ui ) {
                         window.location = ui.item.key;
                     },
-                    source: availableTags
+                    source: function(data, response){
+                        $.ajax({
+				type: 'POST',
+				dataType: 'json',
+				url: ajax_options.admin_ajax_url,
+				data: {'action': 'search_autocomplete', 'term': data.term},
+				success: function(data) {
+                                    response(data);
+				}
+			});
+                    },
             });
         }
         

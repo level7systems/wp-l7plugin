@@ -47,6 +47,8 @@ class L7P_Frontend
         wp_enqueue_script(
             'level7-forms', plugins_url('/assets/js/frontend/forms.js', L7P_PLUGIN_FILE), array('jquery', 'jquery-ui-dialog')
         );
+        $admin_ajax_url = admin_url( 'admin-ajax.php');  
+        wp_localize_script( 'level7-forms', 'ajax_options', array('admin_ajax_url' => $admin_ajax_url) ); 
     }
     
     public function filter_wp_title($title, $sep)

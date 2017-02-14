@@ -394,18 +394,11 @@ function l7p_block_manual_search_form()
 
     ?>
     <form action="[FORM_SEARCH_ACTION]" class="l7p l7p-manual-search-form" method="GET">
-        <div class="row">
-        <div class="form-row col-xs-8">
-            <?php echo L7P_Form::text_input(array('name' => 'search', 'placeholder' => 'search...', 'required' => true)) ?>
-        </div>
-        <div class="col-xs-1">
-            <button class="l7p-search-button "><span class="fa fa-search fa-6"></span></button>
-        </div>
+        <div >
+            <?php echo L7P_Form::text_input(array('class' => 'l7p-search-input', 'name' => 'search', 'placeholder' => 'search...', 'required' => true));
+            ?><button class="l7p-search-button"><span class="fa fa-search fa-6"></span></button>
         </div>
     </form>
-    <script type="text/javascript" >
-        var availableTags = [MANUAL_KEYWORDS];
-    </script>
     <?php
     $content = ob_get_clean();
 
@@ -422,8 +415,11 @@ function l7p_block_manual_search_results()
             unset($chapter['index']);
             foreach($chapter as $subchapter){
                 $search_in = str_replace(array("\r\n", "\n", "\r"), ' ', strip_tags($subchapter['content']));
+                $search_in_chapter = str_replace(array("\r\n", "\n", "\r"), ' ', strip_tags($subchapter['chapter']));
                 $position = strpos(strtolower($search_in), strtolower($search));
-                if($position !== false){
+                $position_chapter = strpos(strtolower($search_in_chapter), strtolower($search));
+                
+                if($position !== false || $position_chapter !== false){
                     $start = 0;
                     if($position > 150){
                         $start = $position - 150;
@@ -437,6 +433,7 @@ function l7p_block_manual_search_results()
                     $result['url'] = l7p_url_for('manual',array('chapter' => $key . '_' . str_replace(' ', '-', $result['chapter'])));
                     $results[] = $result; 
                 }
+                
             }
         }
     }
