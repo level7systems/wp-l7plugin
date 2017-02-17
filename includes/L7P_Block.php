@@ -408,45 +408,20 @@ function l7p_block_manual_search_form()
 function l7p_block_manual_search_results()
 {
     $search = sanitize_text_field(get_query_var('search'));
-    if(strlen($search) >= 2){
-        $chapters = l7p_get_chapters();
-        $results = array();
-        foreach($chapters as $key => $chapter){
-            unset($chapter['index']);
-            foreach($chapter as $subchapter){
-                $search_in = str_replace(array("\r\n", "\n", "\r"), ' ', strip_tags($subchapter['content']));
-                $search_in_chapter = str_replace(array("\r\n", "\n", "\r"), ' ', strip_tags($subchapter['chapter']));
-                $position = strpos(strtolower($search_in), strtolower($search));
-                $position_chapter = strpos(strtolower($search_in_chapter), strtolower($search));
-                if($position !== false || $position_chapter !== false){
-                    $start = 0;
-                    if($position > 150){
-                        $start = $position - 150;
-                    }
-                    $result = array();
-                    $result['manual'] = $key;
-                    $result['chapter'] = $subchapter['chapter'];
-                    $result['name'] = $subchapter['name'];
-                    $searchCaseInsensitive = substr($search_in, $position, strlen($search));
-                    $result['content'] = str_replace($searchCaseInsensitive,'<strong>' . $searchCaseInsensitive .'</strong>',substr($search_in, $start, 300)); 
-                    $result['url'] = l7p_url_for('manual',array('chapter' => $key . '_' . str_replace(' ', '-', $result['chapter'])));
-                    $results[] = $result; 
-                }
-                
-            }
-        }
-    }
+
+    $results = l7p_search_manual($search);
+
     ob_start();
     
     ?>
     
-    <?php if($results): ?>
+    <?php if ($results): ?>
     <div class="resultsfor">Search results for: <strong><?php echo $search; ?></strong></div>
     <div  class="results">
         <?php foreach($results as $result): ?>
         <div class="result">
-            <h3><a href="<?php echo $result['url']; ?>" class="title" title=""><?php echo $result['name'] . ' - ' . $result['chapter']; ?></a></h3>
-            [...] <?php echo $result['content']; ?> [...]
+            <h3><a href="<?php echo $result['url']; ?>" class="title" title=""><?php echo $result['title'] ?></a></h3>
+            <?php echo $result['excerpt']; ?>
             <br />
             <a href="<?php echo $result['url']; ?>" class="btn read-more" title="">Read more</a>
         </div>

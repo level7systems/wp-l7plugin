@@ -461,11 +461,7 @@ function l7p_inline_manual_content()
 {
     return 'l7p_get_chapter(\'content\');';
 }
-// Manual - keywords
-function l7p_inline_manual_keywords()
-{
-    return 'json_encode(l7p_get_chapters_keywords());';
-}
+
 // API url
 function l7p_inline_api_url()
 {

@@ -684,29 +684,161 @@ function l7p_get_chapter($attr)
 
 function l7p_get_chapters_keywords($term = '')
 {
-    $chapters = l7p_get_chapters();
     $keywords = array();
-    $indexes = '';
-    foreach($chapters as $chapter){
-        $indexes .= $chapter['index'];
-    }
-    $rows = explode("\n",(str_replace(array("\r\n\r\n", "\n\n", "\r\r"),"\r\n",strip_tags($indexes, '<a>'))));
-    foreach($rows as $row){
-        $row = trim($row);
-        if($row){
-            $a = new SimpleXMLElement($row);
-            preg_match('/^\/.*\/(.*)_([a-zA-Z0-9\-]*).*$/', (string)$a['href'], $matches);
-            $keywords[] = array('value' => $matches[1] . ' - ' . $matches[2] . ' - ' . (string)$a[0], 'key' => (string)$a['href']);
+
+    foreach (l7p_search_manual($term) as $result) {
+        $keywords[] = array("value" => $result['title'], "key" => $result['url']);
+
+        if (count($keywords) > 5) {
+            break;
         }
     }
-    if($term){
-        foreach($keywords as $key => $keyword){
-            if(strpos(strtolower($keyword['value']), strtolower($term)) === false) {
-                unset($keywords[$key]);
+
+    return $keywords;
+}
+
+function l7p_search_manual($search)
+{
+    $ingoreWords = array("how", "can");
+
+    $result = array();
+
+    if (!$search = trim(preg_replace("/[^a-z,\s]/i", "", $search))) {
+        return $result;
+    }
+
+    $search = preg_replace("/\s{2,}/", " ", $search);
+
+    $keywords = array();
+
+    foreach (explode(" ", $search) as $word) {
+        
+        $word = strtolower($word);
+
+        if (strlen($word) < 3 || in_array($word, $ingoreWords)) {
+            continue;
+        }
+
+        // remove plural and continous form
+        if (!in_array($word, array("ring"))) {
+            $word = preg_replace("/ing$|s$/", "", $word);
+        }
+
+        if (count($keywords) > 5) {
+            break;
+        }
+
+        $keywords[] = $word;
+    }
+
+    $searchPhrase = implode(" ", $keywords);
+
+    $chapters = l7p_get_chapters();
+
+    unset($chapters['Affiliate']);
+    unset($chapters['REST']);
+
+    $removeChars = array('"', ".", ",", "\n", "\r");
+
+    $matchHeader = array();
+    $matchContent = array();
+
+    foreach ($chapters as $manualName => $manualChapters) {
+        
+        unset($manualChapters['index']);
+
+        foreach ($manualChapters as $chapter) {
+
+            $chapterParts = array();
+
+            $url = $manualName."_".str_replace(" ", "-", $chapter['chapter'])."/";
+
+            $chapterParts[$url] = '';
+
+            $h2 = false;
+
+            foreach (explode("\n", $chapter['content']) as $line) {
+
+                $m = array();
+
+                if (preg_match('/<h2>(.*)<\/h2>/i', $line, $m)) {
+                    $url = $manualName."_".str_replace(" ", "-", $chapter['chapter'])."/#" . str_replace(" ", "-", $m[1]);
+                    continue;
+                }
+
+                $chapterParts[$url].= $line;
+            }
+
+            foreach ($chapterParts as $headerUrl => $content) {
+                $header = preg_replace("/^$manualName/", "", preg_replace("/[^a-z]/i", " ", $headerUrl));
+                
+                $content = str_replace("\n", " ",strip_tags($content));
+
+                if (l7p_phrase_match($searchPhrase, $header, true)) {
+                    $matchHeader[$headerUrl] = l7p_get_search_excerpt($content);
+                    continue;
+                }
+
+                if (l7p_phrase_match($searchPhrase, $content, true)) {
+                    $matchContent[$headerUrl] = l7p_get_search_excerpt($content);
+                }
             }
         }
     }
-    return $keywords;
+
+    foreach (array_merge($matchHeader, $matchContent) as $headerUrl => $excerpt) {
+        $title = str_replace(array("#", "-"), " ", trim($headerUrl, "/"));
+        $title = str_replace(array("_", "/"), " - ", $title);
+        $title = preg_replace("/\s{2,}/", " ",str_replace("/", " - ", $title));
+
+        $result[] = array(
+            "url"       => "/manual/" . $headerUrl,
+            "title"     => $title,
+            "excerpt"   => $excerpt,
+        );
+    }
+
+    return $result;
+}
+
+function l7p_get_search_excerpt($content)
+{
+    $excerptLen = 350;
+
+    return (strlen($content) > $excerptLen) ? substr($content, 0, $excerptLen) . "..." : substr($content, 0, $excerptLen);
+}
+
+function l7p_phrase_match($searchPhrase, $content, $splitWords = false)
+{
+    $content = strtolower($content);
+
+    if (preg_match("/$searchPhrase/", $content)) {
+        return true;
+    }
+
+    if (!$splitWords) {
+        return false;
+    }
+
+    $contentWords = explode(" ", $content);
+
+    $matches = array();
+
+    $keywords = explode(" ", $searchPhrase);
+
+    foreach ($keywords as $keyword) {
+        foreach ($contentWords as $word) {
+            if (strpos($word, $keyword) !== false && !in_array($keyword, $matches)) {
+                $matches[] = $keyword;
+
+                if (count($keywords) == count($matches)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 function l7p_get_routes()
