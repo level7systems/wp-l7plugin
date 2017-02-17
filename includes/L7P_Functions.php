@@ -779,7 +779,7 @@ function l7p_search_manual($search)
                     continue;
                 }
 
-                if (l7p_phrase_match($searchPhrase, $content, true)) {
+                if (l7p_phrase_match($searchPhrase, str_replace($removeChars, "", $content))) {
                     $matchContent[$headerUrl] = l7p_get_search_excerpt($content);
                 }
             }
