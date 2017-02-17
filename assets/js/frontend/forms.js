@@ -1156,13 +1156,15 @@ function isEuCountry(country_code)
             });
             
         });
-        $.ui.autocomplete.prototype._renderItem = function (ul, item) {
-            item.label = item.label.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + $.ui.autocomplete.escapeRegex(this.term) + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<strong>$1</strong>");
-            return $("<li></li>")
-                    .data("item.autocomplete", item)
-                    .append("<a>" + item.label + "</a>")
-                    .appendTo(ul);
-        };
+        if($.ui.autocomplete){
+            $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+                item.label = item.label.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + $.ui.autocomplete.escapeRegex(this.term) + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<strong>$1</strong>");
+                return $("<li></li>")
+                        .data("item.autocomplete", item)
+                        .append("<a>" + item.label + "</a>")
+                        .appendTo(ul);
+            }; 
+        }
         if($('.l7p-manual-search-form').length){
             $( ".l7p-manual-search-form input" ).autocomplete({
                     select: function( event, ui ) {
