@@ -66,6 +66,7 @@ class L7P_Install
         wp_delete_post(l7p_get_option('subscription_page_id'));
         wp_delete_post(l7p_get_option('register_page_id'));
         wp_delete_post(l7p_get_option('affiliate_page_id'));
+        wp_delete_post(l7p_get_option('manual_search_page_id'));
         
         // delete options
         $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'l7p_%';");
@@ -192,6 +193,12 @@ class L7P_Install
                 'slug'      => 'manual-chapter',
                 'title'     => 'Manual chapter',
                 'content'   => $pages_contents['manual_chapter'],
+                'post_type' => 'l7p_page',
+            ),
+            'manual_search' => array(
+                'slug'      => 'manual-search',
+                'title'     => 'Manual search',
+                'content'   => $pages_contents['manual_search'],
                 'post_type' => 'l7p_page',
             ),
         );
@@ -1152,6 +1159,23 @@ CONTENT
       [MANUAL_CONTENT]
     </div>
   </div>
+</div>
+
+<div>
+  <h3><span>`Support</span> Center`</h3>
+  <p>`Access to the VoIP Studio Support Center is only granted to our customers.<br>
+    Please login into Customer Portal to open a new Support Ticket.`</p>
+  <a href="/login">`Login`</a>
+</div>
+
+CONTENT
+            , 'manual_search'        => <<<CONTENT
+<div>
+  <h1>[MANUAL_NAME]<span><span>[MANUAL_CHAPTER]</span></span></h1>
+</div>
+
+<div>		
+  
 </div>
 
 <div>

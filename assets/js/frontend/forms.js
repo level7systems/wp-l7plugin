@@ -1156,6 +1156,35 @@ function isEuCountry(country_code)
             });
             
         });
+        if($.ui.autocomplete){
+            $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+                item.label = item.label.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + $.ui.autocomplete.escapeRegex(this.term) + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<strong>$1</strong>");
+                return $("<li></li>")
+                        .data("item.autocomplete", item)
+                        .append("<a>" + item.label + "</a>")
+                        .appendTo(ul);
+            }; 
+        }
+        if($('.l7p-manual-search-form').length){
+            $( ".l7p-manual-search-form input" ).autocomplete({
+                    select: function( event, ui ) {
+                        window.location = ui.item.key;
+                    },
+                    source: function(data, response){
+                        $.ajax({
+				type: 'POST',
+				dataType: 'json',
+				url: ajax_options.admin_ajax_url,
+				data: {'action': 'search_autocomplete', 'term': data.term},
+				success: function(data) {
+                                    response(data);
+				}
+			});
+                    },
+            });
+        }
+        
+        
     });
 
 }(window.jQuery, window, document));

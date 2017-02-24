@@ -19,6 +19,8 @@ class L7P_Ajax
     {
         add_action('wp_ajax_nopriv_login_form', array($this, 'login_form'));
         add_action('wp_ajax_nopriv_register_form', array($this, 'register_form'));
+        add_action('wp_ajax_nopriv_search_autocomplete', array($this, 'search_autocomplete'));
+        add_action('wp_ajax_search_autocomplete', array($this, 'search_autocomplete'));
     }
     
     public function login_form()
@@ -36,6 +38,13 @@ class L7P_Ajax
 
         echo $form;
         
+        wp_die();
+    }
+    
+    public function search_autocomplete()
+    {
+        $term =  sanitize_text_field($_POST['term']); 
+        echo json_encode(l7p_get_chapters_keywords($term));
         wp_die();
     }
 }

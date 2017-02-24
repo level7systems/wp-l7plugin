@@ -388,6 +388,53 @@ function l7p_block_javascript_package_type_select()
     return L7P_Content::parse_content($content);
 }
 
+function l7p_block_manual_search_form()
+{
+    ob_start();
+
+    ?>
+    <form action="[FORM_SEARCH_ACTION]" class="l7p l7p-manual-search-form" method="GET">
+        <div >
+            <?php echo L7P_Form::text_input(array('class' => 'l7p-search-input', 'name' => 'search', 'placeholder' => 'search...', 'required' => true));
+            ?><button class="l7p-search-button"><span class="fa fa-search fa-6"></span></button>
+        </div>
+    </form>
+    <?php
+    $content = ob_get_clean();
+
+    return L7P_Content::parse_content($content);
+}
+
+function l7p_block_manual_search_results()
+{
+    $search = sanitize_text_field(get_query_var('search'));
+
+    $results = l7p_search_manual($search);
+
+    ob_start();
+    
+    ?>
+    
+    <?php if ($results): ?>
+    <div class="resultsfor">Search results for: <strong><?php echo $search; ?></strong></div>
+    <div  class="results">
+        <?php foreach($results as $result): ?>
+        <div class="result">
+            <h3><a href="<?php echo $result['url']; ?>" class="title" title=""><?php echo $result['title'] ?></a></h3>
+            <?php echo $result['excerpt']; ?>
+            <br />
+            <a href="<?php echo $result['url']; ?>" class="btn read-more" title="">Read more</a>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php else : ?>
+        <h3>No results found!</h3>
+    <?php endif; ?>
+
+    <?php
+    $content = ob_get_clean();
+    return L7P_Content::parse_content($content);
+}
 // deprecated
 function l7p_block_javascript_package_type_select_class()
 {
@@ -410,3 +457,4 @@ function l7p_block_package_country_select()
 
     return L7P_Content::parse_content($content);
 }
+

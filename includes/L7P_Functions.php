@@ -127,9 +127,9 @@ function l7p_get_permalinks($culture = null)
         'rates' => 'voip-call-rates',
         'telephone_numbers' => 'telephone-numbers',
         'manual' => 'manual',
-        'terms' => 'terms-and-conditions'
+        'terms' => 'terms-and-conditions',
+        'manual_search' => 'manual-search'
     );
-
     // if web product has shop enabled
     if (l7p_get_web_product_settings('has_shop')) {
         $defaults['hardware'] = 'hardware';
@@ -141,7 +141,6 @@ function l7p_get_permalinks($culture = null)
             $result[$culture][$name] = isset($permalinks[$culture . '_' . $name]) ? $permalinks[$culture . '_' . $name] : $defaults[$name];
         }
     }
-
     return $result;
 }
 
@@ -683,13 +682,172 @@ function l7p_get_chapter($attr)
     return isset($chapters[$manual_type][$name][$attr]) ? $chapters[$manual_type][$name][$attr] : '';
 }
 
+function l7p_get_chapters_keywords($term = '')
+{
+    $keywords = array();
+
+    foreach (l7p_search_manual($term) as $result) {
+        $keywords[] = array("value" => $result['title'], "key" => $result['url']);
+
+        if (count($keywords) > 5) {
+            break;
+        }
+    }
+
+    return $keywords;
+}
+
+function l7p_search_manual($search)
+{
+    $ingoreWords = array("how", "can");
+
+    $result = array();
+
+    if (!$search = trim(preg_replace("/[^a-z,\s]/i", "", $search))) {
+        return $result;
+    }
+
+    $search = preg_replace("/\s{2,}/", " ", $search);
+
+    $keywords = array();
+
+    foreach (explode(" ", $search) as $word) {
+        
+        $word = strtolower($word);
+
+        if (strlen($word) < 3 || in_array($word, $ingoreWords)) {
+            continue;
+        }
+
+        // remove plural and continous form
+        if (!in_array($word, array("ring"))) {
+            $word = preg_replace("/ing$|s$/", "", $word);
+        }
+
+        if (count($keywords) > 5) {
+            break;
+        }
+
+        $keywords[] = $word;
+    }
+
+    $searchPhrase = implode(" ", $keywords);
+
+    $chapters = l7p_get_chapters();
+
+    unset($chapters['Affiliate']);
+    unset($chapters['REST']);
+
+    $removeChars = array('"', ".", ",", "\n", "\r");
+
+    $matchHeader = array();
+    $matchContent = array();
+
+    foreach ($chapters as $manualName => $manualChapters) {
+        
+        unset($manualChapters['index']);
+
+        foreach ($manualChapters as $chapter) {
+
+            $chapterParts = array();
+
+            $url = $manualName."_".str_replace(" ", "-", $chapter['chapter'])."/";
+
+            $chapterParts[$url] = '';
+
+            $h2 = false;
+
+            foreach (explode("\n", $chapter['content']) as $line) {
+
+                $m = array();
+
+                if (preg_match('/<h2>(.*)<\/h2>/i', $line, $m)) {
+                    $url = $manualName."_".str_replace(" ", "-", $chapter['chapter'])."/#" . str_replace(" ", "-", $m[1]);
+                    continue;
+                }
+
+                $chapterParts[$url].= $line;
+            }
+
+            foreach ($chapterParts as $headerUrl => $content) {
+                $header = preg_replace("/^$manualName/", "", preg_replace("/[^a-z]/i", " ", $headerUrl));
+                
+                $content = str_replace("\n", " ",strip_tags($content));
+
+                if (l7p_phrase_match($searchPhrase, $header, true)) {
+                    $matchHeader[$headerUrl] = l7p_get_search_excerpt($content);
+                    continue;
+                }
+
+                if (l7p_phrase_match($searchPhrase, str_replace($removeChars, "", $content))) {
+                    $matchContent[$headerUrl] = l7p_get_search_excerpt($content);
+                }
+            }
+        }
+    }
+
+    foreach (array_merge($matchHeader, $matchContent) as $headerUrl => $excerpt) {
+        $title = str_replace(array("#", "-"), " ", trim($headerUrl, "/"));
+        $title = str_replace(array("_", "/"), " - ", $title);
+        $title = preg_replace("/\s{2,}/", " ",str_replace("/", " - ", $title));
+
+        $result[] = array(
+            "url"       => "/manual/" . $headerUrl,
+            "title"     => $title,
+            "excerpt"   => $excerpt,
+        );
+    }
+
+    return $result;
+}
+
+function l7p_get_search_excerpt($content)
+{
+    $excerptLen = 350;
+
+    return (strlen($content) > $excerptLen) ? substr($content, 0, $excerptLen) . "..." : substr($content, 0, $excerptLen);
+}
+
+function l7p_phrase_match($searchPhrase, $content, $splitWords = false)
+{
+    $content = strtolower($content);
+
+    if (preg_match("/$searchPhrase/", $content)) {
+        return true;
+    }
+
+    if (!$splitWords) {
+        return false;
+    }
+
+    $contentWords = explode(" ", $content);
+
+    $matches = array();
+
+    $keywords = explode(" ", $searchPhrase);
+
+    foreach ($keywords as $keyword) {
+        foreach ($contentWords as $word) {
+            if (strpos($word, $keyword) !== false && !in_array($keyword, $matches)) {
+                $matches[] = $keyword;
+
+                if (count($keywords) == count($matches)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 function l7p_get_routes()
 {
     $login_page = get_post(l7p_get_option('login_page_id'));
 
     return array(
         'login' => sprintf('/%s/', $login_page->post_name),
-        'country_rates' => '/:permalink_rates/:country/:currency/',
+        'country_rates'=> '/:permalink_rates/:country/:currency/',
         'numbers' => '/:permalink_telephone_numbers/:country/:currency/',
         'numbers_state' => '/:permalink_telephone_numbers/:country/:state/:currency/',
         'number_buy' => '/:permalink_telephone_numbers/:country/:city/buy/:currency/',
@@ -699,7 +857,8 @@ function l7p_get_routes()
         'phone_buy' => '/:permalink_hardware/:group/:model/buy/:currency/',
         'manual' => '/:permalink_manual/:chapter/',
         'terms' => '/:permalink_terms/',
-        'download' => '/download-for-:os/'
+        'download' => '/download-for-:os/',
+        'manual_search' => '/:permalink_manual_search/',
     );
 }
 
@@ -727,12 +886,10 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
         $param = l7p_urlize($param);
         $replace_pairs[':' . $key] = $param;
     }
-
     // add currency id not set
     if (!isset($replace_pairs[':currency'])) {
         $replace_pairs[':currency'] = strtolower(l7p_get_currency());
     }
-
     $url = strtr($routes[$route_name], $replace_pairs);
 
     // WPML integration
@@ -746,7 +903,6 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
         $base_url = network_site_url();
         $url = $base_url . $url;
     }
-
     return $url;
 }
 
@@ -1010,6 +1166,11 @@ function l7p_form_subscription_action()
     return sprintf("https://%s/%s/en/profile", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
+function l7p_form_search_action()
+{
+    return '';
+}
+
 function l7p_image_tag($source, array $options = array())
 {
     if (!$source) {
@@ -1055,6 +1216,7 @@ function l7p_image_path($source, $absolute = true)
 
 function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
 {
+    var_dump($name, $value, $expire);
     setcookie($name, $value, $expire, $path, $domain, $secure);
 }
 
