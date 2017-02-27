@@ -699,7 +699,9 @@ function l7p_get_chapters_keywords($term = '')
 
 function l7p_search_manual($search)
 {
-    $ingoreWords = array("how", "can");
+    $ingoreWords = array("how", "can", "new");
+    $symonims = array("extension" => "user");
+    $replace = array( array("set up", "setup"), array("add", "add"));
 
     $result = array();
 
@@ -708,6 +710,7 @@ function l7p_search_manual($search)
     }
 
     $search = preg_replace("/\s{2,}/", " ", $search);
+    $search = str_replace($replace[0], $replace[1], $search);
 
     $keywords = array();
 
@@ -720,7 +723,7 @@ function l7p_search_manual($search)
         }
 
         // remove plural and continous form
-        if (!in_array($word, array("ring"))) {
+        if (!in_array($word, array("ring", "lightning"))) {
             $word = preg_replace("/ing$|s$/", "", $word);
         }
 
@@ -728,10 +731,12 @@ function l7p_search_manual($search)
             break;
         }
 
-        $keywords[] = $word;
+        if (isset($symonims[$word]) && !in_array($symonims[$word], $keywords)) {
+            $keywords[] = $symonims[$word];
+        } else if (!in_array($word, $keywords)) {
+            $keywords[] = $word;
+        }
     }
-
-    $searchPhrase = implode(" ", $keywords);
 
     $chapters = l7p_get_chapters();
 
@@ -774,12 +779,12 @@ function l7p_search_manual($search)
                 
                 $content = str_replace("\n", " ",strip_tags($content));
 
-                if (l7p_phrase_match($searchPhrase, $header, true)) {
+                if (l7p_phrase_match_header($keywords, $header, true)) {
                     $matchHeader[$headerUrl] = l7p_get_search_excerpt($content);
                     continue;
                 }
 
-                if (l7p_phrase_match($searchPhrase, str_replace($removeChars, "", $content))) {
+                if (l7p_phrase_match_content($keywords, $header, str_replace($removeChars, "", $content))) {
                     $matchContent[$headerUrl] = l7p_get_search_excerpt($content);
                 }
             }
@@ -808,26 +813,47 @@ function l7p_get_search_excerpt($content)
     return (strlen($content) > $excerptLen) ? substr($content, 0, $excerptLen) . "..." : substr($content, 0, $excerptLen);
 }
 
-function l7p_phrase_match($searchPhrase, $content, $splitWords = false)
+function l7p_phrase_match_content($keywords, $header, $content)
 {
-    $content = strtolower($content);
+    $ignoreWords = array("add", "edit", "configure", "integrate");
 
-    if (preg_match("/$searchPhrase/", $content)) {
-        return true;
+    foreach ($keywords as $key => $word) {
+        if (in_array($word, $ignoreWords)) {
+            unset($keywords[$key]);
+        }
     }
 
-    if (!$splitWords) {
+    if (!$keywords) {
         return false;
     }
 
-    $contentWords = explode(" ", $content);
+    $content = strtolower($content);
+
+    if (strpos($content, implode(" ", $keywords)) !== false) {
+        return true;
+    }
+
+    $headerWords = explode(" ", strtolower($header));
+
+    foreach ($keywords as $keyword) {
+        if (in_array($keyword, $headerWords)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function l7p_phrase_match_header($keywords, $header)
+{
+    $header = strtolower($header);
+
+    $headerWords = explode(" ", $header);
 
     $matches = array();
 
-    $keywords = explode(" ", $searchPhrase);
-
     foreach ($keywords as $keyword) {
-        foreach ($contentWords as $word) {
+        foreach ($headerWords as $word) {
             if (strpos($word, $keyword) !== false && !in_array($keyword, $matches)) {
                 $matches[] = $keyword;
 
