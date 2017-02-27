@@ -784,7 +784,7 @@ function l7p_search_manual($search)
                     continue;
                 }
 
-                if (l7p_phrase_match_content($keywords, $header, str_replace($removeChars, "", $content))) {
+                if (count($matchContent) < 10 && l7p_phrase_match_content($keywords, $header, str_replace($removeChars, "", $content))) {
                     $matchContent[$headerUrl] = l7p_get_search_excerpt($content);
                 }
             }
