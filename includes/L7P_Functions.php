@@ -700,7 +700,7 @@ function l7p_get_chapters_keywords($term = '')
 function l7p_search_manual($search)
 {
     $ingoreWords = array("how", "can", "new");
-    $symonims = array("extension" => "user");
+    $synonyms = array("extension" => "user");
     $replace = array( array("set up", "setup"), array("add", "add"));
 
     $result = array();
@@ -731,8 +731,8 @@ function l7p_search_manual($search)
             break;
         }
 
-        if (isset($symonims[$word]) && !in_array($symonims[$word], $keywords)) {
-            $keywords[] = $symonims[$word];
+        if (isset($synonyms[$word]) && !in_array($synonyms[$word], $keywords)) {
+            $keywords[] = $synonyms[$word];
         } else if (!in_array($word, $keywords)) {
             $keywords[] = $word;
         }
