@@ -1034,7 +1034,8 @@ function l7p_register_ppc_click($token)
         'id' => $token,
         'referer' => $_SERVER['HTTP_REFERER'],
         'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-        'ip' => l7p_get_remote_addr()
+        'ip' => l7p_get_remote_addr(),
+        'lp' => (isset($_GET['lp'])) ? $_GET['lp'] : '',
     );
 
     $url = l7p_api_url() . '?' . http_build_query($params);
