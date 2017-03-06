@@ -354,10 +354,16 @@ class L7P_Query
 
             if (isset($query->query_vars['token'])) {
 
-                $response = l7p_register_ppc_click($query->query_vars['token']);
+                $landing_page = '';
+
+                if (isset($_SERVER['HTTP_HOST']) && isset($_GET['lp']) && $_GET['lp']) {
+                    $landing_page = sprintf("https://%s%s", $_SERVER['HTTP_HOST'], $_GET['lp']);
+                }
+
+                $response = l7p_register_ppc_click($query->query_vars['token'], $landing_page);
                 if ($response['success']) {
                     l7p_setcookie('xl7ppc', $response['ppc_click_id']);
-                    $redirect_url = (isset($_SERVER['HTTP_HOST']) && isset($_GET['lp']) && $_GET['lp']) ? sprintf("https://%s%s", $_SERVER['HTTP_HOST'], $_GET['lp']) : $response['redirect'];
+                    $redirect_url = ($landing_page) ? $landing_page : $response['redirect'];
                     if (isset($_GET['gclid'])) {
                         $redirect_url .= '?gclid=' . $_GET['gclid'];
                     }

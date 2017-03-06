@@ -1027,7 +1027,7 @@ function l7p_verify_subscription_token($token)
     return l7p_send_curl($url);
 }
 
-function l7p_register_ppc_click($token)
+function l7p_register_ppc_click($token, $landing_page = '')
 {
     $params = array(
         'method' => 'ppc',
@@ -1035,7 +1035,7 @@ function l7p_register_ppc_click($token)
         'referer' => $_SERVER['HTTP_REFERER'],
         'user_agent' => $_SERVER['HTTP_USER_AGENT'],
         'ip' => l7p_get_remote_addr(),
-        'lp' => (isset($_GET['lp'])) ? $_GET['lp'] : '',
+        'lp' => $landing_page,
     );
 
     $url = l7p_api_url() . '?' . http_build_query($params);
