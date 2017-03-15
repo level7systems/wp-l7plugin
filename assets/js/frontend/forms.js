@@ -191,7 +191,7 @@ function isEuCountry(country_code)
             if ($form.find('input[name="extini"]').val()) {
                 var match = $form.find('input[name="extini"]').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
                 if (match[1]) {
-                    url_suffix = '#support,support:' + match[1];
+                    url_suffix = '#dashboard,support:' + match[1];
                 }
             }
             
