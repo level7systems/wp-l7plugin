@@ -1075,6 +1075,9 @@ function isEuCountry(country_code)
                     // set form action to login
                     if ($form.data('appKey') == 'voipstudio') {
                         var login_url = $('form.l7p-login-form').attr('action');
+                        if ($('form.l7p-login-form').attr('data-api-url')) {
+                            login_url = $('form.l7p-login-form').attr('data-api-url');
+                        }
                         $form.attr('action', login_url);
                         // login to new web product
                         loginLegacy($form);
