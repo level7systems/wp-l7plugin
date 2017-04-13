@@ -25,6 +25,23 @@ function getCookie(key, defaults) {
     return defaults !== undefined ? defaults : undefined;
 }
 
+function isREST(appKey) {
+    var resetKeys = [
+        "gotrunk",
+        "voipstudio"
+    ];
+
+    return resetKeys.indexOf(appKey) > -1;
+}
+
+function isBusinessVoIP(appKey) {
+    var businessVoIPKeys = [
+        "voipstudio"
+    ];
+
+    return businessVoIPKeys.indexOf(appKey) > -1;
+}
+
 function setCookie(name, value, options) {
 
     options = (options === undefined) ? {} : options;
@@ -168,7 +185,7 @@ function isEuCountry(country_code)
 
         var $form = this;
         
-        if ($form.data('appKey') == 'gotrunk') {
+        if (isREST($form.data('appKey'))) {
             
             if (!response) {
                 jQuery(document).trigger("l7p:form:completed");
@@ -445,8 +462,7 @@ function isEuCountry(country_code)
             
             $('form.l7p-rest-register-form').each(function(index, form) {
                 
-                if ($(form).data('appKey') == 'voipstudio') {
-                    // voipstudio
+                if (isBusinessVoIP($(form).data('appKey'))) {
                     validateRequiredFields($(form), [
                         'firstname',
                         'lastname',
@@ -456,7 +472,6 @@ function isEuCountry(country_code)
                         'tc'
                     ]);
                 } else {
-                    // gotrunk
                     validateRequiredFields($(form), [
                         'firstname',
                         'lastname',
@@ -639,7 +654,7 @@ function isEuCountry(country_code)
 
                     jQuery(document).trigger("l7p:registration:completed", ['customer', $form.attr('data-l7p-event')]);
                     
-                    if ($form.data('appKey') == 'gotrunk') {
+                    if (isREST($form.data('appKey'))) {
                         
                         setCookie($form.data('appKey') + '.register', { email: data.email, first_name: data.first_name, last_name: data.last_name });
                         // redirect user to their application url
