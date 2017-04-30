@@ -111,7 +111,7 @@ function isEuCountry(country_code)
     }
 
     function getGeoIp() {
-        
+        var l7_geoip;
         if (getCookie('l7_geoip', false)) {
             l7_geoip = getCookie('l7_geoip');
             jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
@@ -120,14 +120,17 @@ function isEuCountry(country_code)
             $.getJSON('https://ssl7.net/js/geo-ip.js?_tc' + date.getTime(), function(response) {
                 l7_geoip = response;
                 // cookie expires in 1 day
-                setCookie('l7_geoip', l7_geoip, { expires: 1 });
-                jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+
             }).fail(function() {
-                // display global errors
-                $('#l7p-global-errors, .l7p-global-errors').html("Your browser does not support C").show();
-                
-                jQuery(document).trigger("l7p:geoip:error");
+                l7_geoip = {
+                    country_code: "US",
+                    country_name: "United States",
+                    ip: "96.126.107.122"
+                };
             });
+
+            setCookie('l7_geoip', l7_geoip, { expires: 1 });
+            jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
         }
     }
     
