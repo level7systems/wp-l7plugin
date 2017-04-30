@@ -127,28 +127,39 @@ function isEuCountry(country_code)
         }
     }
 
+    function setDefaultGeoIP() {
+        var l7_geoip = {
+            country_code: "US",
+            country_name: "United States",
+            ip: "96.126.107.122"
+        };
+        setCookie('l7_geoip', l7_geoip, { expires: 1 });
+        jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+    }
+
     function getGeoIp() {
-        
+        var l7_geoip;
         if (getCookie('l7_geoip', false)) {
             l7_geoip = getCookie('l7_geoip');
             jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
         } else {
             var date = new Date();
             $.getJSON('https://ssl7.net/js/geo-ip.js?_tc' + date.getTime(), function(response) {
-                l7_geoip = response;
-                // cookie expires in 1 day
-                setCookie('l7_geoip', l7_geoip, { expires: 1 });
-                jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+                if (response.country_code && response.country_name && response.ip) {
+                    l7_geoip = response;
+                    setCookie('l7_geoip', l7_geoip, { expires: 1 });
+                    jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+                } else {
+                    setDefaultGeoIP();
+                }
+    
             }).fail(function() {
-                // display global errors
-                $('#l7p-global-errors, .l7p-global-errors').html("Your browser does not support C").show();
-                
-                jQuery(document).trigger("l7p:geoip:error");
+                setDefaultGeoIP();
             });
         }
     }
     
-    $(document).on("l7p:geoip:loaded", function(event, l7p_geoip) {
+    $(document).on("l7p:geoip:loaded", function(event, l7_geoip) {
         setPackageTypeAndCountry(l7_geoip);
     });
     
