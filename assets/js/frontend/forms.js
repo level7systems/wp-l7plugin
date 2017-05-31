@@ -27,7 +27,11 @@ function getCookie(key, defaults) {
 
 function restApiUrl(endpoint) {
     
-    var apiUrl = jQuery('[data-api-url]').first().data('apiUrl');
+    if (jQuery('form.l7p-rest-login-form').length > 0) {
+        var apiUrl = jQuery('form.l7p-rest-login-form').first().data('apiUrl');
+    } else {
+        var apiUrl = jQuery('[data-api-url]').first().data('apiUrl');
+    }
     
     return apiUrl + endpoint;
 }
