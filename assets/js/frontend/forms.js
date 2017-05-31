@@ -27,7 +27,7 @@ function getCookie(key, defaults) {
 
 function restApiUrl(endpoint) {
     
-    var apiUrl = jQuery('[data-rest-api-url]').first().data('restApiUrl');
+    var apiUrl = jQuery('[data-api-url]').first().data('apiUrl');
     
     return apiUrl + endpoint;
 }
@@ -52,6 +52,24 @@ function isBusinessVoIP(appKey) {
     ];
 
     return businessVoIPKeys.indexOf(appKey) > -1;
+}
+
+function authorizeRestApi($form, userId, userToken) {
+    
+    setCookie($form.data('appKey') + '.auth', {
+        user_id: userId, 
+        user_token: userToken 
+    });
+
+    var url_suffix = '';
+    if ($form.find('input[name="extini"]').val()) {
+        var match = $form.find('input[name="extini"]').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
+        if (match[1]) {
+            url_suffix = '#dashboard,support:' + match[1];
+        }
+    }
+
+    window.location.href = '/app/' + url_suffix;
 }
 
 function setCookie(name, value, options) {
@@ -219,37 +237,27 @@ function isEuCountry(country_code)
             $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
             return false;
         }
+        
+        var userId = response.user_id,
+            userToken = response.user_token;
 
+        // GoTrunk does not support legacy login
+        if (!isBusinessVoIP($form.data('appKey'))) {
+            authorizeRestApi($form, userId, userToken);
+            return ;
+        }
+        
         $.ajax({
             dataType: "json",
             url: restApiUrl('/me'),
             beforeSend: function(xhr) {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa(response.user_id + ':' + response.user_token));
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(userId + ':' + userToken));
             }
         }).done(function(response) {
                 
-            var customerId = response.data.customer_id,
-              // TODO: this is need to be changed
-              lastLegacyCustomerId = 2;
-
-            // login to VoIPstudio 2.0
-            if (customerId > lastLegacyCustomerId) {
-
-                setCookie($form.data('appKey') + '.auth', {
-                    user_id: response.user_id, 
-                    user_token: response.user_token 
-                });
-
-                var url_suffix = '';
-                if ($form.find('input[name="extini"]').val()) {
-                    var match = $form.find('input[name="extini"]').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
-                    if (match[1]) {
-                        url_suffix = '#dashboard,support:' + match[1];
-                    }
-                }
-
-                window.location.href = '/app/' + url_suffix;
-
+            // if legacy login is supported for this customer
+            if (!response.data.legacy_login) {
+                authorizeRestApi($form, userId, userToken);
                 return ;
             }
 
@@ -962,7 +970,7 @@ function isEuCountry(country_code)
                     }
                     
                     jQuery(document).trigger("l7p:password:changed");
-
+                    
                     if (res.redirect) {
                         // redirect user to their application url
                         window.location.href = res.redirect;
@@ -971,29 +979,26 @@ function isEuCountry(country_code)
                     if (res.email) {
                         
                         $.ajax({
-                            url: $form.data('restApiLoginUrl'),
+                            url: restApiUrl('/login'),
                             type: 'POST',
                             dataType: 'json',
                             data: JSON.stringify({
-                                email:res.email,
+                                email: res.email,
                                 password: $form.find('#password1').val()
                             }),
                             contentType: 'application/json; charset=utf-8',
                             success: function (res) {
 
-                                if (!res.user_id || !res.user_token) {
+                                var userId = res.user_id,
+                                    userToken = res.user_token;
+                            
+                                if (!userId || !userToken) {
                                     jQuery(document).trigger("l7p:form:completed");
                                     $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
                                     return false;
                                 }
-
-                                setCookie($form.data('appKey') + '.auth', {
-                                    user_id: res.user_id, 
-                                    user_token: res.user_token 
-                                });
-
-                                // redirect user to their application url
-                                window.location.href = '/app/';
+                                
+                                authorizeRestApi($form, userId, userToken);
                             }, 
                             error: function(jqXhr, status) {
                                 jQuery(document).trigger("l7p:form:completed");
