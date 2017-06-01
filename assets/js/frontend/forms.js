@@ -241,33 +241,15 @@ function isEuCountry(country_code)
             $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
             return false;
         }
-        
-        var userId = response.user_id,
-            userToken = response.user_token;
 
-        // GoTrunk does not support legacy login
-        if (!isBusinessVoIP($form.data('appKey'))) {
-            authorizeRestApi($form, userId, userToken);
+        // GoTrunk also does not support legacy login
+        if (!response.legacy_login || !isBusinessVoIP($form.data('appKey'))) {
+            authorizeRestApi($form, response.user_id, response.user_token);
             return ;
         }
-        
-        $.ajax({
-            dataType: "json",
-            url: restApiUrl('/me'),
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa(userId + ':' + userToken));
-            }
-        }).done(function(response) {
-                
-            // if legacy login is supported for this customer
-            if (!response.data.legacy_login) {
-                authorizeRestApi($form, userId, userToken);
-                return ;
-            }
 
-            // legacy login
-            legacyLogin($form);
-        });
+        // legacy login
+        legacyLogin($form);
     };
             
     var onLoginError = function(jqXhr, status) {
