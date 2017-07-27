@@ -683,8 +683,7 @@ function isEuCountry(country_code)
                     if (isREST($form.data('appKey'))) {
                         
                         setCookie($form.data('appKey') + '.register', { email: data.email, first_name: data.first_name, last_name: data.last_name });
-                        // redirect user to their application url
-                        window.location.href = '/app/';
+                        
                     } else {
                         jQuery(document).trigger("l7p:form:completed");
 
