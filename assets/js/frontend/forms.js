@@ -77,7 +77,7 @@ function authorizeRestApi($form, userId, userToken, legacy = false) {
         // legacy app in DEV env
         var legacyUrl = legacyApiUrl();
         // for dev env
-        if (legacyUrl.indexOf('voipstudio.dev') !== false) {
+        if (legacyUrl.indexOf('voipstudio.dev') > -1) {
             var url = legacyUrl.replace('/api', '/u/app');
         } else {
             var url = '/v1app/user/';
