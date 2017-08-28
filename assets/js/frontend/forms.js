@@ -58,7 +58,7 @@ function isBusinessVoIP(appKey) {
     return businessVoIPKeys.indexOf(appKey) > -1;
 }
 
-function authorizeRestApi($form, userId, userToken) {
+function authorizeRestApi($form, userId, userToken, legacy = false) {
     
     setCookie($form.data('appKey') + '.auth', {
         user_id: userId, 
@@ -73,6 +73,20 @@ function authorizeRestApi($form, userId, userToken) {
         }
     }
 
+    if (legacy) {
+        // legacy app in DEV env
+        var legacyUrl = legacyApiUrl();
+        // for dev env
+        if (legacyUrl.indexOf('voipstudio.dev') !== false) {
+            var url = legacyUrl.replace('/api', '/u/app');
+        } else {
+            var url = '/v1app/user/';
+        }
+        
+        window.location.href = url + url_suffix;
+        return ;
+    }
+    
     window.location.href = '/app/' + url_suffix;
 }
 
@@ -242,14 +256,7 @@ function isEuCountry(country_code)
             return false;
         }
 
-        // GoTrunk also does not support legacy login
-        if (!response.legacy_login || !isBusinessVoIP($form.data('appKey'))) {
-            authorizeRestApi($form, response.user_id, response.user_token);
-            return ;
-        }
-
-        // legacy login
-        legacyLogin($form);
+        authorizeRestApi($form, response.user_id, response.user_token, response.legacy_login);
     };
             
     var onLoginError = function(jqXhr, status) {
@@ -302,84 +309,6 @@ function isEuCountry(country_code)
         jQuery(document).trigger("l7p:login:error");
     };
     
-    function legacyLogin($form) {
-        
-        clearErrors($form);
-        $.jsonp({
-            url: legacyApiUrl(),
-            callbackParameter: "callback",
-            type: 'POST',
-            data: {
-                method: 'login',
-                username: $form.find('input[name="username"]').val(),
-                password: $form.find('input[name="password"]').val(),
-                remember_me: $form.find('#remember').is(':checked')
-            },
-            beforeSend: function() {
-                jQuery(document).trigger("l7p:form:processing");
-            },
-            success:  function (response) {
-             
-                if (!response.success) {
-
-                    jQuery(document).trigger("l7p:form:completed");
-
-                    if (response.errors.username) {
-                        $form.find('input[name="username"]').after('<p class="small error-username">' + response.errors.username + '</p>');
-                    }
-
-                    if (response.errors.password) {
-                        $form.find('input[name="password"]').after('<p class="small error-password">' + response.errors.password + '</p>');
-                    }
-
-                    if (response.errors.email) {
-                        if (response.errors.email.indexOf("unrecognised user name") != -1) {
-
-                            var recover_url = '/recover-password';
-                            if (document.location.pathname.startsWith('/en')) {
-                                recover_url = '/en' + recover_url;
-                            }
-
-                            $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
-                        } else if (response.errors.email.indexOf("not confirmed") != -1) {
-
-                            var confirmation_url = '/resend-confirmation-email';
-                            if (document.location.pathname.startsWith('/en')) {
-                                confirmation_url = '/en' + confirmation_url;
-                            }
-
-                            $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
-                        } else {
-                            $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email).show();
-                        }
-                    }
-
-                    if (response.errors.web_product_activation) {
-                        jQuery(document).trigger("l7p:web_product:activation", [ response.errors.web_product_activation ]);
-                    }
-
-                    return false;
-                }
-
-                if (response.redirect) {
-                    // redirect user to their application url
-                    window.location.href = response.redirect + '?message=' + response.info;
-
-                    return false;
-                }
-
-                var redirection = response.info;
-                if ($form.find('input[name="extini"]').val()) {
-                    redirection += '?extini=' + $form.find('input[name="extini"]').val();
-                }
-
-                // redirect user to their application url
-                window.location.href = redirection;
-            }, 
-            error: onLoginError.bind($form)
-        });
-    }
-            
     function login($form) {
         
         clearErrors($form);
@@ -457,7 +386,7 @@ function isEuCountry(country_code)
 
             e.preventDefault();
             
-            legacyLogin($(this));
+            login($(this));
         });
         
         // REST login form
@@ -982,8 +911,7 @@ function isEuCountry(country_code)
                                     $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
                                     return false;
                                 }
-                                
-                                authorizeRestApi($form, userId, userToken);
+                                authorizeRestApi($form, userId, userToken, res.legacy_login);
                             }, 
                             error: function(jqXhr, status) {
                                 jQuery(document).trigger("l7p:form:completed");
@@ -1110,19 +1038,9 @@ function isEuCountry(country_code)
                 },
                 success: function (response) {
                     // set form action to login
-                    if ($form.data('appKey') == 'voipstudio') {
-                        var login_url = $('form.l7p-login-form').attr('action');
-                        if ($('form.l7p-login-form').attr('data-api-url')) {
-                            login_url = $('form.l7p-login-form').attr('data-api-url');
-                        }
-                        $form.attr('action', login_url);
-                        // login to new web product
-                        legacyLogin($form);
-                    } else {
-                        $form.attr('action', restApiUrl('/login'));
-                        // login to new web product
-                        login($form);
-                    }
+                    $form.attr('action', restApiUrl('/login'));
+                    // login to new web product
+                    login($form);
                 }, 
                 error: function(jqXhr, status) {
                     jQuery(document).trigger("l7p:form:completed");
