@@ -242,14 +242,14 @@ function isEuCountry(country_code)
             return false;
         }
 
-        // GoTrunk also does not support legacy login
-        if (!response.legacy_login || !isBusinessVoIP($form.data('appKey'))) {
-            authorizeRestApi($form, response.user_id, response.user_token);
+        if (response.legacy_login) {
+            // legacy login
+            legacyLogin($form);
             return ;
         }
 
-        // legacy login
-        legacyLogin($form);
+        // other app login
+        authorizeRestApi($form, response.user_id, response.user_token);
     };
             
     var onLoginError = function(jqXhr, status) {
