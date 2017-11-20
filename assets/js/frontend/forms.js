@@ -777,41 +777,43 @@ function isEuCountry(country_code)
         }
 
         $(document).on('submit', 'form#l7p-password-recover-form, form.l7p-password-recover-form', function (e) {
-            var $form = $(this);
+            var $form = $(this),
+                email = $form.find('input[name="email"]').val();
+                
             clearErrors($form);
             
-            var url = $form.attr('action');
-            if($form.attr('data-api-url')){
-                url = $form.attr('data-api-url');
-            }
-            
             e.preventDefault();
-            $.jsonp({
-                url: url,
-                callbackParameter: "callback",
+            $.ajax({
+                url: restApiUrl('/password'),
                 type: 'POST',
-                data: {
-                    method: 'recover',
-                    email: $form.find('input[name="email"]').val()
-                },
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: email
+                }),
+                contentType: 'application/json; charset=utf-8',
                 beforeSend: function(){
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
-
-                    if (res.status === 403) {
-
-                        if (res.errors.email)
-                            $form.find('input[name="email"]').after('<p class="small error-email">' + res.errors.email + '</p>');
-
-                        return false;
-                    }
+                    
+                    var expire = new Date(),
+                        time = expire.getTime() + 1000*60*60*1;
+                    expire.setTime(time);
+                    setCookie('reset_email', email, { expires: expire });
 
                     $form.html('<p class="big center text-center">Your password has been changed. An email has been sent to you with your new login details.</p>');
                     
                     jQuery(document).trigger("l7p:password:requested");
                 }, 
                 error: function(jqXhr, status) {
+                    
+                    if (jqXhr.status == 400) {
+
+                        var res = jqXhr.responseJSON;
+                        $form.find('input[name="email"]').after('<p class="small error-email">' + res.message + '</p>');
+
+                        return false;
+                    }
                     
                     if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
@@ -836,88 +838,91 @@ function isEuCountry(country_code)
 
         $(document).on('submit', 'form#l7p-new-password-form, form.l7p-new-password-form', function (e) {
 
-            var $form = $(this);
+            var $form = $(this),
+                password = $form.find('#password1').val(),
+                confirm_password = $form.find('input[name="password2"]').val();
+            
+            if (password !== confirm_password) {
+                $('#l7p-global-errors, .l7p-global-errors').html('Both passwords must be identical.').show();
+                return false;
+            }
             
             clearErrors($form);
-            var url = $form.attr('action');
-            if($form.attr('data-api-url')){
-                url = $form.attr('data-api-url');
-            }
+            
             e.preventDefault();
-            $.jsonp({
-                url: url,
-                callbackParameter: "callback",
+            $.ajax({
+                url: restApiUrl('/reset'),
                 type: 'POST',
-                data: {
-                    method: 'onetimelogin',
-                    reset_token: getCookie('reset_token', ''),
-                    password1: $form.find('#password1').val(),
-                    password2: $form.find('input[name="password2"]').val()
-                },
+                dataType: 'json',
+                data: JSON.stringify({
+                    token: getCookie('reset_token', ''),
+                    password: password
+                }),
+                contentType: 'application/json; charset=utf-8',
                 beforeSend: function(){
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
-                    if (res.status === 403) {
-                        jQuery(document).trigger("l7p:form:completed");
-                        if (res.errors.reset_token) {
-                            $('#l7p-global-errors, .l7p-global-errors').html(res.errors.reset_token).show();
+                    jQuery(document).trigger("l7p:password:changed");
+                        
+                    $.ajax({
+                        url: restApiUrl('/login'),
+                        type: 'POST',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            email: getCookie('reset_email', ''),
+                            password: password
+                        }),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (res) {
+
+                            var userId = res.user_id,
+                                userToken = res.user_token;
+
+                            if (!userId || !userToken) {
+                                jQuery(document).trigger("l7p:form:completed");
+                                $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
+                                return false;
+                            }
+                            authorizeRestApi($form, userId, userToken, res.legacy_login);
+                        }, 
+                        error: function(jqXhr, status) {
+                            jQuery(document).trigger("l7p:form:completed");
+                            if ($('div#maintenance').length === 0) {
+                                $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                            }
+                        }
+                    });
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    jQuery(document).trigger("l7p:form:completed");
+                    if (jqXhr.status == 400) {
+                        
+                        var res = jqXhr.responseJSON;
+                        if (res.errors.length > 0) {
+                            
+                            jQuery.each(res.errors, function(index, error) {
+                                
+                                if (error.field == 'token') {
+                                    $('#l7p-global-errors, .l7p-global-errors').html(error.token).show();
+                                    return false;
+                                }
+                        
+                                if (error.field == 'password') {
+                                    $form.find('#password1').after('<p class="small error-email">' + error.message + '</p>');
+                                }
+                            });
+                            
                             return false;
-                        }
-                        if (res.errors.password1) {
-                            $form.find('#password1').after('<p class="small error-email">' + res.errors.password1 + '</p>');
-                        }
-                        if (res.errors.password2) {
-                            $form.find('input[name="password2"]').after('<p class="small error-email">' + res.errors.password2 + '</p>');
+                        } else {
+                            $('#l7p-global-errors, .l7p-global-errors').html(res.message).show();
                         }
 
                         return false;
                     }
                     
-                    jQuery(document).trigger("l7p:password:changed");
-                    
-                    if (res.redirect) {
-                        // redirect user to their application url
-                        window.location.href = res.redirect;
-                    }
-                    
-                    if (res.email) {
-                        
-                        $.ajax({
-                            url: restApiUrl('/login'),
-                            type: 'POST',
-                            dataType: 'json',
-                            data: JSON.stringify({
-                                email: res.email,
-                                password: $form.find('#password1').val()
-                            }),
-                            contentType: 'application/json; charset=utf-8',
-                            success: function (res) {
-
-                                var userId = res.user_id,
-                                    userToken = res.user_token;
-                            
-                                if (!userId || !userToken) {
-                                    jQuery(document).trigger("l7p:form:completed");
-                                    $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
-                                    return false;
-                                }
-                                authorizeRestApi($form, userId, userToken, res.legacy_login);
-                            }, 
-                            error: function(jqXhr, status) {
-                                jQuery(document).trigger("l7p:form:completed");
-                                if ($('div#maintenance').length === 0) {
-                                    $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
-                                }
-                            }
-                        });
-                    }
-                    
-                    return false;
-                }, 
-                error: function(jqXhr, status) {
-                    jQuery(document).trigger("l7p:form:completed");
                     if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
