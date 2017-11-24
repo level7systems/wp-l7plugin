@@ -840,10 +840,16 @@ function isEuCountry(country_code)
 
             var $form = $(this),
                 password = $form.find('#password1').val(),
-                confirm_password = $form.find('input[name="password2"]').val();
+                confirm_password = $form.find('input[name="password2"]').val(),
+                email = getCookie('reset_email', '');
             
             if (password !== confirm_password) {
                 $('#l7p-global-errors, .l7p-global-errors').html('Both passwords must be identical.').show();
+                return false;
+            }
+            
+            if (email == '') {
+                $('#l7p-global-errors, .l7p-global-errors').html('Reset token has expired.').show();
                 return false;
             }
             
@@ -871,7 +877,7 @@ function isEuCountry(country_code)
                         type: 'POST',
                         dataType: 'json',
                         data: JSON.stringify({
-                            email: getCookie('reset_email', ''),
+                            email: email,
                             password: password
                         }),
                         contentType: 'application/json; charset=utf-8',
