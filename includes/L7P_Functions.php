@@ -87,9 +87,17 @@ function l7p_get_download()
 function l7p_get_download_url($os)
 {
     $downloads = l7p_get_download();
-
+    $appKey = l7p_get_web_product_settings('app_key');
+    
     if ($os == 'mac-osx') {
-        return $downloads[$os]['x64'];
+        $data = file_get_contents(sprintf("http://repo.ssl7.net/release/%s/latest-mac.yml", $appKey));
+        if ($data === false) {
+            return $downloads[$os]['x64'];
+        }
+        
+        $lines = explode("\n", $data);
+        $path = substr($lines[2], 6);
+        return sprintf("http://repo.ssl7.net/release/%s/%s", $appKey, strtr($path, ['-mac.zip' => '.dmg']));
     }
 
     // linux
@@ -97,13 +105,18 @@ function l7p_get_download_url($os)
         return $downloads[$os]['x64'];
     }
 
-    // win
-    if ($os == 'windows' && preg_match('/WOW64|Win64/i', $_SERVER['HTTP_USER_AGENT'])) {
-        return $downloads[$os]['x64'];
+    $data = file_get_contents(sprintf("http://repo.ssl7.net/release/%s/latest.yml", $appKey));
+    if ($data === false) {
+        if (preg_match('/WOW64|Win64/i', $_SERVER['HTTP_USER_AGENT'])) {
+            return $downloads[$os]['x64'];
+        }
+        // x86
+        return $downloads[$os]['x86'];
     }
 
-    // x86
-    return $downloads[$os]['x86'];
+    $lines = explode("\n", $data);
+    $path = substr($lines[2], 6);
+    return sprintf("http://repo.ssl7.net/release/%s/%s", $appKey, $path);
 }
 
 function l7p_get_config()
