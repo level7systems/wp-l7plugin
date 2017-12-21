@@ -116,9 +116,14 @@ class L7P_XmlRpc_Api
         
         $data = json_decode($params[1], true);
         $currency = $data['currency'];
-        $countryCode = $data['country_data'];
+        $countryCode = $data['country_code'];
         
-        $ddiCountries[$currency][$countryCode] = $data['data'];
+        if ($countryCode == 'US') {
+            $stateCode = $data['country_code'];
+            $ddiCountries[$currency][$countryCode][$stateCode] = $data['data'];
+        } else {
+            $ddiCountries[$currency][$countryCode] = $data['data'];
+        }
         
         l7p_update_option('ddi_countries', $ddiCountries);
         
