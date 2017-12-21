@@ -19,6 +19,7 @@ class L7P_XmlRpc_Api
         'l7.setRoutes'      => 'setRoutes',
         'l7.setDdi'         => 'setDdi',
         'l7.setDdiCountries'=> 'setDdiCountries',
+        'l7.setDdiCountry'  => 'setDdiCountry',
         'l7.setPhones'      => 'setPhones',
         'l7.setChapters'    => 'setChapters',
         'l7.cacheClear'     => 'cacheClear'
@@ -99,6 +100,27 @@ class L7P_XmlRpc_Api
         }
         
         l7p_update_option('ddi_countries', json_decode($params[1], true));
+        
+        return "OK";
+    }
+    
+    // update data of single country
+    public function setDdiCountry($params)
+    {
+        // verify token
+        if (!$this->authorize($params[0])) {
+            return $this->error;
+        }
+        
+        $ddiCountries = l7p_get_option('ddi_countries');
+        
+        $data = json_decode($params[1], true);
+        $currency = $data['currency'];
+        $countryCode = $data['country_data'];
+        
+        $ddiCountries[$currency][$countryCode] = $data['data'];
+        
+        l7p_update_option('ddi_countries', $ddiCountries);
         
         return "OK";
     }
