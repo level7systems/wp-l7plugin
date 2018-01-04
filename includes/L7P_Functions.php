@@ -128,7 +128,7 @@ function l7p_get_permalinks($culture = null)
         'telephone_numbers' => 'telephone-numbers',
         'manual' => 'manual',
         'terms' => 'terms-and-conditions',
-        'manual_search' => 'manual-search'
+        'release_notes'  => 'release-notes'
     );
     // if web product has shop enabled
     if (l7p_get_web_product_settings('has_shop')) {
@@ -350,6 +350,18 @@ function l7p_has_country($country_name, $urlized = true)
 function l7p_get_states()
 {
     return l7p_get_settings('states', array());
+}
+
+function l7p_get_year_from_query()
+{
+    global $wp_query;
+
+    if (!isset($wp_query->query_vars['page'])) {
+        return null;
+    }
+    $year = $wp_query->query_vars['page'];
+
+    return $year;
 }
 
 function l7p_get_currency_from_query()
@@ -858,7 +870,7 @@ function l7p_get_routes()
         'manual' => '/:permalink_manual/:chapter/',
         'terms' => '/:permalink_terms/',
         'download' => '/download-for-:os/',
-        'manual_search' => '/:permalink_manual_search/',
+        'release-notes' => '/:permalink_release_notes/:year',
     );
 }
 

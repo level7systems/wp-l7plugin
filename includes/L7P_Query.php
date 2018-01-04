@@ -22,7 +22,8 @@ class L7P_Query
         'token',
         'extini',
         'email',
-        'user_id'
+        'user_id',
+        'year'
     );
 
     public function __construct()
@@ -180,6 +181,9 @@ class L7P_Query
         // redirect to currency page
         if (in_array($pagename, array('pricing', 'rates', 'telephone_numbers', 'hardware')) && !$query->query_vars['currency']) {
             return $this->redirect_to_currency();
+        }
+        if (in_array($pagename, array('release-notes'))) {
+            return $this->redirect_to_release_note();
         }
         
         if ($pagename == "rates") {
@@ -460,6 +464,13 @@ class L7P_Query
         return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
     }
     
+    public function redirect_to_release_note()
+    {
+        $page = get_post(l7p_get_option('release_note_page_id'));
+
+        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+    }
+    
     public function redirect_to_app()
     {
         return l7p_redirect(sprintf("%s://%s/app/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST']));
@@ -491,7 +502,8 @@ class L7P_Query
         $currencies_rule = strtolower(implode("|", $currencies));
 
         foreach ($cultures as $culture) {
-
+            
+           
             // downloads
             add_rewrite_rule("download-for-(windows|mac-osx|linux)/?$", 'index.php?name=download&os=$matches[1]', 'top');
             // rates
@@ -521,7 +533,10 @@ class L7P_Query
             // manual
             add_rewrite_rule(sprintf("%s/([\w\-\+!]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         }
-
+        
+        //release-notes
+        //:permalink/:year/
+        add_rewrite_rule(sprintf("%s/([0-9]{4,4})/?$", $permalink[$culture]['release-notes']), 'index.php?name=release-notes&year=$matches[1]', 'top');
         // login as
         add_rewrite_rule("loginas/([0-9]+)/([a-zA-Z0-9]+)$", 'index.php?name=loginas&user_id=$matches[1]&token=$matches[2]', 'top');
         // account confirmation
