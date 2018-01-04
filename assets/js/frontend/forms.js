@@ -25,6 +25,62 @@ function getCookie(key, defaults) {
     return defaults !== undefined ? defaults : undefined;
 }
 
+function restApiUrl(endpoint) {
+    
+    if (jQuery('form.l7p-rest-login-form').length > 0) {
+        var apiUrl = jQuery('form.l7p-rest-login-form').first().data('apiUrl');
+    } else {
+        var apiUrl = jQuery('[data-api-url]').first().data('apiUrl');
+    }
+    
+    return apiUrl + endpoint;
+}
+
+function legacyApiUrl() {
+    
+    return jQuery('[data-legacy-api-url]').first().data('legacyApiUrl')
+}
+
+function isREST(appKey) {
+    var resetKeys = [
+        "gotrunk",
+        "voipstudio"
+    ];
+
+    return resetKeys.indexOf(appKey) > -1;
+}
+
+function isBusinessVoIP(appKey) {
+    var businessVoIPKeys = [
+        "voipstudio"
+    ];
+
+    return businessVoIPKeys.indexOf(appKey) > -1;
+}
+
+function authorizeRestApi($form, userId, userToken, legacy = false) {
+    
+    setCookie($form.data('appKey') + '.auth', {
+        user_id: userId, 
+        user_token: userToken 
+    });
+
+    var url_suffix = '';
+    if ($form.find('input[name="extini"]').val()) {
+        var match = $form.find('input[name="extini"]').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
+        if (match[1]) {
+            url_suffix = '#dashboard,support:' + match[1];
+        }
+    }
+
+    if (legacy) {
+        window.location.href = '/v1app/user/' + url_suffix;
+        return ;
+    }
+    
+    window.location.href = '/app/' + url_suffix;
+}
+
 function setCookie(name, value, options) {
 
     options = (options === undefined) ? {} : options;
@@ -110,28 +166,39 @@ function isEuCountry(country_code)
         }
     }
 
+    function setDefaultGeoIP() {
+        var l7_geoip = {
+            country_code: "US",
+            country_name: "United States",
+            ip: "96.126.107.122"
+        };
+        setCookie('l7_geoip', l7_geoip, { expires: 1 });
+        jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+    }
+
     function getGeoIp() {
-        
+        var l7_geoip;
         if (getCookie('l7_geoip', false)) {
             l7_geoip = getCookie('l7_geoip');
             jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
         } else {
             var date = new Date();
             $.getJSON('https://ssl7.net/js/geo-ip.js?_tc' + date.getTime(), function(response) {
-                l7_geoip = response;
-                // cookie expires in 1 day
-                setCookie('l7_geoip', l7_geoip, { expires: 1 });
-                jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+                if (response.country_code && response.country_name && response.ip) {
+                    l7_geoip = response;
+                    setCookie('l7_geoip', l7_geoip, { expires: 1 });
+                    jQuery(document).trigger("l7p:geoip:loaded",[ l7_geoip ]);
+                } else {
+                    setDefaultGeoIP();
+                }
+    
             }).fail(function() {
-                // display global errors
-                $('#l7p-global-errors, .l7p-global-errors').html("Your browser does not support C").show();
-                
-                jQuery(document).trigger("l7p:geoip:error");
+                setDefaultGeoIP();
             });
         }
     }
     
-    $(document).on("l7p:geoip:loaded", function(event, l7p_geoip) {
+    $(document).on("l7p:geoip:loaded", function(event, l7_geoip) {
         setPackageTypeAndCountry(l7_geoip);
     });
     
@@ -168,93 +235,20 @@ function isEuCountry(country_code)
 
         var $form = this;
         
-        if ($form.data('appKey') == 'gotrunk') {
-            
-            if (!response) {
-                jQuery(document).trigger("l7p:form:completed");
-                $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
-                return false;
-            }
-
-            if (!response.user_id || !response.user_token) {
-                jQuery(document).trigger("l7p:form:completed");
-                $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
-                return false;
-            }
-
-            setCookie($form.data('appKey') + '.auth', {
-                user_id: response.user_id, 
-                user_token: response.user_token 
-            });
-
-            var url_suffix = '';
-            if ($form.find('input[name="extini"]').val()) {
-                var match = $form.find('input[name="extini"]').val().match(/SupportSubmitReplyWindow\(([0-9]+)\)/);
-                if (match[1]) {
-                    url_suffix = '#support,support:' + match[1];
-                }
-            }
-            
-            var redirection = '/app/' + url_suffix;
-            
-        } else {
-        
-            if (!response.success) {
-
-                jQuery(document).trigger("l7p:form:completed");
-
-                if (response.errors.username) {
-                    $form.find('input[name="username"]').after('<p class="small error-username">' + response.errors.username + '</p>');
-                }
-
-                if (response.errors.password) {
-                    $form.find('input[name="password"]').after('<p class="small error-password">' + response.errors.password + '</p>');
-                }
-
-                if (response.errors.email) {
-                    if (response.errors.email.indexOf("unrecognised user name") != -1) {
-
-                        var recover_url = '/recover-password';
-                        if (document.location.pathname.startsWith('/en')) {
-                            recover_url = '/en' + recover_url;
-                        }
-
-                        $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
-                    } else if (response.errors.email.indexOf("not confirmed") != -1) {
-
-                        var confirmation_url = '/resend-confirmation-email';
-                        if (document.location.pathname.startsWith('/en')) {
-                            confirmation_url = '/en' + confirmation_url;
-                        }
-
-                        $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
-                    } else {
-                        $('#l7p-global-errors, .l7p-global-errors').html(response.errors.email).show();
-                    }
-                }
-
-                if (response.errors.web_product_activation) {
-                    jQuery(document).trigger("l7p:web_product:activation", [ response.errors.web_product_activation ]);
-                }
-
-                return false;
-            }
-
-            if (response.redirect) {
-                // redirect user to their application url
-                window.location.href = response.redirect + '?message=' + response.info;
-
-                return false;
-            }
-
-            var redirection = response.info;
-            if ($form.find('input[name="extini"]').val()) {
-                redirection += '?extini=' + $form.find('input[name="extini"]').val();
-            }
+        if (!response) {
+            jQuery(document).trigger("l7p:form:completed");
+            $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
+            return false;
         }
 
-        // redirect user to their application url
-        window.location.href = redirection;
+        if (!response.user_id || !response.user_token) {
+            jQuery(document).trigger("l7p:form:completed");
+            $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
+            return false;
+        }
+
+        // other app login
+        authorizeRestApi($form, response.user_id, response.user_token, response.legacy_login);
     };
             
     var onLoginError = function(jqXhr, status) {
@@ -307,42 +301,12 @@ function isEuCountry(country_code)
         jQuery(document).trigger("l7p:login:error");
     };
     
-    function loginLegacy($form) {
-        
-        clearErrors($form);
-        var url = $form.attr('action');
-            
-        if($form.attr('data-api-url')){
-            url = $form.attr('data-api-url');
-        }
-        $.jsonp({
-            url: url,
-            callbackParameter: "callback",
-            type: 'POST',
-            data: {
-                method: 'login',
-                username: $form.find('input[name="username"]').val(),
-                password: $form.find('input[name="password"]').val(),
-                remember_me: $form.find('#remember').is(':checked')
-            },
-            beforeSend: function() {
-                jQuery(document).trigger("l7p:form:processing");
-            },
-            success:  onLoginSuccess.bind($form), 
-            error: onLoginError.bind($form)
-        });
-    }
-            
     function login($form) {
         
         clearErrors($form);
-        var url = $form.attr('action');
-            
-        if($form.attr('data-api-url')){
-            url = $form.attr('data-api-url');
-        }
+        
         $.ajax({
-            url: url,
+            url: restApiUrl('/login'),
             type: 'POST',
             dataType: 'json',
             data: JSON.stringify({
@@ -414,7 +378,7 @@ function isEuCountry(country_code)
 
             e.preventDefault();
             
-            loginLegacy($(this));
+            login($(this));
         });
         
         // REST login form
@@ -445,8 +409,7 @@ function isEuCountry(country_code)
             
             $('form.l7p-rest-register-form').each(function(index, form) {
                 
-                if ($(form).data('appKey') == 'voipstudio') {
-                    // voipstudio
+                if (isBusinessVoIP($(form).data('appKey'))) {
                     validateRequiredFields($(form), [
                         'firstname',
                         'lastname',
@@ -456,7 +419,6 @@ function isEuCountry(country_code)
                         'tc'
                     ]);
                 } else {
-                    // gotrunk
                     validateRequiredFields($(form), [
                         'firstname',
                         'lastname',
@@ -639,11 +601,10 @@ function isEuCountry(country_code)
 
                     jQuery(document).trigger("l7p:registration:completed", ['customer', $form.attr('data-l7p-event')]);
                     
-                    if ($form.data('appKey') == 'gotrunk') {
+                    if (isREST($form.data('appKey'))) {
                         
                         setCookie($form.data('appKey') + '.register', { email: data.email, first_name: data.first_name, last_name: data.last_name });
-                        // redirect user to their application url
-                        window.location.href = '/app/';
+                        
                     } else {
                         jQuery(document).trigger("l7p:form:completed");
 
@@ -816,41 +777,43 @@ function isEuCountry(country_code)
         }
 
         $(document).on('submit', 'form#l7p-password-recover-form, form.l7p-password-recover-form', function (e) {
-            var $form = $(this);
+            var $form = $(this),
+                email = $form.find('input[name="email"]').val();
+                
             clearErrors($form);
             
-            var url = $form.attr('action');
-            if($form.attr('data-api-url')){
-                url = $form.attr('data-api-url');
-            }
-            
             e.preventDefault();
-            $.jsonp({
-                url: url,
-                callbackParameter: "callback",
+            $.ajax({
+                url: restApiUrl('/password'),
                 type: 'POST',
-                data: {
-                    method: 'recover',
-                    email: $form.find('input[name="email"]').val()
-                },
+                dataType: 'json',
+                data: JSON.stringify({
+                    email: email
+                }),
+                contentType: 'application/json; charset=utf-8',
                 beforeSend: function(){
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
-
-                    if (res.status === 403) {
-
-                        if (res.errors.email)
-                            $form.find('input[name="email"]').after('<p class="small error-email">' + res.errors.email + '</p>');
-
-                        return false;
-                    }
+                    
+                    var expire = new Date(),
+                        time = expire.getTime() + 1000*60*60*1;
+                    expire.setTime(time);
+                    setCookie('reset_email', email, { expires: expire });
 
                     $form.html('<p class="big center text-center">Your password has been changed. An email has been sent to you with your new login details.</p>');
                     
                     jQuery(document).trigger("l7p:password:requested");
                 }, 
                 error: function(jqXhr, status) {
+                    
+                    if (jqXhr.status == 400) {
+
+                        var res = jqXhr.responseJSON;
+                        $form.find('input[name="email"]').after('<p class="small error-email">' + res.message + '</p>');
+
+                        return false;
+                    }
                     
                     if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
@@ -875,92 +838,97 @@ function isEuCountry(country_code)
 
         $(document).on('submit', 'form#l7p-new-password-form, form.l7p-new-password-form', function (e) {
 
-            var $form = $(this);
+            var $form = $(this),
+                password = $form.find('#password1').val(),
+                confirm_password = $form.find('input[name="password2"]').val(),
+                email = getCookie('reset_email', '');
+            
+            if (password !== confirm_password) {
+                $('#l7p-global-errors, .l7p-global-errors').html('Both passwords must be identical.').show();
+                return false;
+            }
+            
+            if (email == '') {
+                $('#l7p-global-errors, .l7p-global-errors').html('Reset token has expired.').show();
+                return false;
+            }
             
             clearErrors($form);
-            var url = $form.attr('action');
-            if($form.attr('data-api-url')){
-                url = $form.attr('data-api-url');
-            }
+            
             e.preventDefault();
-            $.jsonp({
-                url: url,
-                callbackParameter: "callback",
+            $.ajax({
+                url: restApiUrl('/reset'),
                 type: 'POST',
-                data: {
-                    method: 'onetimelogin',
-                    reset_token: getCookie('reset_token', ''),
-                    password1: $form.find('#password1').val(),
-                    password2: $form.find('input[name="password2"]').val()
-                },
+                dataType: 'json',
+                data: JSON.stringify({
+                    token: getCookie('reset_token', ''),
+                    password: password
+                }),
+                contentType: 'application/json; charset=utf-8',
                 beforeSend: function(){
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
 
-                    if (res.status === 403) {
-                        jQuery(document).trigger("l7p:form:completed");
-                        if (res.errors.reset_token) {
-                            $('#l7p-global-errors, .l7p-global-errors').html(res.errors.reset_token).show();
+                    jQuery(document).trigger("l7p:password:changed");
+                        
+                    $.ajax({
+                        url: restApiUrl('/login'),
+                        type: 'POST',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            email: email,
+                            password: password
+                        }),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (res) {
+
+                            var userId = res.user_id,
+                                userToken = res.user_token;
+
+                            if (!userId || !userToken) {
+                                jQuery(document).trigger("l7p:form:completed");
+                                $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
+                                return false;
+                            }
+                            authorizeRestApi($form, userId, userToken, res.legacy_login);
+                        }, 
+                        error: function(jqXhr, status) {
+                            jQuery(document).trigger("l7p:form:completed");
+                            if ($('div#maintenance').length === 0) {
+                                $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                            }
+                        }
+                    });
+                }, 
+                error: function(jqXhr, status) {
+                    
+                    jQuery(document).trigger("l7p:form:completed");
+                    if (jqXhr.status == 400) {
+                        
+                        var res = jqXhr.responseJSON;
+                        if (res.errors.length > 0) {
+                            
+                            jQuery.each(res.errors, function(index, error) {
+                                
+                                if (error.field == 'token') {
+                                    $('#l7p-global-errors, .l7p-global-errors').html(error.token).show();
+                                    return false;
+                                }
+                        
+                                if (error.field == 'password') {
+                                    $form.find('#password1').after('<p class="small error-email">' + error.message + '</p>');
+                                }
+                            });
+                            
                             return false;
-                        }
-                        if (res.errors.password1) {
-                            $form.find('#password1').after('<p class="small error-email">' + res.errors.password1 + '</p>');
-                        }
-                        if (res.errors.password2) {
-                            $form.find('input[name="password2"]').after('<p class="small error-email">' + res.errors.password2 + '</p>');
+                        } else {
+                            $('#l7p-global-errors, .l7p-global-errors').html(res.message).show();
                         }
 
                         return false;
                     }
                     
-                    jQuery(document).trigger("l7p:password:changed");
-
-                    if (res.redirect) {
-                        // redirect user to their application url
-                        window.location.href = res.redirect;
-                    }
-                    
-                    if (res.email) {
-                        
-                        $.ajax({
-                            url: $form.data('restApiLoginUrl'),
-                            type: 'POST',
-                            dataType: 'json',
-                            data: JSON.stringify({
-                                email:res.email,
-                                password: $form.find('#password1').val()
-                            }),
-                            contentType: 'application/json; charset=utf-8',
-                            success: function (res) {
-
-                                if (!res.user_id || !res.user_token) {
-                                    jQuery(document).trigger("l7p:form:completed");
-                                    $('#l7p-global-errors, .l7p-global-errors').html('API failed to return userId and/or userToken').show();
-                                    return false;
-                                }
-
-                                setCookie($form.data('appKey') + '.auth', {
-                                    user_id: res.user_id, 
-                                    user_token: res.user_token 
-                                });
-
-                                // redirect user to their application url
-                                window.location.href = '/app/';
-                            }, 
-                            error: function(jqXhr, status) {
-                                jQuery(document).trigger("l7p:form:completed");
-                                if ($('div#maintenance').length === 0) {
-                                    $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
-                                }
-                            }
-                        });
-                    }
-                    
-                    return false;
-                }, 
-                error: function(jqXhr, status) {
-                    jQuery(document).trigger("l7p:form:completed");
                     if ($('div#maintenance').length === 0) {
                         $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
                     }
@@ -1073,17 +1041,9 @@ function isEuCountry(country_code)
                 },
                 success: function (response) {
                     // set form action to login
-                    if ($form.data('appKey') == 'voipstudio') {
-                        var login_url = $('form.l7p-login-form').attr('action');
-                        $form.attr('action', login_url);
-                        // login to new web product
-                        loginLegacy($form);
-                    } else {
-                        var login_url = $form.data('restApiUrl') + '/login';
-                        $form.attr('action', login_url);
-                        // login to new web product
-                        login($form);
-                    }
+                    $form.attr('action', restApiUrl('/login'));
+                    // login to new web product
+                    login($form);
                 }, 
                 error: function(jqXhr, status) {
                     jQuery(document).trigger("l7p:form:completed");

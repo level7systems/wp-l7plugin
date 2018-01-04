@@ -87,9 +87,17 @@ function l7p_get_download()
 function l7p_get_download_url($os)
 {
     $downloads = l7p_get_download();
-
+    $appKey = l7p_get_web_product_settings('app_key');
+    
     if ($os == 'mac-osx') {
-        return $downloads[$os]['x64'];
+        $data = file_get_contents(sprintf("http://repo.ssl7.net/release/%s/latest-mac.yml", $appKey));
+        if ($data === false) {
+            return $downloads[$os]['x64'];
+        }
+        
+        $lines = explode("\n", $data);
+        $path = substr($lines[2], 6);
+        return sprintf("http://repo.ssl7.net/release/%s/%s", $appKey, strtr($path, ['-mac.zip' => '.dmg']));
     }
 
     // linux
@@ -97,13 +105,18 @@ function l7p_get_download_url($os)
         return $downloads[$os]['x64'];
     }
 
-    // win
-    if ($os == 'windows' && preg_match('/WOW64|Win64/i', $_SERVER['HTTP_USER_AGENT'])) {
-        return $downloads[$os]['x64'];
+    $data = file_get_contents(sprintf("http://repo.ssl7.net/release/%s/latest.yml", $appKey));
+    if ($data === false) {
+        if (preg_match('/WOW64|Win64/i', $_SERVER['HTTP_USER_AGENT'])) {
+            return $downloads[$os]['x64'];
+        }
+        // x86
+        return $downloads[$os]['x86'];
     }
 
-    // x86
-    return $downloads[$os]['x86'];
+    $lines = explode("\n", $data);
+    $path = substr($lines[2], 6);
+    return sprintf("http://repo.ssl7.net/release/%s/%s", $appKey, $path);
 }
 
 function l7p_get_config()
@@ -711,7 +724,9 @@ function l7p_get_chapters_keywords($term = '')
 
 function l7p_search_manual($search)
 {
-    $ingoreWords = array("how", "can");
+    $ingoreWords = array("how", "can", "new");
+    $synonyms = array("extension" => "user");
+    $replace = array( array("set up", "setup"), array("add", "add"));
 
     $result = array();
 
@@ -720,6 +735,7 @@ function l7p_search_manual($search)
     }
 
     $search = preg_replace("/\s{2,}/", " ", $search);
+    $search = str_replace($replace[0], $replace[1], $search);
 
     $keywords = array();
 
@@ -732,7 +748,7 @@ function l7p_search_manual($search)
         }
 
         // remove plural and continous form
-        if (!in_array($word, array("ring"))) {
+        if (!in_array($word, array("ring", "lightning"))) {
             $word = preg_replace("/ing$|s$/", "", $word);
         }
 
@@ -740,10 +756,12 @@ function l7p_search_manual($search)
             break;
         }
 
-        $keywords[] = $word;
+        if (isset($synonyms[$word]) && !in_array($synonyms[$word], $keywords)) {
+            $keywords[] = $synonyms[$word];
+        } else if (!in_array($word, $keywords)) {
+            $keywords[] = $word;
+        }
     }
-
-    $searchPhrase = implode(" ", $keywords);
 
     $chapters = l7p_get_chapters();
 
@@ -786,12 +804,12 @@ function l7p_search_manual($search)
                 
                 $content = str_replace("\n", " ",strip_tags($content));
 
-                if (l7p_phrase_match($searchPhrase, $header, true)) {
+                if (l7p_phrase_match_header($keywords, $header, true)) {
                     $matchHeader[$headerUrl] = l7p_get_search_excerpt($content);
                     continue;
                 }
 
-                if (l7p_phrase_match($searchPhrase, str_replace($removeChars, "", $content))) {
+                if (count($matchContent) < 10 && l7p_phrase_match_content($keywords, $header, str_replace($removeChars, "", $content))) {
                     $matchContent[$headerUrl] = l7p_get_search_excerpt($content);
                 }
             }
@@ -820,26 +838,47 @@ function l7p_get_search_excerpt($content)
     return (strlen($content) > $excerptLen) ? substr($content, 0, $excerptLen) . "..." : substr($content, 0, $excerptLen);
 }
 
-function l7p_phrase_match($searchPhrase, $content, $splitWords = false)
+function l7p_phrase_match_content($keywords, $header, $content)
 {
-    $content = strtolower($content);
+    $ignoreWords = array("add", "edit", "configure", "integrate");
 
-    if (preg_match("/$searchPhrase/", $content)) {
-        return true;
+    foreach ($keywords as $key => $word) {
+        if (in_array($word, $ignoreWords)) {
+            unset($keywords[$key]);
+        }
     }
 
-    if (!$splitWords) {
+    if (!$keywords) {
         return false;
     }
 
-    $contentWords = explode(" ", $content);
+    $content = strtolower($content);
+
+    if (strpos($content, implode(" ", $keywords)) !== false) {
+        return true;
+    }
+
+    $headerWords = explode(" ", strtolower($header));
+
+    foreach ($keywords as $keyword) {
+        if (in_array($keyword, $headerWords)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function l7p_phrase_match_header($keywords, $header)
+{
+    $header = strtolower($header);
+
+    $headerWords = explode(" ", $header);
 
     $matches = array();
 
-    $keywords = explode(" ", $searchPhrase);
-
     foreach ($keywords as $keyword) {
-        foreach ($contentWords as $word) {
+        foreach ($headerWords as $word) {
             if (strpos($word, $keyword) !== false && !in_array($keyword, $matches)) {
                 $matches[] = $keyword;
 
@@ -1013,14 +1052,15 @@ function l7p_verify_subscription_token($token)
     return l7p_send_curl($url);
 }
 
-function l7p_register_ppc_click($token)
+function l7p_register_ppc_click($token, $landing_page = '')
 {
     $params = array(
         'method' => 'ppc',
         'id' => $token,
         'referer' => $_SERVER['HTTP_REFERER'],
         'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-        'ip' => l7p_get_remote_addr()
+        'ip' => l7p_get_remote_addr(),
+        'lp' => $landing_page,
     );
 
     $url = l7p_api_url() . '?' . http_build_query($params);

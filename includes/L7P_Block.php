@@ -414,9 +414,10 @@ function l7p_block_manual_search_results()
     ob_start();
     
     ?>
+
+    <div class="resultsfor">Search results for: <strong><?php echo $search; ?></strong></div>
     
     <?php if ($results): ?>
-    <div class="resultsfor">Search results for: <strong><?php echo $search; ?></strong></div>
     <div  class="results">
         <?php foreach($results as $result): ?>
         <div class="result">
