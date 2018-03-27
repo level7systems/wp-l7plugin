@@ -460,7 +460,7 @@ class L7P_Query
             $uri = preg_replace(sprintf('#/%s/$#', strtolower($currency)), '/', $uri);
         }
 
-        return l7p_redirect(sprintf("%s://%s%s/", l7p_is_ssl() ? 'https' : 'http', $uri, strtolower(l7p_get_currency())));
+        return l7p_redirect(sprintf("%s://%s%s/", l7p_is_ssl() ? 'https' : 'http', $uri, strtolower(l7p_get_currency())), true);
     }
 
     public function redirect_to_login()
