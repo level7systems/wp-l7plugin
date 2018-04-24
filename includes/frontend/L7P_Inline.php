@@ -422,7 +422,7 @@ function l7p_inline_phone_reviews_url()
 // Phone - description
 function l7p_inline_phone_description()
 {
-    return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',convert_markdown_text(l7p_get_phone(\'description\')))';
+    return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',l7p_get_phone(\'description\'))';
 }
 # Manual
 // Manual - name
