@@ -96,7 +96,7 @@ function l7p_get_download_url($os)
         }
         
         $lines = explode("\n", $data);
-        $path = substr($lines[2], 6);
+        $path = substr($lines[7], 6);
         return sprintf("http://repo.ssl7.net/release/%s/%s", $appKey, strtr($path, ['-mac.zip' => '.dmg']));
     }
 
@@ -115,7 +115,7 @@ function l7p_get_download_url($os)
     }
 
     $lines = explode("\n", $data);
-    $path = substr($lines[2], 6);
+    $path = substr($lines[5], 6);
     return sprintf("http://repo.ssl7.net/release/%s/%s", $appKey, $path);
 }
 
