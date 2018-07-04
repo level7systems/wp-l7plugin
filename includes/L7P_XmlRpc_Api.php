@@ -92,18 +92,6 @@ class L7P_XmlRpc_Api
         return "OK";
     }
     
-    public function setDdiCountries($params)
-    {
-        // verify token
-        if (!$this->authorize($params[0])) {
-            return $this->error;
-        }
-        
-        l7p_update_option('ddi_countries', json_decode($params[1], true));
-        
-        return "OK";
-    }
-    
     // update data of single country
     public function setDdiCountry($params)
     {
