@@ -119,7 +119,7 @@ class L7P_XmlRpc_Api
         $countryCode = $data['country_code'];
         
         if ($countryCode == 'US') {
-            $stateCode = $data['country_code'];
+            $stateCode = $data['state_code'];
             $ddiCountries[$currency][$countryCode][$stateCode] = $data['data'];
         } else {
             $ddiCountries[$currency][$countryCode] = $data['data'];
