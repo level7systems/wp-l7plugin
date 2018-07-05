@@ -572,11 +572,6 @@ function l7p_get_pricelist_routes()
     return l7p_get_option('routes', array());
 }
 
-function l7p_get_ddi_countries()
-{
-    return l7p_get_option('ddi_countries', array());
-}
-
 function l7p_get_ddi($type = 'free')
 {
     if ($type == 'free') {
@@ -606,24 +601,56 @@ function l7p_get_ddi($type = 'free')
     return array();
 }
 
-function l7p_get_ddi_country($country_code, $data, $key = false)
+function l7p_get_ddi_country($country_code, $data = null, $key = false)
 {
     $currency = l7p_get_currency();
-
     $state_code = l7p_get_state_code_from_query();
 
-    $ddi = l7p_get_ddi_countries();
-    $country_data = $ddi[$currency][$country_code];
-
+    $ddi = l7p_get_option(sprintf('ddi_country_%s', $country_code), array());
+    $country_data = $ddi[$currency];
+    
+    if ($data === null) {
+        return $country_data;
+    }
+    
     if ($state_code && $data != 'ddi_data') {
-        $country_data = isset($country_data[$state_code]) ? $country_data[$state_code] : array();
+        $country_data = l7p_get_ddi_state($state_code, $currency);
     }
 
     if (!$key) {
         return isset($country_data[$data]) ? $country_data[$data] : array();
     }
 
-    return isset($country_data[$data][$key]) ? $country_data[$data][$key] : array();
+    return isset($country_data[$data][$key]) ? $country_data[$data][$key] : "";
+}
+
+function l7p_get_ddi_state($state_code, $currency)
+{
+    
+    $state_data = l7p_get_option(sprintf('ddi_state_%s', $state_code), [
+        $currency   => []
+    ]);
+    
+    return $state_data[$currency];
+}
+
+function l7p_set_ddi_state($state_code, $currency, array $data)
+{
+    $state_data = l7p_get_option(sprintf('ddi_state_%s', $state_code), [
+        $currency   => []
+    ]);
+    
+    $state_data[$currency] = $data;
+    
+    l7p_update_option(sprintf('ddi_state_%s', $state_code), $state_data);
+}
+
+function l7p_set_ddi_country($country_code, $currency, array $data)
+{
+    $country_data = l7p_get_option(sprintf('ddi_country_%s', $country_code), array());
+    $country_data[$currency] = $data;
+    
+    l7p_update_option(sprintf('ddi_country_%s', $country_code), $country_data);
 }
 
 function l7p_get_phones()
