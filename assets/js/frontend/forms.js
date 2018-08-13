@@ -5,6 +5,19 @@ if (!String.prototype.startsWith) {
   };
 }
 
+function getLanguageHeader() {
+    var host = document.location.host,
+        locales = ["es"],
+        domainParts = document.location.host.split("."),
+        countryPart = domainParts.pop();
+
+    if (locales.indexOf(countryPart) !== -1) {
+        return countryPart;
+    }
+
+    return 'en';
+}
+
 function getCookie(key, defaults) {
     var cookies = document.cookie ? document.cookie.split('; ') : [];
 
@@ -594,7 +607,8 @@ function isEuCountry(country_code)
                 dataType: 'json',
                 data: JSON.stringify(data),
                 contentType: 'application/json; charset=utf-8',
-                beforeSend: function(){
+                beforeSend: function(jqXhr){
+                    jqXhr.setRequestHeader("X-Language", getLanguageHeader());
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
