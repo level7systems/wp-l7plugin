@@ -207,7 +207,7 @@ function l7p_currency_symbol($value, $decimal = 2, $minor = false, $iso = null)
 
 function l7p_get_cultures()
 {
-    return l7p_get_settings('cultures', array('en'));
+    return [ preg_replace('/_[a-z]+$/i', '', get_locale()) ];
 }
 
 function l7p_has_culture($culture_name)
