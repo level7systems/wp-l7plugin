@@ -71,7 +71,7 @@ function isBusinessVoIP(appKey) {
     return businessVoIPKeys.indexOf(appKey) > -1;
 }
 
-function authorizeRestApi($form, userId, userToken, legacy = false) {
+function authorizeRestApi($form, userId, userToken, legacy) {
     
     setCookie($form.data('appKey') + '.auth', {
         user_id: userId, 
