@@ -669,21 +669,32 @@ function l7p_get_phones()
 
 function l7p_get_phone($attr = null)
 {
-    $phones = l7p_get_phones();
     $name = l7p_get_phone_name_from_query();
 
-    if (is_null($attr)) {
-        return isset($phones[$name]) ? $phones[$name] : array();
+    $searchKey = strtr($name, ['.' => ' ', '-' => ' ']);
+    $filtered = array_filter(l7p_get_phones(), function($phone) use ($searchKey) {
+        return strtr($phone['name'], ['.' => ' ', '-' => ' ']) == $searchKey;
+    });
+    
+    if (count($filtered) === 0) {
+        return null;
     }
-    return isset($phones[$name][$attr]) ? $phones[$name][$attr] : array();
+    $phone = current($filtered);
+    
+    if (is_null($attr)) {
+        return $phone;
+    }
+    return isset($phone[$attr]) ? $phone[$attr] : array();
 }
 
 function l7p_has_phone($phone_name)
 {
-    $phones = l7p_get_phones();
-    $phone_name = strtr($phone_name, ['-' => ' ']);
+    $searchKey = strtr($phone_name, ['.' => ' ', '-' => ' ']);
+    $filtered = array_filter(l7p_get_phones(), function($phone) use ($searchKey) {
+        return strtr($phone['name'], ['.' => ' ', '-' => ' ']) == $searchKey;
+    });
 
-    return isset($phones[$phone_name]);
+    return count($filtered) > 0;
 }
 
 function l7p_get_min_price($group_name)
@@ -1295,7 +1306,6 @@ function l7p_image_path($source, $absolute = true)
 
 function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
 {
-    var_dump($name, $value, $expire);
     setcookie($name, $value, $expire, $path, $domain, $secure);
 }
 
