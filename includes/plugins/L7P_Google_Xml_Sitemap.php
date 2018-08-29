@@ -30,7 +30,7 @@ class L7P_Google_Xml_Sitemap
             return;
         }
 
-        $countries = l7p_get_countries($culture);
+        $countries = l7p_get_countries();
 
         // rates
         foreach ($countries as $country_code => $country_name) {

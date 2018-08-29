@@ -304,22 +304,10 @@ function l7p_get_geo_state()
     return (isset($geoip['region']) && $geoip['region']) ? $geoip['region'] : 'AL';
 }
 
-function l7p_get_countries($locale = null)
+function l7p_get_countries()
 {
-    if ($locale === null) {
-        $locale = l7p_get_locale();
-    }
-
-    if (!l7p_has_culture($locale)) {
-        throw new Exception(sprintf("Locale: %s does not supported.", $locale));
-    }
-
     $countries = l7p_get_settings('countries', array());
-    if (!isset($countries[$locale])) {
-        return array();
-    }
-
-    $countries = $countries[$locale];
+    
     asort($countries);
 
     return $countries;
