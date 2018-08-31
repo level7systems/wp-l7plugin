@@ -134,8 +134,6 @@ function l7p_get_permalinks($culture = null)
 {
     $permalinks = l7p_get_option('permalinks');
 
-    $cultures = l7p_get_cultures();
-
     $defaults = array(
         'rates' => 'voip-call-rates',
         'telephone_numbers' => 'telephone-numbers',
@@ -149,11 +147,10 @@ function l7p_get_permalinks($culture = null)
     }
 
     $result = array();
-    foreach ($cultures as $culture) {
-        foreach ($defaults as $name => $permalink) {
-            $result[$culture][$name] = isset($permalinks[$culture . '_' . $name]) ? $permalinks[$culture . '_' . $name] : $defaults[$name];
-        }
+    foreach ($defaults as $name => $permalink) {
+        $result[$name] = isset($permalinks[$name]) ? $permalinks[$name] : $defaults[$name];
     }
+    
     return $result;
 }
 
@@ -207,7 +204,7 @@ function l7p_currency_symbol($value, $decimal = 2, $minor = false, $iso = null)
 
 function l7p_get_cultures()
 {
-    return [ preg_replace('/_[a-z]+$/i', '', get_locale()) ];
+    return l7p_get_settings('cultures', array());
 }
 
 function l7p_has_culture($culture_name)
@@ -220,7 +217,7 @@ function l7p_has_culture($culture_name)
 
 function l7p_get_culture()
 {
-    return l7p_get_locale();
+    return l7p_get_settings('culture', array());
 }
 
 // allowed currencies
@@ -950,11 +947,9 @@ function l7p_url_for($route_name, $params = array(), $absolute = false)
 {
     $routes = l7p_get_routes();
     $permalinks = l7p_get_permalinks();
-    // locale
-    $locale = isset($params['locale']) ? $params['locale'] : l7p_get_locale();
     $route_name = ltrim($route_name, '@');
     $replace_pairs = array();
-    foreach ($permalinks[$locale] as $key => $permalink) {
+    foreach ($permalinks as $key => $permalink) {
         $replace_pairs[sprintf(':permalink_%s', $key)] = $permalink;
     }
 
@@ -1009,21 +1004,14 @@ function l7p_pre($var)
 
 function l7p_add_settings_field($id, $title, $callback, $page, $section = 'default', $args = array())
 {
-    $cultures = l7p_get_cultures();
+    $name = $args['name'];
+    $l7p_args = $args;
+    $l7p_args['name'] = $name;
+    $l7p_args['pre'] = '/';
+    $l7p_args['value'] = isset($l7p_args['value'][$name]) ? $l7p_args['value'][$name] : '';
+    $l7p_args['help'] = isset($args['help']) ? $args['help'] : '';
 
-    foreach ($cultures as $i => $culture) {
-
-        $l7p_id = $culture . '_' . $id;
-        $name = $args['name'];
-        $l7p_title = !$i ? $title : '';
-        $l7p_args = $args;
-        $l7p_args['name'] = $culture . '_' . $name;
-        $l7p_args['pre'] = '/' . $culture . '/';
-        $l7p_args['value'] = isset($l7p_args['value'][$culture][$name]) ? $l7p_args['value'][$culture][$name] : '';
-        $l7p_args['help'] = !$i && isset($args['help']) ? $args['help'] : '';
-
-        add_settings_field($l7p_id, $l7p_title, $callback, $page, $section, $l7p_args);
-    }
+    add_settings_field($id, $title, $callback, $page, $section, $l7p_args);
 }
 
 function l7p_urlize($text)

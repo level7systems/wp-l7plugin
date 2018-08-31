@@ -503,46 +503,42 @@ class L7P_Query
     {
         
         $permalink = l7p_get_permalinks();
-        $cultures = l7p_get_cultures();
         $currencies = l7p_get_currencies();
         $currencies_rule = strtolower(implode("|", $currencies));
 
-        foreach ($cultures as $culture) {
-            
-           
-            // downloads
-            add_rewrite_rule("download-for-(windows|mac-osx)/?$", 'index.php?name=download&os=$matches[1]', 'top');
-            // rates
-            // /:permalink/:country/:currency/
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
-            // virtual numbers
-            // /:permalink/:phone/:currency/
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
-            // /:permalink/:phone/:country/:currency/
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
-            // /:permalink/:country/:city/buy/:currency/
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/buy/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
-            // /:permalink/:country/toll-free/:city/buy/:currency/
-            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/toll-free/([0-9]{3,4})/buy/?(%s)?$", $permalink[$culture]['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1&toll_free=1', 'top');
+        // downloads
+        add_rewrite_rule("download-for-(windows|mac-osx)/?$", 'index.php?name=download&os=$matches[1]', 'top');
+        // rates
+        // /:permalink/:country/:currency/
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
+        // virtual numbers
+        // /:permalink/:phone/:currency/
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
+        // /:permalink/:phone/:country/:currency/
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
+        // /:permalink/:country/:city/buy/:currency/
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/buy/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
+        // /:permalink/:country/toll-free/:city/buy/:currency/
+        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/toll-free/([0-9]{3,4})/buy/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1&toll_free=1', 'top');
 
-            // if web_product has shop enabled
-            if (l7p_get_web_product_settings('has_shop')) {
-                // hardware
-                // /:permalink/:group/:currency/
-                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
-                // /:permalink/:group/:model/:currency/
-                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
-                // /:permalink/:group/:model/buy/:currency/
-                add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/buy/?(%s)?$", $permalink[$culture]['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]&buy=1', 'top');
-            }
-
-            // manual
-            add_rewrite_rule(sprintf("%s/([\w\-\+!]+)/?$", $permalink[$culture]['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
+        // if web_product has shop enabled
+        if (l7p_get_web_product_settings('has_shop')) {
+            // hardware
+            // /:permalink/:group/:currency/
+            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&currency=$matches[2]', 'top');
+            // /:permalink/:group/:model/:currency/
+            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]', 'top');
+            // /:permalink/:group/:model/buy/:currency/
+            add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/buy/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]&buy=1', 'top');
         }
+
+        // manual
+        add_rewrite_rule(sprintf("%s/([\w\-\+!]+)/?$", $permalink['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         
         //release-notes
         //:permalink/:year/
-        add_rewrite_rule(sprintf("%s/([0-9]{4,4})/?$", $permalink[$culture]['release-notes']), 'index.php?name=release-notes&year=$matches[1]', 'top');
+        add_rewrite_rule(sprintf("%s/([0-9]{4,4})/?$", $permalink['release-notes']), 'index.php?name=release-notes&year=$matches[1]', 'top');
+        
         // login as
         add_rewrite_rule("loginas/([0-9]+)/([a-zA-Z0-9]+)$", 'index.php?name=loginas&user_id=$matches[1]&token=$matches[2]', 'top');
         // account confirmation

@@ -98,7 +98,6 @@ class L7P_Admin
         // mappings section
         add_settings_section('l7p_mappings_section', '', array($this, 'mappings_section_callback'), 'l7p_mappings');
 
-        $cultures = l7p_get_cultures();
         $config = l7p_get_config();
         $permalinks = l7p_get_permalinks();
         $section_name = 'l7p_permalinks';
@@ -298,7 +297,7 @@ class L7P_Admin
                 'name' => $pagename,
                 'section' => $section_name,
                 'value' => $page->ID,
-                'help' => !is_null($page) ? '/en/' . $page->post_name : '',
+                'help' => !is_null($page) ? '/' . $page->post_name : '',
                 'style' => $has_error ? 'border: 2px solid red;' : ''
                 )
             );
