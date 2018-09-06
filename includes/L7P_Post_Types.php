@@ -24,10 +24,17 @@ class L7P_Post_Types
      */
     public static function register_post_types()
     {
+        
         if (post_type_exists('l7p_page') && post_type_exists('l7p_release')) {
+            // enable reviews for l7p_page
+            if (post_type_supports('l7p_page', 'revisions') === false) {
+                add_post_type_support('l7p_page', 'revisions');
+            }
             return;
         }
+        
         if (!post_type_exists('l7p_page')) {
+            
             register_post_type('l7p_page', array(
                 'label' => __("Dynamic page templates", 'level7platform'),
                 'description' => __('This is where you can manage Level7 platform page templates.', 'level7platform'),
@@ -50,7 +57,7 @@ class L7P_Post_Types
                 'capability_type' => 'page',
                 'map_meta_cap' => true,
                 'capabilities' => array(),
-                'supports' => array('title', 'editor', 'excerpt', 'thumbnail'),
+                'supports' => array('title', 'editor', 'excerpt', 'thumbnail', 'revisions'),
                 'rewrite' => false,
                 'query_var' => false
                 )
