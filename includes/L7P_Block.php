@@ -347,11 +347,16 @@ function l7p_block_subscription_form()
         [FORM_SECURITY_TOKEN]
 
         [FORM_SUBSCRIPTION_TOKEN]
+        
+        <input type="hidden" name="is_subscribed" value="[if is_subscribed]0[else]1[/if]" id="is_subscribed" />
 
         <div class="form-row">
-            <input type="checkbox" name="is_subscribed" value="1" id="is_subscribed" [if is_subscribed]checked="checked"[/if]>
-            <label for="is_subscribed"><span></span>Active</label>
-            <button type="submit" id="l7p-subscription-button" >Update</button>
+            
+            [if is_subscribed]
+                <button type="submit" id="l7p-subscription-button" >Disable subscription</button>
+            [else]
+                <button type="submit" id="l7p-subscription-button" >Activate subscription</button>
+            [/if]
         </div>
     </form>
 
