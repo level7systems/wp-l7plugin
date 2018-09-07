@@ -963,13 +963,9 @@ function isEuCountry(country_code)
 
         $(document).on('submit', 'form#l7p-subscription-form, form.l7p-subscription-form', function (e) {
 
-            var $form = $(this),
-                    s = '';
+            var $form = $(this);
                     
             clearErrors($form);
-
-            if ($form.find('#is_subscribed').prop('checked'))
-                s = 1;
 
             e.preventDefault();
             $.jsonp({
@@ -978,8 +974,8 @@ function isEuCountry(country_code)
                 type: 'POST',
                 data: {
                     method: 'subscribe',
-                    is_subscribed: s,
-                    conf_link: $form.find('#subscription_token').val()
+                    is_subscribed: $form.find('input[name="is_subscribed"]').val(),
+                    conf_link: $form.find('input[name="subscription_token"]').val()
                 },
                 beforeSend: function(){
                     jQuery(document).trigger("l7p:form:processing");
@@ -996,7 +992,7 @@ function isEuCountry(country_code)
 
                     $form.html('<p class="big center text-center">Your subscription has been updated.</p>');
                     
-                    jQuery(document).trigger("l7p:subscription:completed", [s]);
+                    jQuery(document).trigger("l7p:subscription:completed", [$form.find('input[name="is_subscribed"]').val()]);
                 }, 
                 error: function(jqXhr, status) {
                     
