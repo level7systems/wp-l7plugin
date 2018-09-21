@@ -1215,24 +1215,38 @@ function l7p_api_url()
     return sprintf("https://%s/%s/api", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
 }
 
+function l7p_get_default_web_domain()
+{
+    $domainMap = [
+        "voipstudio.dev.es"  => "voipstudio.dev",
+        "voipstudio.test.es" => "voipstudio.test",
+        "voipstudio.es"      => "voipstudio.com",
+        "dev.voipstudio.es"  => "dev.voipstudio.com",
+    ];
+
+    $domain = l7p_get_web_product_settings('domain');
+
+    return (isset($domainMap[$domain])) ? $domainMap[$domain] : $domain;
+}
+
 function l7p_form_confirm_action()
 {
-    return sprintf("https://%s/%s/en/c", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+    return sprintf("https://%s/%s/%s/c", l7p_get_level7_domain(), l7p_get_default_web_domain('domain'), l7p_get_locale());
 }
 
 function l7p_form_verify_reset_token_action()
 {
-    return sprintf("https://%s/%s/en/reset", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+    return sprintf("https://%s/%s/%s/reset", l7p_get_level7_domain(), l7p_get_default_web_domain('domain'), l7p_get_locale());
 }
 
 function l7p_form_resend_confirmation_email_action()
 {
-    return sprintf("https://%s/%s/en/r", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+    return sprintf("https://%s/%s/%s/r", l7p_get_level7_domain(), l7p_get_default_web_domain('domain'), l7p_get_locale());
 }
 
 function l7p_form_subscription_action()
 {
-    return sprintf("https://%s/%s/en/profile", l7p_get_level7_domain(), l7p_get_web_product_settings('domain'));
+    return sprintf("https://%s/%s/%s/profile", l7p_get_level7_domain(), l7p_get_default_web_domain('domain'), l7p_get_locale());
 }
 
 function l7p_form_search_action()

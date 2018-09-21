@@ -1,3 +1,61 @@
+i18n = {};
+i18n.en = {
+    "URL_RECOVER_PASSWORD": "/recover-password/",
+
+};
+i18n.es = {
+    "Resend confirmation email to %1": "",
+    "Failed to decode API response": "",
+    "API failed to return userId and/or userToken": "",
+    "Have you forgotten your password?": "¿Ha olvidado su contraseña?",
+    "We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!": "",
+    "URL_RECOVER_PASSWORD": "/recuperar-contrasena/",
+};
+
+_ = function() {
+
+    if (arguments.length === 0) {
+        return '';
+    }
+
+    var text = Array.prototype.shift.call(arguments);
+
+    if (i18n[getLanguageHeader()] && i18n[getLanguageHeader()][text]) {
+        text = i18n[getLanguageHeader()][text];
+    }
+
+    var replaced = {};
+
+    var tokens = text.match(/%([A-Z,_])+%/g);
+
+    if (tokens) {
+
+        var arrayLength = tokens.length;
+
+        for (var key = 0; key < arrayLength; key++) {
+            var token = tokens[key].substring(1, tokens[key].length - 1);
+
+            if (!replaced[token]) {
+
+                var re = new RegExp('%'+token+'%', "g");
+
+                text = text.replace(re, i18n.webproduct[appKey][token]);
+
+                replaced[token] = true;
+            }
+        }
+    }
+    
+    for (var i = 0; i < arguments.length; i++) {
+        
+        var token_no = i + 1;
+        
+        text = text.replace("%" + token_no, arguments[i]);
+    }
+    
+    return text;
+};
+
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
       position = position || 0;
@@ -250,13 +308,13 @@ function isEuCountry(country_code)
         
         if (!response) {
             jQuery(document).trigger("l7p:form:completed");
-            $form.find('input[name="username"]').after('<p class="small error-username">Failed to decode API response</p>');
+            $form.find('input[name="username"]').after('<p class="small error-username">' + _('Failed to decode API response') + '</p>');
             return false;
         }
 
         if (!response.user_id || !response.user_token) {
             jQuery(document).trigger("l7p:form:completed");
-            $form.find('input[name="username"]').after('<p class="small error-username">API failed to return userId and/or userToken</p>');
+            $form.find('input[name="username"]').after('<p class="small error-username">' + _('API failed to return userId and/or userToken') + '</p>');
             return false;
         }
 
@@ -281,22 +339,22 @@ function isEuCountry(country_code)
                         jQuery(document).trigger("l7p:web_product:activation", [ error.message ]);
                     } else if ($form.hasClass('l7p-activate-form')) {
                         $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>');
-                    } else if (error.message.indexOf("Invalid email and/or password") != -1) {
+                    } else if (error.code == 'AU1003') {
 
-                        var recover_url = '/recover-password';
+                        var recover_url = _('URL_RECOVER_PASSWORD');
                         if (document.location.pathname.startsWith('/en')) {
                             recover_url = '/en' + recover_url;
                         }
 
-                        $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">Have you forgotten your password?</a>').show();
-                    } else if (error.message.indexOf("not confirmed") != -1) {
+                        $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + recover_url + '">'+_('Have you forgotten your password?') + '</a>').show();
+                    } else if (error.code == 'AU1002') {
 
                         var confirmation_url = '/resend-confirmation-email';
                         if (document.location.pathname.startsWith('/en')) {
                             confirmation_url = '/en' + confirmation_url;
                         }
 
-                        $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">Resend confirmation email to ' + $form.find('input[name="username"]').val() + '</a>').show();
+                        $('#l7p-global-errors, .l7p-global-errors').html(error.message + '<br><a href="' + confirmation_url + '/' + $form.find('input[name="username"]').val() + '">' + _('Resend confirmation email to %1', $form.find('input[name="username"]').val()) + '</a>').show();
                     } else {
                         $form.find('input[name="username"]').after('<p class="small error-username">' + error.message + '</p>');
                     }
@@ -308,7 +366,7 @@ function isEuCountry(country_code)
         }
         
         if ($('div#maintenance').length === 0) {
-            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">'+_('We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!')+'</div>');
         }
 
         jQuery(document).trigger("l7p:login:error");
@@ -550,7 +608,7 @@ function isEuCountry(country_code)
                 error: function(jqXhr, status) {
                     
                     if ($('div#maintenance').length === 0) {
-                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                        $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">'+_('We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!')+'</div>');
                     }
                     
                     jQuery(document).trigger("l7p:registration:error", ['customer']);
@@ -668,7 +726,7 @@ function isEuCountry(country_code)
                     } else {
                     
                         if ($('div#maintenance').length === 0) {
-                            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!</div>');
+                            $form.before('<div id="maintenance" class="f-msg-error error-global" style="display: block">'+_('We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!')+'</div>');
                         }
                     }
                     
