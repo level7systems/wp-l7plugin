@@ -327,7 +327,8 @@ function isEuCountry(country_code)
                 password: $form.find('input[name="password"]').val()
             }),
             contentType: 'application/json; charset=utf-8',
-            beforeSend: function(){
+            beforeSend: function(jqXhr){
+                jqXhr.setRequestHeader("X-Language", getLanguageHeader());
                 jQuery(document).trigger("l7p:form:processing");
             },
             success: onLoginSuccess.bind($form),
@@ -805,7 +806,8 @@ function isEuCountry(country_code)
                     email: email
                 }),
                 contentType: 'application/json; charset=utf-8',
-                beforeSend: function(){
+                beforeSend: function(jqXhr){
+                    jqXhr.setRequestHeader("X-Language", getLanguageHeader());
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
@@ -879,7 +881,8 @@ function isEuCountry(country_code)
                     password: password
                 }),
                 contentType: 'application/json; charset=utf-8',
-                beforeSend: function(){
+                beforeSend: function(jqXhr){
+                    jqXhr.setRequestHeader("X-Language", getLanguageHeader());
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: function (res) {
@@ -895,6 +898,9 @@ function isEuCountry(country_code)
                             password: password
                         }),
                         contentType: 'application/json; charset=utf-8',
+                        beforeSend: function(jqXhr){
+                            jqXhr.setRequestHeader("X-Language", getLanguageHeader());
+                        },
                         success: function (res) {
 
                             var userId = res.user_id,
@@ -1047,6 +1053,7 @@ function isEuCountry(country_code)
                 contentType: 'application/json; charset=utf-8',
                 beforeSend: function(jqXhr) {
                     jQuery(document).trigger("l7p:form:processing");
+                    jqXhr.setRequestHeader("X-Language", getLanguageHeader());
                     jqXhr.setRequestHeader("Authorization", "Basic " + btoa(response.user_id + ":" + response.user_token));
                 },
                 success: function (response) {
@@ -1118,7 +1125,8 @@ function isEuCountry(country_code)
                     password: password
                 }),
                 contentType: 'application/json; charset=utf-8',
-                beforeSend: function(){
+                beforeSend: function(jqXhr){
+                    jqXhr.setRequestHeader("X-Language", getLanguageHeader());
                     jQuery(document).trigger("l7p:form:processing");
                 },
                 success: onActivationSuccess.bind($form),
