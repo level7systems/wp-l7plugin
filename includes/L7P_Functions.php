@@ -1107,7 +1107,10 @@ function l7p_send_curl($url, $method = "GET")
         CURLOPT_SSL_VERIFYHOST => false,
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_USERAGENT => 'Level7 WP plugin',
-        CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'X-Language: ' . strtolower(l7p_get_locale())
+        ),
         CURLOPT_FOLLOWLOCATION => true
     ));
     $json = curl_exec($curl);

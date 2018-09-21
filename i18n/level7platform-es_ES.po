@@ -1,0 +1,26 @@
+msgid "Your account is now confirmed. Please use your email address and password to login."
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "First Name"
+msgstr ""
+
+msgid "Last Name"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Confirm Password"
+msgstr ""
+
+msgid "Choose prefered Price Plan (you can change it later if needed)."
+msgstr ""
+
+msgid "I have read and agree to the [a]Terms and Conditions[/a]"
+msgstr ""
+
+msgid "Create an account"
+msgstr ""
