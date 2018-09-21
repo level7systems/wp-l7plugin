@@ -307,11 +307,11 @@ class L7P_Query
 
                 try {
                     l7p_confirm_account($query->query_vars['token']);
-                    l7p_set_success_flash_message("Your account is now confirmed. Please use your email address and password to login.");
+                    l7p_set_success_flash_message(__("Your account is now confirmed. Please use your email address and password to login.", 'level7platform'));
                 } catch (RestException $e) {
                     l7p_set_error_flash_message($e->getMessage());
                 } catch (Exception $e) {
-                    l7p_set_error_flash_message(__('Invalid confirmation token.'));
+                    l7p_set_error_flash_message(__('Invalid confirmation token.', 'level7platform'));
                 }
                 
                 return $this->redirect_to_login();
