@@ -4,6 +4,7 @@ i18n.en = {
 
 };
 i18n.es = {
+    "Your password has been changed. An email has been sent to you with your new login details.": "",
     "Resend confirmation email to %1": "",
     "Failed to decode API response": "",
     "API failed to return userId and/or userToken": "",
@@ -875,7 +876,7 @@ function isEuCountry(country_code)
                     expire.setTime(time);
                     setCookie('reset_email', email, { expires: expire });
 
-                    $form.html('<p class="big center text-center">Your password has been changed. An email has been sent to you with your new login details.</p>');
+                    $form.html('<p class="big center text-center">'+_('Your password has been changed. An email has been sent to you with your new login details.')+'</p>');
                     
                     jQuery(document).trigger("l7p:password:requested");
                 }, 
