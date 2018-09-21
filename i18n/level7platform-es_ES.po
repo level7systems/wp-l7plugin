@@ -1,26 +1,26 @@
 msgid "Your account is now confirmed. Please use your email address and password to login."
-msgstr ""
+msgstr "Su cuenta ha sido validada. Por favor utilice su email y contraseña para acceder"
 
 msgid "Login"
-msgstr ""
+msgstr "Inicio de sesión"
 
 msgid "First Name"
-msgstr ""
+msgstr "Nombre"
 
 msgid "Last Name"
-msgstr ""
+msgstr "Apellidos"
 
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 msgid "Confirm Password"
-msgstr ""
+msgstr "Confirmar contraseña"
 
 msgid "Choose prefered Price Plan (you can change it later if needed)."
-msgstr ""
+msgstr "Seleccione el plan de precios (puede cambiarlo más adelante si lo necesita)"
 
 msgid "I have read and agree to the [a]Terms and Conditions[/a]"
-msgstr ""
+msgstr "He leído y acepto los [a]Términos y Condiciones[/a]"
 
 msgid "Create an account"
-msgstr ""
+msgstr "Crear una cuenta"
