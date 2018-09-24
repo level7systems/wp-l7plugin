@@ -4,12 +4,12 @@ i18n.en = {
 
 };
 i18n.es = {
-    "Your password has been changed. An email has been sent to you with your new login details.": "",
-    "Resend confirmation email to %1": "",
-    "Failed to decode API response": "",
-    "API failed to return userId and/or userToken": "",
+    "Your password has been changed. An email has been sent to you with your new login details.": "Su contraseña ha sido modificada. Le hemos enviado un email con los nuevos detalles de acceso.",
+    "Resend confirmation email to %1": "Volver a enviar el email de confirmación a %1",
+    "Failed to decode API response": "No se ha podido descodificar la respuesta de la API",
+    "API failed to return userId and/or userToken": "La API no ha podido obtener el userID y/o el userToken",
     "Have you forgotten your password?": "¿Ha olvidado su contraseña?",
-    "We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!": "",
+    "We are sorry, Our website is undergoing maintenance. <br/>We apologise for any inconvenience caused, and thank you for your understanding!": "Lo sentimos, estamos realizando tareas de mantenimiento en nuestro portal. <br/> Le pedimos disculpas. Gracias por su comprension.",
     "URL_RECOVER_PASSWORD": "/recuperar-contrasena/",
 };
 
