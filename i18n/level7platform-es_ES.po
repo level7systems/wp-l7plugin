@@ -26,10 +26,10 @@ msgid "Create an account"
 msgstr "Crear una cuenta"
 
 msgid "%s Call Rates - %s"
-msgstr ""
+msgstr "Tarifas de %s - %s"
 
 msgid "%s, %s Telephone Numbers - %s"
-msgstr ""
+msgstr "Numeración de %s, %s - %s"
 
 msgid "%s Telephone Numbers - %s"
-msgstr ""
+msgstr "Numeración de %s  - %s"
