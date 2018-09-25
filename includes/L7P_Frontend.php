@@ -63,16 +63,16 @@ class L7P_Frontend
         
         if (l7p_is_rates_country_page()) {
             $country_name = l7p_get_country_name_from_query();
-            return sprintf("%s Call Rates - %s", $country_name, $product_name );
+            return sprintf(__("%s Call Rates - %s"), $country_name, $product_name );
         }
         
         if (l7p_is_telephone_numbers_country_page()) {
             $country_name = l7p_get_country_name_from_query();
             $state_name = l7p_get_state_name_from_query();
-            if($state_name) {
-                return sprintf("%s, %s Telephone Numbers - %s", $state_name, $country_name, $product_name);
+            if ($state_name) {
+                return sprintf(__("%s, %s Telephone Numbers - %s"), $state_name, $country_name, $product_name);
             } else {
-                return sprintf("%s Telephone Numbers - %s", $country_name, $product_name);
+                return sprintf(__("%s Telephone Numbers - %s"), $country_name, $product_name);
             }
         }
         

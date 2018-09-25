@@ -24,3 +24,12 @@ msgstr "He leído y acepto los [a]Términos y Condiciones[/a]"
 
 msgid "Create an account"
 msgstr "Crear una cuenta"
+
+msgid "%s Call Rates - %s"
+msgstr ""
+
+msgid "%s, %s Telephone Numbers - %s"
+msgstr ""
+
+msgid "%s Telephone Numbers - %s"
+msgstr ""
