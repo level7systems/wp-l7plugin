@@ -16,6 +16,7 @@ class L7P_Frontend
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
         
+        add_filter('wp_title', array($this, 'filter_wp_title'), 20, 2);
         add_filter('pre_get_document_title', array($this, 'filter_wp_title'), 20, 2);
         add_filter('widget_posts_args', array($this, 'filter_recent_posts_widget_parameters'));
         // remove rel cannonical
