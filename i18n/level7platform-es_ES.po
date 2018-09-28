@@ -33,3 +33,6 @@ msgstr "Numeración de %s, %s - %s"
 
 msgid "%s Telephone Numbers - %s"
 msgstr "Numeración de %s  - %s"
+
+msgid "Please login to complete your purchase."
+msgstr ""
