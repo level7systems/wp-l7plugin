@@ -35,4 +35,4 @@ msgid "%s Telephone Numbers - %s"
 msgstr "Numeración de %s  - %s"
 
 msgid "Please login to complete your purchase."
-msgstr ""
+msgstr "Por favor, inicie sesión para completar el proceso de compra."
