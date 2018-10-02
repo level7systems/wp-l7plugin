@@ -15,7 +15,7 @@ class L7P_Frontend
     {
         add_action('wp_enqueue_scripts', array($this, 'styles'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
-        
+
         add_filter('wp_title', array($this, 'filter_wp_title'), 20, 2);
         add_filter('pre_get_document_title', array($this, 'filter_wp_title'), 20, 2);
         add_filter('widget_posts_args', array($this, 'filter_recent_posts_widget_parameters'));
@@ -75,6 +75,11 @@ class L7P_Frontend
             } else {
                 return sprintf(__("%s Telephone Numbers - %s", 'level7platform'), $country_name, $product_name);
             }
+        }
+
+        if (l7p_is_hardware_group_page()) {
+            $group_name = l7p_get_phone_group_name_from_query();
+            return sprintf("%s - %s", $group_name, $product_name);
         }
         
         if (l7p_is_hardware_phone_details_page()) {
