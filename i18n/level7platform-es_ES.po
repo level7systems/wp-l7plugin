@@ -36,3 +36,18 @@ msgstr "Numeración de %s  - %s"
 
 msgid "Please login to complete your purchase."
 msgstr "Por favor, inicie sesión para completar el proceso de compra."
+
+msgid "Desk Phones"
+msgstr "Teléfonos de sobremesa"
+
+msgid "DECT Phones"
+msgstr "Teléfonos DECT"
+
+msgid "Conference Phones"
+msgstr "Equipos de conferencia"
+
+msgid "VoIP Adaptors"
+msgstr "Adaptadores VoIP"
+
+msgid "Accessories"
+msgstr "Accesorios"

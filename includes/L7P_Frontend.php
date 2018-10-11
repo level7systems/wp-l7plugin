@@ -79,13 +79,13 @@ class L7P_Frontend
 
         if (l7p_is_hardware_group_page()) {
             $group_name = l7p_get_phone_group_name_from_query();
-            return sprintf("%s - %s", $group_name, $product_name);
+            return sprintf("%s - %s", __($group_name, 'level7platform'), $product_name);
         }
         
         if (l7p_is_hardware_phone_details_page()) {
             $group_name = l7p_get_phone_group_name_from_query();
             $phone_name = l7p_get_phone_name_from_query();
-            return sprintf("%s - %s - %s", $group_name, $phone_name, $product_name);
+            return sprintf("%s - %s - %s", __($group_name, 'level7platform'), $phone_name, $product_name);
         }
         
         return $title;
