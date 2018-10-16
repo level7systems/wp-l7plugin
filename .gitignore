@@ -1,6 +1,7 @@
 .project
 .buildpath
 .settings
+.idea
 
 # build directory for Sencha (ExtJS) projects
 /extjs/build/.sass-cache/

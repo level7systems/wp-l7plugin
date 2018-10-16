@@ -21,6 +21,30 @@ class L7P_Frontend
         add_filter('widget_posts_args', array($this, 'filter_recent_posts_widget_parameters'));
         // removes WP shortlinks from <heade>
         remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+		// rewrite for plugin pages Yoast SEO canonicals tag
+		add_filter( 'wpseo_canonical', function ( $canonical ) {
+			$l7p_pages = array(
+				(int) l7p_get_option( 'pricing_page_id' ),
+				(int) l7p_get_option( 'rates_page_id' ),
+				(int) l7p_get_option( 'telephone_numbers_page_id' ),
+				(int) l7p_get_option( 'hardware_page_id' ),
+				(int) l7p_get_option( 'support_page_id' ),
+				(int) l7p_get_option( 'login_page_id' ),
+				(int) l7p_get_option( 'one_time_login_page_id' ),
+				(int) l7p_get_option( 'recover_page_id' ),
+				(int) l7p_get_option( 'subscription_page_id' ),
+				(int) l7p_get_option( 'register_page_id' ),
+				(int) l7p_get_option( 'manual_search_page_id' )
+			);
+
+			$pages_with_currency_redirect_ids = l7p_get_option('currency_redirect_ids');
+			var_dump($pages_with_currency_redirect_ids);
+			if ( get_post_type() === 'l7p_page' || in_array( (int) get_the_ID(), $l7p_pages, true ) ) {
+				return get_home_url() . parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+			}
+
+			return $canonical;
+		} );
         // removes WP extra feeds from <head>
         remove_action('wp_head', 'feed_links_extra', 3 );
     }
