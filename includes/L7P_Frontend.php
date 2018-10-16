@@ -37,8 +37,8 @@ class L7P_Frontend
 				(int) l7p_get_option( 'manual_search_page_id' )
 			);
 
-			$pages_with_currency_redirect_ids = l7p_get_option('currency_redirect_ids');
-			var_dump($pages_with_currency_redirect_ids);
+			$pages_with_currency_redirect_ids = l7p_get_option( 'currency_redirect_ids' );
+			array_merge( $l7p_pages, $pages_with_currency_redirect_ids );
 			if ( get_post_type() === 'l7p_page' || in_array( (int) get_the_ID(), $l7p_pages, true ) ) {
 				return get_home_url() . parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 			}
