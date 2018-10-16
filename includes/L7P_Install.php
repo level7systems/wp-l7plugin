@@ -881,7 +881,7 @@ CONTENT
 		
 <div>
     <div>
-        <figure><img class src="http://static.ssl7.net/images/1/vs/desk-phones.jpg" alt="Desk Phones"></figure>
+        <figure><img class src="https://static.ssl7.net/images/1/vs/desk-phones.jpg" alt="Desk Phones"></figure>
     </div>
     <div>
         <h2>Desk Phones</h2> <a href="[PHONE_DESK_URL]">Browse All</a>
@@ -893,7 +893,7 @@ CONTENT
 		
 <div>
     <div>
-        <figure><img class src="http://static.ssl7.net/images/1/vs/dect-phones.jpg" alt="DECT Phones"></figure>
+        <figure><img class src="https://static.ssl7.net/images/1/vs/dect-phones.jpg" alt="DECT Phones"></figure>
     </div>
     <div>
         <h2>DECT Phones</h2> <a href="[PHONE_DECT_URL]">Browse All</a>
@@ -905,7 +905,7 @@ CONTENT
 		
 <div>
     <div>
-        <figure><img class src="http://static.ssl7.net/images/1/vs/conf-phones.jpg" alt="Conference Phones"></figure>
+        <figure><img class src="https://static.ssl7.net/images/1/vs/conf-phones.jpg" alt="Conference Phones"></figure>
     </div>
     <div>
         <h2>Conference Phones</h2> <a href="[PHONE_CONF_URL]">Browse All</a>
@@ -917,7 +917,7 @@ CONTENT
 <div>
     <div>
         <figure>
-            <img class src="http://static.ssl7.net/images/1/vs/adaptors.jpg" alt="VoIP Adapters">
+            <img class src="https://static.ssl7.net/images/1/vs/adaptors.jpg" alt="VoIP Adapters">
         </figure>
     </div>
     <div>
@@ -931,7 +931,7 @@ CONTENT
 <div>
     <div>
         <figure>
-            <img class src="http://static.ssl7.net/images/1/vs/accesories.jpg" alt="Accessories">
+            <img class src="https://static.ssl7.net/images/1/vs/accesories.jpg" alt="Accessories">
         </figure>
     </div>
     <div>
