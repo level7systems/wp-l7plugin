@@ -40,7 +40,18 @@ class L7P_Frontend
 			$pages_with_currency_redirect_ids = l7p_get_option( 'currency_redirect_ids' );
 			array_merge( $l7p_pages, $pages_with_currency_redirect_ids );
 			if ( get_post_type() === 'l7p_page' || in_array( (int) get_the_ID(), $l7p_pages, true ) ) {
-				return get_home_url() . parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+				$home_url = get_home_url();
+				$uri = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+				if ( preg_match( '/\.(es|it|de|at)$/', $home_url ) ) {
+					$uri = preg_replace('/\.(usd|eur|gbp)$/', $uri,'eur');
+					//$l7_default_currency = 'eur';
+				} else {
+					//default currency is USD
+					$uri = preg_replace('/\.(usd|eur|gbp)$/', $uri,'usd');
+					//$l7_default_currency = 'usd';
+				}
+
+				return $home_url . $uri;
 			}
 
 			return $canonical;
