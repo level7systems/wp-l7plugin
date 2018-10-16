@@ -384,13 +384,13 @@ function l7p_inline_phone_price()
 // Phone - thumbnail image
 function l7p_inline_phone_thumb_img()
 {
-    return 'isset($phone_data) ? $phone_data[\'thumb_img\'] : l7p_get_phone(\'thumb_img\')';
+    return 'isset($phone_data) ? l7p_asset($phone_data[\'thumb_img\']) : l7p_asset(l7p_get_phone(\'thumb_img\'))';
 }
 
 // Phone - image
 function l7p_inline_phone_img()
 {
-    return 'isset($phone_data) ? $phone_data[\'img\'] : l7p_get_phone(\'img\')';
+    return 'isset($phone_data) ? l7p_asset($phone_data[\'img\']) : l7p_asset(l7p_get_phone(\'img\'))';
 }
 
 // Phone - group URL
