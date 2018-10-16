@@ -1292,7 +1292,7 @@ function l7p_image_tag($source, array $options = array())
 function l7p_image_path($source, $absolute = true)
 {
     $path = '/images/';
-    $url = 'http://static.ssl7.net';
+    $url = 'https://static.ssl7.net';
 
     return $absolute ? $url . $path . $source : $path . $source;
 }
