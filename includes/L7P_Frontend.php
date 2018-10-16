@@ -22,38 +22,7 @@ class L7P_Frontend
         // removes WP shortlinks from <heade>
         remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
 		// rewrite for plugin pages Yoast SEO canonicals tag
-		add_filter( 'wpseo_canonical', function ( $canonical ) {
-			$l7p_pages = array(
-				(int) l7p_get_option( 'pricing_page_id' ),
-				(int) l7p_get_option( 'rates_page_id' ),
-				(int) l7p_get_option( 'telephone_numbers_page_id' ),
-				(int) l7p_get_option( 'hardware_page_id' ),
-				(int) l7p_get_option( 'support_page_id' ),
-				(int) l7p_get_option( 'login_page_id' ),
-				(int) l7p_get_option( 'one_time_login_page_id' ),
-				(int) l7p_get_option( 'recover_page_id' ),
-				(int) l7p_get_option( 'subscription_page_id' ),
-				(int) l7p_get_option( 'register_page_id' ),
-				(int) l7p_get_option( 'manual_search_page_id' )
-			);
-
-			$pages_with_currency_redirect_ids = l7p_get_option( 'currency_redirect_ids' );
-			array_merge( $l7p_pages, $pages_with_currency_redirect_ids );
-			if ( get_post_type() === 'l7p_page' || in_array( (int) get_the_ID(), $l7p_pages, true ) ) {
-				$home_url = get_home_url();
-				$uri = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
-				if ( preg_match( '/\.(es|it|de|at)$/', $home_url ) ) {
-					$uri = preg_replace('#\/(usd|eur|gbp)\/#','/eur/', $uri);
-				} else {
-					//default currency is USD
-					$uri = preg_replace('#\/(usd|eur|gbp)\/#','/usd/', $uri);
-				}
-
-				return $home_url . $uri;
-			}
-
-			return $canonical;
-		} );
+		add_filter( 'wpseo_canonical', array($this, 'wpseo_canonical'), 10 , 1 );
         // removes WP extra feeds from <head>
         remove_action('wp_head', 'feed_links_extra', 3 );
     }
@@ -67,6 +36,39 @@ class L7P_Frontend
             'level7-forms', plugins_url('/assets/css/frontend/forms.css', L7P_PLUGIN_FILE)
         );
     }
+
+	public function wpseo_canonical( $canonical ) {
+		$l7p_pages = array(
+			(int) l7p_get_option( 'pricing_page_id' ),
+			(int) l7p_get_option( 'rates_page_id' ),
+			(int) l7p_get_option( 'telephone_numbers_page_id' ),
+			(int) l7p_get_option( 'hardware_page_id' ),
+			(int) l7p_get_option( 'support_page_id' ),
+			(int) l7p_get_option( 'login_page_id' ),
+			(int) l7p_get_option( 'one_time_login_page_id' ),
+			(int) l7p_get_option( 'recover_page_id' ),
+			(int) l7p_get_option( 'subscription_page_id' ),
+			(int) l7p_get_option( 'register_page_id' ),
+			(int) l7p_get_option( 'manual_search_page_id' )
+		);
+
+		$pages_with_currency_redirect_ids = l7p_get_option( 'currency_redirect_ids' );
+		array_merge( $l7p_pages, $pages_with_currency_redirect_ids );
+		if ( get_post_type() === 'l7p_page' || in_array( (int) get_the_ID(), $l7p_pages, true ) ) {
+			$home_url = get_home_url();
+			$uri      = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+			if ( preg_match( '/\.(es|it|de|at)$/', $home_url ) ) {
+				$uri = preg_replace( '#\/(usd|eur|gbp)\/#', '/eur/', $uri );
+			} else {
+				//default currency is USD
+				$uri = preg_replace( '#\/(usd|eur|gbp)\/#', '/usd/', $uri );
+			}
+
+			return $home_url . $uri;
+		}
+
+		return $canonical;
+	}
 
     /**
      * Enqueue scripts
