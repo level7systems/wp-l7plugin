@@ -43,12 +43,10 @@ class L7P_Frontend
 				$home_url = get_home_url();
 				$uri = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 				if ( preg_match( '/\.(es|it|de|at)$/', $home_url ) ) {
-					$uri = preg_replace('\/(usd|eur|gbp)\/$', $uri,'/eur/');
-					//$l7_default_currency = 'eur';
+					$uri = preg_replace('#\/(usd|eur|gbp)\/#','/eur/', $uri);
 				} else {
 					//default currency is USD
-					$uri = preg_replace('\/(usd|eur|gbp)\/$/', $uri,'/usd/');
-					//$l7_default_currency = 'usd';
+					$uri = preg_replace('#\/(usd|eur|gbp)\/#','/usd/', $uri);
 				}
 
 				return $home_url . $uri;
