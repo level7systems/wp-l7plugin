@@ -943,6 +943,22 @@ function l7p_has_route($route_name)
     return array_key_exists($route_name, $routes);
 }
 
+function l7p_is_https()
+{
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== "off") {
+        return true;
+    }
+    return false;
+}
+
+function l7p_asset($url)
+{
+    if (l7p_is_https()) {
+        return strtr($url, ['http://' => 'https://']);
+    }
+    return strtr($url, ['https://' => 'http://']);
+}
+
 function l7p_url_for($route_name, $params = array(), $absolute = false)
 {
     $routes = l7p_get_routes();
