@@ -329,11 +329,13 @@ class L7P_Query
 
             if (isset($query->query_vars['email'])) {
 
-                $response = l7p_ressend_confirmation_email($query->query_vars['email']);
-                if ($response['success']) {
-                    l7p_set_success_flash_message(__($response['info']));
-                } else {
-                    l7p_set_error_flash_message(__($response['info']));
+                try {
+                    l7p_ressend_confirmation_email($query->query_vars['email']);
+                    l7p_set_success_flash_message(sprintf(__("Confirmation email sent to %s.", 'level7platform'), $query->query_vars['email']));
+                } catch (RestException $e) {
+                    l7p_set_error_flash_message($e->getMessage());
+                } catch (Exception $e) {
+                    l7p_set_error_flash_message(__('Unable to resend confirmation e-mail.', 'level7platform'));
                 }
 
                 return $this->redirect_to_login();

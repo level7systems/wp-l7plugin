@@ -1064,12 +1064,13 @@ function l7p_verify_reset_token($token)
 
 function l7p_ressend_confirmation_email($email)
 {
-    $url = strtr(':url/:email', array(
-        ':url' => l7p_form_resend_confirmation_email_action(),
-        ':email' => $email
+    $url = strtr(':url/confirmation', array(
+        ':url' => l7p_rest_api_url(),
     ));
 
-    return l7p_send_curl($url);
+    return l7p_send_curl($url, "POST", [
+        'email' => $email
+    ]);
 }
 
 function l7p_verify_subscription_token($token)
@@ -1113,7 +1114,7 @@ function l7p_register_agent_click($token)
     return l7p_send_curl($url);
 }
 
-function l7p_send_curl($url, $method = "GET")
+function l7p_send_curl($url, $method = "GET", array $data = [])
 {
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -1129,6 +1130,11 @@ function l7p_send_curl($url, $method = "GET")
         ),
         CURLOPT_FOLLOWLOCATION => true
     ));
+    
+    if ($data) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+    }
+    
     $json = curl_exec($curl);
 
     // if JSONP was returned
