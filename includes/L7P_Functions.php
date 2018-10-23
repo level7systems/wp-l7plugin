@@ -1380,7 +1380,9 @@ function l7p_is_hardware_phone_details_page()
 function l7p_get_remote_addr()
 {
     if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        if ($temp = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return trim($temp[0]);
+        }
     }
 
     return $_SERVER['REMOTE_ADDR'];
