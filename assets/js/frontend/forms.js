@@ -916,14 +916,15 @@ function isEuCountry(country_code)
             var $form = $(this),
                 password = $form.find('#password1').val(),
                 confirm_password = $form.find('input[name="password2"]').val(),
-                email = getCookie('reset_email', '');
+                email = getCookie('reset_email', ''),
+                token = getCookie('reset_token', '');
             
             if (password !== confirm_password) {
                 $('#l7p-global-errors, .l7p-global-errors').html('Both passwords must be identical.').show();
                 return false;
             }
             
-            if (email == '') {
+            if (token == '') {
                 $('#l7p-global-errors, .l7p-global-errors').html('Reset token has expired.').show();
                 return false;
             }
@@ -947,6 +948,11 @@ function isEuCountry(country_code)
                 success: function (res) {
 
                     jQuery(document).trigger("l7p:password:changed");
+
+                    if (email == '') {
+                        window.location = '/login';
+                        return;
+                    }
                         
                     $.ajax({
                         url: restApiUrl('/login'),
