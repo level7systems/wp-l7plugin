@@ -385,7 +385,7 @@ function l7p_block_javascript_package_type_select()
     ?>
     <?php echo L7P_Form::select(array('name' => 'package_type', 'choices' => array(), 'value' => 'P')) ?>
     
-    <script type="text/javascript">var package_type_options = {<?php echo implode(", ", $options) ?>};</script>
+    <script>var package_type_options = {<?php echo implode(", ", $options) ?>};</script>
     
     <?php
     $content = ob_get_clean();
