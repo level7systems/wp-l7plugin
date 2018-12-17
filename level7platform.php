@@ -59,7 +59,7 @@ class Level7Platform
         // integration with other plugins
         add_action('plugins_loaded', array('L7P_PluginIntegration', 'setup'), 10);
 
-        add_action('init', array($this, 'init'), 0);
+        add_action('plugins_loaded', array($this, 'init'), 0);
 
         // Loaded action
         do_action('level7platform_loaded');
