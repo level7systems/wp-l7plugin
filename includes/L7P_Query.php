@@ -469,14 +469,14 @@ class L7P_Query
     {
         $page = get_post(l7p_get_option('login_page_id'));
 
-        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], $page->post_name));
     }
     
     public function redirect_to_release_note()
     {
         $page = get_post(l7p_get_option('release_note_page_id'));
 
-        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], $page->post_name));
     }
     
     public function redirect_to_app()
@@ -488,14 +488,14 @@ class L7P_Query
     {
         $page = get_post(l7p_get_option('one_time_login_page_id'));
 
-        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], $page->post_name));
     }
 
     public function redirect_to_subscription()
     {
         $page = get_post(l7p_get_option('subscription_page_id'));
 
-        return l7p_redirect(sprintf("%s://%s/%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], strtolower(l7p_get_locale()), $page->post_name));
+        return l7p_redirect(sprintf("%s://%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], $page->post_name));
     }
 
     /**
