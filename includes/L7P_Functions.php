@@ -238,6 +238,15 @@ function l7p_get_currencies()
 
 function l7p_get_currency($auto_discover = false)
 {
+    if (isset($_COOKIE['l7_wp_cfg'])) {
+        
+        $json = json_decode(stripcslashes($_COOKIE['l7_wp_cfg']), true);
+
+        if (isset($json['currency_iso'])) {
+            return $json['currency_iso'];
+        }
+    }
+
     if ($currency = l7p_get_session('currency', false)) {
         return $currency;
     }
