@@ -238,12 +238,33 @@ function l7p_get_currencies()
 
 function l7p_get_currency($auto_discover = false)
 {
+    $currencies = l7p_get_currencies();
+
+    $temp = explode("/", trim($_SERVER['REDIRECT_URL'], "/"));
+    $lastPart = strtoupper(array_pop($temp));
+
+    if (in_array($lastPart, $currencies)) {
+        return $lastPart;
+    }
+
     if (isset($_COOKIE['l7_wp_cfg'])) {
         
         $json = json_decode(stripcslashes($_COOKIE['l7_wp_cfg']), true);
 
         if (isset($json['currency_iso'])) {
             return $json['currency_iso'];
+        }
+    }
+
+    if (defined('L7_CONFIG_PATH')) {
+        if ($json = json_decode(file_get_contents(L7_CONFIG_PATH), true)) {
+            if (isset($json['currencies']) && is_array($json['currencies'])) {
+                foreach ($json['currencies'] as $currencyIso => $data) {
+                    if ($data['default']) {
+                        return $currencyIso;
+                    }
+                }
+            }
         }
     }
 
