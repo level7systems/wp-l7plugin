@@ -68,12 +68,18 @@ function l7p_get_locale()
 
 function l7p_get_session($key, $default = false)
 {
+    if (defined('L7_CONFIG_PATH')) {
+        return $default;
+    }
     $key = "l7p_" . $key;
     return array_key_exists($key, $_SESSION) ? $_SESSION[$key] : $default;
 }
 
 function l7p_update_session($key, $val)
 {
+    if (defined('L7_CONFIG_PATH')) {
+        return;
+    }
     $key = "l7p_" . $key;
     $_SESSION[$key] = $val;
 }
@@ -256,18 +262,6 @@ function l7p_get_currency($auto_discover = false)
         }
     }
 
-    if (defined('L7_CONFIG_PATH')) {
-        if ($json = json_decode(file_get_contents(L7_CONFIG_PATH), true)) {
-            if (isset($json['currencies']) && is_array($json['currencies'])) {
-                foreach ($json['currencies'] as $currencyIso => $data) {
-                    if ($data['default']) {
-                        return $currencyIso;
-                    }
-                }
-            }
-        }
-    }
-
     if ($currency = l7p_get_session('currency', false)) {
         return $currency;
     }
@@ -286,6 +280,18 @@ function l7p_get_currency($auto_discover = false)
         // return EUR for eu countries
         if ($country_code && l7p_is_eu_country($country_code)) {
             return 'EUR';
+        }
+    }
+
+    if (defined('L7_CONFIG_PATH')) {
+        if ($json = json_decode(file_get_contents(L7_CONFIG_PATH), true)) {
+            if (isset($json['currencies']) && is_array($json['currencies'])) {
+                foreach ($json['currencies'] as $currencyIso => $data) {
+                    if ($data['default']) {
+                        return $currencyIso;
+                    }
+                }
+            }
         }
     }
     
@@ -1359,7 +1365,7 @@ function l7p_image_path($source, $absolute = true)
     return $absolute ? $url . $path . $source : $path . $source;
 }
 
-function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = false)
+function l7p_setcookie($name, $value = 0, $expire = 0, $path = "/", $domain = null, $secure = true)
 {
     setcookie($name, $value, $expire, $path, $domain, $secure);
 }

@@ -305,6 +305,11 @@ class L7P_Query
 
             if (isset($query->query_vars['token'])) {
 
+                if (defined('L7_CONFIG_PATH')) {
+                    l7p_setcookie('confirmation_token', $query->query_vars['token']);
+                    return $this->redirect_to_login();
+                }
+
                 try {
                     l7p_confirm_account($query->query_vars['token']);
                     l7p_set_success_flash_message(__("Your account is now confirmed. Please use your email address and password to login.", 'level7platform'));
@@ -468,7 +473,7 @@ class L7P_Query
     public function redirect_to_login()
     {
         $page = get_post(l7p_get_option('login_page_id'));
-
+        
         return l7p_redirect(sprintf("%s://%s/%s/", l7p_is_ssl() ? 'https' : 'http', $_SERVER['HTTP_HOST'], $page->post_name));
     }
     

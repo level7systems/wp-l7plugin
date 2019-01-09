@@ -160,6 +160,11 @@ class Level7Platform
 
     private function init_session()
     {
+        // do not start session for level7 theme
+        if (defined('L7_CONFIG_PATH')) {
+            return;
+        }
+
         if (!session_id()) {
             session_start();
         }
