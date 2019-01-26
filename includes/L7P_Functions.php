@@ -773,7 +773,7 @@ function l7p_get_chapter($attr)
     if ($attr == 'toc') {
         return isset($chapters[$manual_type]['index']) ? $chapters[$manual_type]['index'] : '';
     }
-    return isset($chapters[$manual_type][$name][$attr]) ? $chapters[$manual_type][$name][$attr] : '';
+    return isset($chapters[$manual_type][$name][$attr]) ? str_replace('http://static.','https://static.',$chapters[$manual_type][$name][$attr]) : '';
 }
 
 function l7p_get_chapters_keywords($term = '')
