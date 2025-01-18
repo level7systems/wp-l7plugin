@@ -119,27 +119,10 @@ class L7P_Admin
             )
         );
 
-        // rate page
-        l7p_add_settings_field(
-            'rates', // id
-            __('Country rates page', 'level7platform'), // setting label
-            array('L7P_Form', 'text_input'), // display callback
-            'l7p_general', // settings page
-            'l7p_permalinks_section', // section
-            array(
-            'name' => 'rates',
-            'section' => $section_name,
-            'value' => $permalinks,
-            'placeholder' => $this->get_field_default_value('rates'),
-            'pre' => '/',
-            'post' => '/:country',
-            )
-        );
-
         // virtual numbers page
         l7p_add_settings_field(
             'telephone_numbers', // id
-            __('Virtual numbers page', 'level7platform'), // setting label
+            __('Telephone numbers page', 'level7platform'), // setting label
             array('L7P_Form', 'text_input'), // display callback
             'l7p_general', // settings page
             'l7p_permalinks_section', // section
@@ -150,7 +133,7 @@ class L7P_Admin
             'placeholder' => $this->get_field_default_value('telephone_numbers'),
             'pre' => '/',
             'post' => '/:country-or-state',
-            'help' => 'Virtual Telephone Numbers'
+            'help' => 'Telephone Numbers'
             )
         );
 
@@ -175,39 +158,6 @@ class L7P_Admin
             );
         }
 
-        // manual page
-        l7p_add_settings_field(
-            'manual', // id
-            __('Manual page', 'level7platform'), // setting label
-            array('L7P_Form', 'text_input'), // display callback
-            'l7p_general', // settings page
-            'l7p_permalinks_section', // section
-            array(
-            'name' => 'manual',
-            'section' => $section_name,
-            'value' => $permalinks,
-            'placeholder' => $this->get_field_default_value('manual'),
-            'pre' => '/',
-            'post' => '/:chapter',
-            )
-        );
-
-        // terms and  page
-        l7p_add_settings_field(
-            'manual', // id
-            __('Terms and Conditions', 'level7platform'), // setting label
-            array('L7P_Form', 'text_input'), // display callback
-            'l7p_general', // settings page
-            'l7p_permalinks_section', // section
-            array(
-            'name' => 'terms',
-            'section' => $section_name,
-            'value' => $permalinks,
-            'placeholder' => $this->get_field_default_value('terms'),
-            'pre' => '/',
-            'help' => __('Links that will be generated for registration form.', 'level7platform'),
-            )
-        );
 
         // advanced settings
         $section_name = 'l7p_advanced';
@@ -268,14 +218,6 @@ class L7P_Admin
             'rates_page_id',
             'telephone_numbers_page_id',
             'hardware_page_id',
-            'support_page_id',
-            'login_page_id',
-            'one_time_login_page_id',
-            'recover_page_id',
-            'subscription_page_id',
-            'register_page_id',
-            'affiliate_page_id',
-            'release_notes_page_id'
         );
         $section_name = 'l7p_mappings';
         foreach ($pages as $pagename) {
