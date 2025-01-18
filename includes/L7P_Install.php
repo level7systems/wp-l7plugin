@@ -59,14 +59,6 @@ class L7P_Install
         wp_delete_post(l7p_get_option('rates_page_id'));
         wp_delete_post(l7p_get_option('telephone_numbers_page_id'));
         wp_delete_post(l7p_get_option('hardware_page_id'));
-        wp_delete_post(l7p_get_option('support_page_id'));
-        wp_delete_post(l7p_get_option('login_page_id'));
-        wp_delete_post(l7p_get_option('one_time_login_page_id'));
-        wp_delete_post(l7p_get_option('recover_page_id'));
-        wp_delete_post(l7p_get_option('subscription_page_id'));
-        wp_delete_post(l7p_get_option('register_page_id'));
-        wp_delete_post(l7p_get_option('affiliate_page_id'));
-        wp_delete_post(l7p_get_option('manual_search_page_id'));
         
         // delete options
         $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'l7p_%';");
@@ -98,72 +90,25 @@ class L7P_Install
                 'content'   => $pages_contents['pricing'],
                 'post_type' => 'page',
             ),
+
             'rates' => array(
                 'slug'      => 'rates',
                 'title'     => 'Call Rates',
                 'content'   => $pages_contents['rates'],
                 'post_type' => 'page',
             ),
-            'telephone_numbers' => array(
-                'slug'      => 'telephone-numbers',
-                'title'     => 'Telephone Numbers',
-                'content'   => $pages_contents['telephone_numbers'],
-                'post_type' => 'page',
-            ),
-            'hardware' => array(
-                'slug'      => 'hardware',
-                'title'     => 'Hardware',
-                'content'   => $pages_contents['hardware'],
-                'post_type' => 'page',
-            ),
-            'support' => array(
-                'slug'      => 'support',
-                'title'     => 'Support',
-                'content'   => $pages_contents['support'],
-                'post_type' => 'page',
-            ),
-            'login' => array(
-                'slug'      => 'login',
-                'title'     => 'Login',
-                'content'   => $pages_contents['login'],
-                'post_type' => 'page',
-            ),
-            'one_time_login' => array(
-                'slug'      => 'one-time-login',
-                'title'     => 'One time login',
-                'content'   => $pages_contents['one_time_login'],
-                'post_type' => 'page',
-            ),
-            'recover' => array(
-                'slug'      => 'recover-password',
-                'title'     => 'Recover password',
-                'content'   => $pages_contents['recover'],
-                'post_type' => 'page',
-            ),
-            'subscription' => array(
-                'slug'      => 'subscription',
-                'title'     => 'Email subscription',
-                'content'   => $pages_contents['subscription'],
-                'post_type' => 'page',
-            ),
-            'register' => array(
-                'slug'      => 'register',
-                'title'     => 'Registration',
-                'content'   => $pages_contents['register'],
-                'post_type' => 'page',
-            ),
-            'affiliate' => array(
-                'slug'      => 'affiliate',
-                'title'     => 'Become Our Agent',
-                'content'   => $pages_contents['affiliate'],
-                'post_type' => 'page',
-            ),
-            // templates for dynamic pages
             'rates_country' => array(
                 'slug'      => 'country-rates',
                 'title'     => 'Country call rates',
                 'content'   => $pages_contents['rates_country'],
                 'post_type' => 'l7p_page',
+            ),
+
+            'telephone_numbers' => array(
+                'slug'      => 'telephone-numbers',
+                'title'     => 'Telephone Numbers',
+                'content'   => $pages_contents['telephone_numbers'],
+                'post_type' => 'page',
             ),
             'telephone_numbers_country' => array(
                 'slug'      => 'country-telephone-numbers',
@@ -177,6 +122,13 @@ class L7P_Install
                 'content'   => $pages_contents['telephone_numbers_state'],
                 'post_type' => 'l7p_page',
             ),
+
+            'hardware' => array(
+                'slug'      => 'hardware',
+                'title'     => 'Hardware',
+                'content'   => $pages_contents['hardware'],
+                'post_type' => 'page',
+            ),
             'hardware_group' => array(
                 'slug'      => 'hardware-group',
                 'title'     => 'Hardware group',
@@ -187,18 +139,6 @@ class L7P_Install
                 'slug'      => 'hardware-model',
                 'title'     => 'Hardware phone details',
                 'content'   => $pages_contents['hardware_model'],
-                'post_type' => 'l7p_page',
-            ),
-            'manual_chapter' => array(
-                'slug'      => 'manual-chapter',
-                'title'     => 'Manual chapter',
-                'content'   => $pages_contents['manual_chapter'],
-                'post_type' => 'l7p_page',
-            ),
-            'manual_search' => array(
-                'slug'      => 'manual-search',
-                'title'     => 'Manual search',
-                'content'   => $pages_contents['manual_search'],
                 'post_type' => 'l7p_page',
             ),
         );
@@ -1052,141 +992,7 @@ CONTENT
 	
 CONTENT
 
-            ,'support'                => <<<CONTENT
-	
-<div>
-    <h1>`VoIPstudio <span>Support</span></h1>
-    <p>`All <span>information </span> can be found in our user <span>manuals</span></p>
-</div>
-
-<div>
-    <div>
-        <div>
-            <h3>`User Manual`</h3>
-            <a href="{MANUAL}?chapter=User_Introduction">`Read online`</a>
-            <a title="Download PDF" href="http://repo.ssl7.net/downloads/manuals/VoIPStudio-User.pdf"></a>
-        </div>
-        <div>
-            <h3>`Receptionist Manual`</h3>
-            <a href="{MANUAL}?chapter=Reception_Introduction">`Read online`</a>
-            <a title="Download PDF" href="http://repo.ssl7.net/downloads/manuals/VoIPStudio-Reception.pdf"></a>
-        </div>
-        <div>
-            <h3>`Administrator Manual`</h3>
-            <a href="{MANUAL}?chapter=Admin_Introduction">`Read online`</a>
-            <a title="Download PDF" href="http://repo.ssl7.net/downloads/manuals/VoIPStudio-Admin.pdf"></a>
-        </div>
-    </div>
-</div>
-
-<div>
-    <h3><span>`Support</span> Centre`</h3>
-    <p>`Access to the VoIPstudio Support Center is only granted to our customers.<br>
-        Please login to Customer Portal to open a new support ticket.`</p>
-  <a>`Login`</a>
-</div>
-	
-CONTENT
        
-            ,'login'                => <<<CONTENT
-<div id="l7p-login">
-
-    [block login_form]
-
-</div>
-            
-CONTENT
-            
-            ,'one_time_login'      => <<<CONTENT
-<div id="l7p-new-password">
-
-    [block new_password_form]
-
-</div>
-        
-CONTENT
-
-            ,'recover'             => <<<CONTENT
-<div id="l7p-password-recover">
-
-    [block password_recover_form]
-
-</div>
-            
-CONTENT
-            
-            ,'subscription'              => <<<CONTENT
-<div id="l7p-subscription">
-
-    [block subscription_form]
-
-</div>
-
-CONTENT
-
-            ,'register'                => <<<CONTENT
-<div>
-            
-    [block register_form]
-            
-</div>
-
-CONTENT
-	
-            ,'affiliate'                => <<<CONTENT
-<div>
-            
-    [block register_agent_form]
-            
-</div>
-            	
-CONTENT
-            
-            , 'manual_chapter'        => <<<CONTENT
-<div>
-  <h1>[MANUAL_NAME]<span><span>[MANUAL_CHAPTER]</span></span></h1>
-</div>
-
-<div>		
-  <div>
-    <div>
-      <h3>`Choose a chapter`</h3>
-      <div>
-        [MANUAL_TOC]
-      </div>
-    </div>
-    <div>
-      [MANUAL_CONTENT]
-    </div>
-  </div>
-</div>
-
-<div>
-  <h3><span>`Support</span> Center`</h3>
-  <p>`Access to the VoIP Studio Support Center is only granted to our customers.<br>
-    Please login into Customer Portal to open a new Support Ticket.`</p>
-  <a href="/login">`Login`</a>
-</div>
-
-CONTENT
-            , 'manual_search'        => <<<CONTENT
-<div>
-  <h1>[MANUAL_NAME]<span><span>[MANUAL_CHAPTER]</span></span></h1>
-</div>
-
-<div>		
-  
-</div>
-
-<div>
-  <h3><span>`Support</span> Center`</h3>
-  <p>`Access to the VoIP Studio Support Center is only granted to our customers.<br>
-    Please login into Customer Portal to open a new Support Ticket.`</p>
-  <a href="/login">`Login`</a>
-</div>
-
-CONTENT
-            
         );
     }
 }
