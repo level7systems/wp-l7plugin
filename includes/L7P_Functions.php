@@ -1048,6 +1048,9 @@ function l7p_redirect($url, $permanent = false)
 
 function l7p_get_page_by_pagename($pagename)
 {
+    if (!trim($pagename)) {
+        return null;
+    }
     $pages = get_posts(array('name' => $pagename, 'post_type' => 'page'));
     return count($pages) > 0 ? $pages[0] : null;
 }
