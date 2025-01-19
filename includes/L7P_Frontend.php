@@ -85,7 +85,7 @@ class L7P_Frontend
         wp_localize_script( 'level7-forms', 'ajax_options', array('admin_ajax_url' => $admin_ajax_url) ); 
     }
     
-    public function filter_wp_title($title, $sep)
+    public function filter_wp_title($title, $sep = null)
     {
         $product_name = l7p_get_web_product_settings('name');
         
