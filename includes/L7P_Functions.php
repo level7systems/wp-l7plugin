@@ -8,7 +8,75 @@
  * file that was distributed with this source code.
  */
 
+
+
 // utils
+
+function l7p_log($msg, $level = 'ERROR')
+{
+    file_put_contents('/enc/var/log/wp-l7pugin.log', date("Y-m-d H:i:s").' ['.$level.']: '.$msg."\n", FILE_APPEND);
+}
+
+function l7p_get_data($filename, $default = null)
+{
+    $path = L7P_DATA_DIR.'/'.$filename;
+
+    if (!file_exists($path) || !is_readable($path)) {
+        l7p_log("l7p_read_data file not found or is not redeable [$path]");
+        return $default;
+    }
+
+    if (!$content = file_get_contents($path)) {
+        l7p_log("l7p_read_data failed to read [$path]");
+        return $default;
+    }
+
+    if (!$json = json_decode($content, true)) {
+        l7p_log("l7p_read_data failed to json_decode [$path]");
+        return $default;
+    }
+
+    return $json;
+}
+
+function l7p_get_us_states()
+{
+    $dataFile = L7P_I18N_DIR.'/data.json';
+
+    if (!$json = @json_decode(@file_get_contents($dataFile), true)) {
+        return [];
+    }
+
+    return $json['state']['US'];
+}
+
+function l7p_countries_i18n($language = null)
+{
+    $dataFile = L7P_I18N_DIR.'/data.json';
+
+    $output = [];
+
+    if (!$json = @json_decode(@file_get_contents($dataFile), true)) {
+        return $output;
+    }
+
+    if ($language) {
+        if (isset($json[$language]) && isset($json[$language]['country'])) {
+            return $json[$language]['country'];
+        }
+        return $output;
+    }
+
+    foreach ($json as $language => $data) {
+        if (!isset($data['country'])) {
+            continue;
+        }
+
+        $output[$language] = $data['country'];
+    }
+
+    return $output;
+}
 
 function l7p_get_option($option, $default = null)
 {
@@ -151,11 +219,8 @@ function l7p_get_permalinks($culture = null)
     $permalinks = l7p_get_option('permalinks');
 
     $defaults = array(
-        'rates' => 'voip-call-rates',
+        'rates' => 'rates',
         'telephone_numbers' => 'telephone-numbers',
-        'manual' => 'manual',
-        'terms' => 'terms-and-conditions',
-        'release_notes'  => 'release-notes'
     );
     // if web product has shop enabled
     if (l7p_get_web_product_settings('has_shop')) {
@@ -220,7 +285,15 @@ function l7p_currency_symbol($value, $decimal = 2, $minor = false, $iso = null)
 
 function l7p_get_cultures()
 {
-    return l7p_get_settings('cultures', array());
+    return [
+        'de',
+        'en',
+        'es',
+        'es-mx',
+        'pl',
+        'pt',
+        'pt-br',
+    ];
 }
 
 function l7p_has_culture($culture_name)
@@ -233,16 +306,59 @@ function l7p_has_culture($culture_name)
 
 function l7p_get_culture()
 {
-    return l7p_get_settings('culture', array());
+    $validCultures = l7p_get_cultures();
+    $default = 'en';
+
+    $temp = explode("/", trim($_SERVER['REDIRECT_URL'], "/"));
+    $firstPart = $temp[0];
+
+    if (in_array($firstPart, $validCultures)) {
+        return $firstPart;
+    }
+
+    return $default;
+}
+
+function l7p_get_current_country()
+{
+    $defaultCountry = 'US';
+
+    $cultureToCountryMap = [
+        'de' => 'DE',
+        'en' => 'US',
+        'es' => 'ES',
+        'es-mx' => 'MX',
+        'pl' => 'PL',
+        'pt' => 'PT',
+        'pt-br' => 'BR',
+    ];
+
+    $culture = l7p_get_culture();
+
+    if (isset($cultureToCountryMap[$culture])) {
+        return $cultureToCountryMap[$culture];
+    }
+
+    return $defaultCountry;
 }
 
 // allowed currencies
 function l7p_get_currencies()
 {
-    return l7p_get_settings('currencies', array());
+    $output = [];
+
+    if ($json = json_decode(file_get_contents(L7_CONFIG_PATH), true)) {
+        if (isset($json['currencies']) && is_array($json['currencies'])) {
+            foreach ($json['currencies'] as $currencyIso => $data) {
+                $output[] = $currencyIso;
+            }
+        }
+    }
+    
+    return $output;
 }
 
-function l7p_get_currency($auto_discover = false)
+function l7p_get_currency()
 {
     $currencies = l7p_get_currencies();
 
@@ -253,49 +369,17 @@ function l7p_get_currency($auto_discover = false)
         return $lastPart;
     }
 
-    if (isset($_COOKIE['l7_wp_cfg'])) {
-        
-        $json = json_decode(stripcslashes($_COOKIE['l7_wp_cfg']), true);
-
-        if (isset($json['currency_iso'])) {
-            return $json['currency_iso'];
-        }
-    }
-
-    if ($currency = l7p_get_session('currency', false)) {
-        return $currency;
-    }
-
-    // if geoip module enabled
-    if (function_exists('geoip_country_code_by_name')) {
-        // try go country by addr
-        $country_code = l7p_get_geo();
-        $country_code = strtolower($country_code);
-        // available currencies
-        $currencies = l7p_get_currencies();
-        if ($country_code && array_key_exists($country_code, $currencies)) {
-            return $currencies[$country_code];
-        }
-        
-        // return EUR for eu countries
-        if ($country_code && l7p_is_eu_country($country_code)) {
-            return 'EUR';
-        }
-    }
-
-    if (defined('L7_CONFIG_PATH')) {
-        if ($json = json_decode(file_get_contents(L7_CONFIG_PATH), true)) {
-            if (isset($json['currencies']) && is_array($json['currencies'])) {
-                foreach ($json['currencies'] as $currencyIso => $data) {
-                    if ($data['default']) {
-                        return $currencyIso;
-                    }
+    if ($json = json_decode(file_get_contents(L7_CONFIG_PATH), true)) {
+        if (isset($json['currencies']) && is_array($json['currencies'])) {
+            foreach ($json['currencies'] as $currencyIso => $data) {
+                if ($data['default']) {
+                    return $currencyIso;
                 }
             }
         }
-    }
+    }    
     
-    return $currency ? : 'USD';
+    return 'USD';
 }
 
 function l7p_currency_name($currency_iso)
@@ -515,64 +599,497 @@ function l7p_get_pricelist($key = false)
 
 function l7p_get_pricelist_domestic($key = false)
 {
-    $pricelist = l7p_get_pricelist();
+    // key: fixed, mobile
+
     $currency = l7p_get_currency();
-    $country_code = l7p_get_geo();
+    $country_code = l7p_get_current_country();
 
-    $domestic = 0;
-    if (isset($pricelist['domestic'][$currency][$country_code])) {
-        $domestic = $pricelist['domestic'][$currency][$country_code];
+    $filename = sprintf("term_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $landlineRates = [];
+    $mobileRates = [];
+
+    foreach ($json as $data) {
+        if (!isset($data['country']) || $data['country'] != $country_code) {
+            continue;
+        }
+
+        if (!isset($data['rate'])) {
+            continue;
+        }
+
+        if (isset($data['type']) && $data['type'] == 'L') {
+            $landlineRates[] = $data['rate'];
+        } else if (isset($data['type']) && $data['type'] == 'M') {
+            $mobileRates[] = $data['rate'];
+        }
     }
 
-    if ($key && isset($domestic[$key])) {
-        return $domestic[$key];
+    $countryRates = [];
+
+    if ($key == 'mobile' && $mobileRates) {
+        $countryRates = $mobileRates;
+    } else {
+        $countryRates = $landlineRates;
     }
 
-    return $domestic;
+    if (!$countryRates) {
+        l7p_log("No rates found for country [$country_code]");
+        return null;
+    }
+
+    asort($countryRates);
+
+    return array_shift($countryRates);
+}
+
+function l7p_get_ddi_country_name()
+{
+    $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+    if (count($temp) < 3) {
+        return false;
+    }
+
+    $latPart = array_pop($temp); // currency
+
+    if (count($temp) === 3) {
+        $state =  array_pop($temp);
+    }
+
+    $countryName = array_pop($temp);
+    $countryName = str_replace('-', ' ', $countryName);
+
+    return $countryName;
+}
+
+function l7p_get_ddi_state_code()
+{
+    $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+    if (count($temp) < 3) {
+        return [];
+    }
+
+    $latPart = array_pop($temp); // currency
+
+    if (count($temp) === 3) {
+        $state =  array_pop($temp);
+
+        $state = str_replace('-', ' ', $state);
+
+        $states = l7p_get_us_states();
+
+        $stateCode = array_search($state, $states);
+
+        return $stateCode;
+    }
+
+    return null;
+}
+
+function l7p_get_ddi_country_code()
+{
+    $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+    if (count($temp) < 3) {
+        return [];
+    }
+
+    $latPart = array_pop($temp); // currency
+
+    if (count($temp) === 3) {
+        $state =  array_pop($temp);
+    }
+
+    $countryName = array_pop($temp);
+
+    $countries = l7p_countries_i18n(l7p_get_culture());
+    
+    $currency = l7p_get_currency();
+    
+    $filename = sprintf("ddis_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $countryMap = [];
+
+    foreach ($json as $data) {
+        if (!isset($countries[$data['country_code']])) {
+            l7p_log("No county for [".$data['country_code']."]");
+            continue;
+        }
+
+        $linkName = str_replace(["&","U.S."], ["","U-S"], $countries[$data['country_code']]);
+        $linkName = str_replace("  ", " ", $linkName);
+        $linkName = str_replace(' ', '-', $linkName);
+
+        $countryMap[$linkName] = $data['country_code'];
+    }
+
+    if (!isset($countryMap[$countryName])) {
+        return false;
+    }
+
+    return $countryMap[$countryName];
+}
+
+function l7p_get_origination_city_letters()
+{
+    if (!$countryCode = l7p_get_ddi_country_code()) {
+        return [];
+    }
+
+    $currency = l7p_get_currency();
+    
+    $filename = sprintf("ddis_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $letters = [];
+
+    foreach ($json as $data) {
+
+        if ($data['country_code'] != $countryCode) {
+            continue;
+        }
+
+        if ($data['ddi_type'] != 'G') {
+            continue;
+        }
+
+        $letters[] = substr($data['city'], 0, 1);
+    }
+
+    $letters = array_unique($letters);
+
+    asort($letters);
+
+    return $letters;
+}
+
+function l7p_get_ddi_data($type)
+{
+    if (!$countryCode = l7p_get_ddi_country_code()) {
+        return [];
+    }
+
+    $currency = l7p_get_currency();
+    
+    $filename = sprintf("ddis_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $output = [];
+
+    foreach ($json as $data) {
+
+        if ($data['country_code'] != $countryCode) {
+            continue;
+        }
+
+        if ($data['ddi_type'] != $type) {
+            continue;
+        }
+
+        $output[] = $data;
+    }
+
+    return $output;
+}
+
+function l7p_get_ddi_country_mobile()
+{
+    return l7p_get_ddi_data('M');
+}
+
+
+function l7p_get_ddi_country_national()
+{
+    return l7p_get_ddi_data('N');
+}
+
+function l7p_get_ddi_country_tollfree()
+{
+    return l7p_get_ddi_data('T');
+}
+
+function l7p_get_ddi_link($type, $anchor, $text)
+{
+    if (!$countryCode = l7p_get_ddi_country_code()) {
+        return [];
+    }
+
+    if (!l7p_get_ddi_data($type)) {
+        return false;
+    }
+
+    return '<a href="#'.$anchor.'">'.$text.'</a>';
+}
+
+function l7p_ddi_has_geographic()
+{
+    return l7p_get_ddi_data('G');
+}
+
+function l7p_ddi_has_national()
+{
+    return l7p_get_ddi_data('N');
+}
+
+function l7p_ddi_has_mobile()
+{
+    return l7p_get_ddi_data('M');
+}
+
+function l7p_ddi_has_tollfree()
+{
+    return l7p_get_ddi_data('T');
+}
+
+function l7p_get_ddi_mobile_link()
+{
+    return l7p_get_ddi_link("M", "mobile", "Mobile");
+}
+
+function l7p_get_ddi_national_link()
+{
+    return l7p_get_ddi_link("N", "national", "National");
+}
+
+function l7p_get_ddi_tollfree_link()
+{
+    return l7p_get_ddi_link("T", "tollfree", "Toll Free");
+}
+
+
+function l7p_get_ddi_country_data()
+{
+    if (!$countryCode = l7p_get_ddi_country_code()) {
+        return [];
+    }
+
+    $currency = l7p_get_currency();
+    
+    $filename = sprintf("ddis_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $stateCode = l7p_get_ddi_state_code();
+
+    $output = [];
+
+    foreach ($json as $data) {
+
+        if ($data['country_code'] != $countryCode) {
+            continue;
+        }
+
+        if ($data['country_code'] == 'US' && $data['state_code'] != $stateCode) {
+            continue;
+        }
+
+        if ($data['ddi_type'] != "G") {
+            continue;
+        }
+
+        $firstLetter = substr($data['city'], 0, 1);
+
+        $output[$firstLetter][] = $data;
+    }
+
+    return $output;
+}
+
+function l7p_get_int_origination()
+{
+    $countries = l7p_countries_i18n(l7p_get_culture());
+
+    $currency = l7p_get_currency();
+    
+    $filename = sprintf("ddis_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $mrc = [];
+
+    foreach ($json as $data) {
+        if (!isset($mrc[$data['country_code']])) {
+            $mrc[$data['country_code']] = $data;
+            continue;
+        }
+
+        if ($mrc[$data['country_code']]['mrc'] > $data['mrc']) {
+            $mrc[$data['country_code']] = $data;
+        }
+    }
+
+    $output = [];
+
+    foreach ($mrc as $i => $data) {
+        if (!isset($countries[$data['country_code']])) {
+            l7p_log("No county for [".$data['country_code']."]");
+            continue;
+        }
+
+        $data['country_name'] = $countries[$data['country_code']];
+
+        $json[$i]['country_name'] = $data;
+
+        $firstLetter = substr($countries[$data['country_code']], 0, 1);
+
+        $linkName = str_replace('U.S.', 'U-S', $data['country_name']);
+        $linkName = str_replace("  ", " ", $linkName);
+        $linkName = str_replace(' ', '-', $linkName);
+
+        $output[$firstLetter][$linkName] = [
+            'country_name' => $data['country_name'],
+            'is_package' => $data['is_package'],
+            'nrc' => l7p_currency_symbol($data['nrc']),
+            'mrc' => l7p_currency_symbol($data['mrc']),
+        ];
+
+    }
+
+    ksort($output);
+
+    return $output;
+}
+
+function l7p_get_int_termination()
+{
+    $allowedLetters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Y", "Z");
+
+    $countries = l7p_countries_i18n(l7p_get_culture());
+
+    $currency = l7p_get_currency();
+    
+    $filename = sprintf("term_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $rates = [];
+    $packageRoutes = [];
+
+    foreach ($json as $term) {
+        if ($term['type'] == 'L') {
+
+            if (isset($rates[$term['country']]['fixed'])) {
+                if ($term['rate'] < $rates[$term['country']]['fixed']) {
+                    $rates[$term['country']]['fixed'] = $term['rate'];
+                }
+            } else {
+                $rates[$term['country']]['fixed'] = $term['rate'];
+            }
+
+            if ($term['is_package'] && !in_array($term['country'].'-L', $packageRoutes)) {
+                $packageRoutes[] = $term['country'].'-L';
+            }
+        }
+
+        if ($term['type'] == 'M') {
+
+            if (isset($rates[$term['country']]['mobile'])) {
+                if ($term['rate'] < $rates[$term['country']]['mobile']) {
+                    $rates[$term['country']]['mobile'] = $term['rate'];
+                }
+            } else {
+                $rates[$term['country']]['mobile'] = $term['rate'];
+            }
+
+            if ($term['is_package'] && !in_array($term['country'].'-M', $packageRoutes)) {
+                $packageRoutes[] = $term['country'].'-M';
+            }
+        }
+    }
+
+    $cultureRates = [];
+    foreach ($countries as $countryCode => $countryName) {
+        if (!isset($rates[$countryCode])) {
+            continue;
+        }
+
+        if (!isset($rates[$countryCode]['mobile'])) {
+            $rates[$countryCode]['mobile'] = $rates[$countryCode]['fixed'];
+        }
+
+        $cultureRates[$countryName]['country_code'] = $countryCode;
+
+        $rateFixed = $rates[$countryCode]['fixed'];
+
+        if (($rateFixed * 100) < 100) {
+            $rateFixed = l7p_currency_symbol($rateFixed, 1, true);
+        } else {
+            $rateFixed = l7p_currency_symbol($rateFixed);
+        }
+
+        $rateMobile = $rates[$countryCode]['mobile'];
+
+        if (($rateMobile * 100) < 100) {
+            $rateMobile = l7p_currency_symbol($rateMobile, 1, true);
+        } else {
+            $rateMobile = l7p_currency_symbol($rateMobile);
+        }
+
+        $cultureRates[$countryName]['fixed'] = $rateFixed;
+        $cultureRates[$countryName]['mobile'] = $rateMobile;
+
+        $cultureRates[$countryName]['fixed-package'] = (in_array($countryCode . "-L", $packageRoutes)) ? true : false;
+        $cultureRates[$countryName]['mobile-package'] = (in_array($countryCode . "-M", $packageRoutes)) ? true : false;
+    }
+
+    ksort($cultureRates);
+
+    $output = array();
+    foreach ($cultureRates as $countryName => $data) {
+        $firstLetter = $countryName[0];
+
+        // try to fix not ASCII characters
+        if (!in_array($firstLetter, $allowedLetters)) {
+            $firstLetter = strtr($countryName, ['Ö' => 'O', 'Ä' => 'A'])[0];
+            if (!in_array($firstLetter, $allowedLetters)) {
+                continue;
+            }
+        }
+
+        $output[$firstLetter][$countryName] = $data;
+    }
+
+    return $output;
 }
 
 function l7p_get_pricelist_letters()
 {
     $allowed_letters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Y", "Z");
+
     $currency = l7p_get_currency();
-    $countries = l7p_get_countries();
-    $pricelist = l7p_get_pricelist();
+    
+    $filename = sprintf("term_%s.json", $currency);
 
-    if (!isset($pricelist['rates'])) {
-        return array();
-    }
-    $rates = $pricelist['rates'];
-    $package_routes = $pricelist['package_routes'];
+    $json = l7p_get_data($filename, []);
 
-    $culture_rates = [];
-    foreach ($countries as $country_code => $country_name) {
-        if (!isset($rates[$country_code])) {
+    $letters = [];
+
+    foreach ($json as $data) {
+        if (!isset($data['name'])) {
+            l7p_log("'name' attribute not found in $filename record");
             continue;
         }
 
-        if (!isset($rates[$country_code]['mobile'])) {
-            $rates[$country_code]['mobile'] = $rates[$country_code]['fixed'];
-        }
+        $firstLetter = strtoupper(substr($data['name'], 0, 1));
 
-        // TODO: add currency for each country
-        $culture_rates[$country_name]['fixed'] = $rates[$country_code]['fixed'][$currency];
-        $culture_rates[$country_name]['mobile'] = $rates[$country_code]['mobile'][$currency];
-
-        $culture_rates[$country_name]['fixed-package'] = (in_array($country_code . "-L", $package_routes)) ? true : false;
-        $culture_rates[$country_name]['mobile-package'] = (in_array($country_code . "-M", $package_routes)) ? true : false;
-    }
-
-    ksort($culture_rates);
-
-    $letters = array();
-    foreach ($culture_rates as $country_name => $data) {
-        $firstletter = $country_name[0];
-
-        if (!in_array($firstletter, $allowed_letters)) {
+        if (in_array($firstLetter, $letters)) {
             continue;
         }
 
-        $letters[$firstletter][$country_name] = $data;
+        if (!in_array($firstLetter, $allowed_letters)) {
+            l7p_log("found not allowed first letter [$firstLetter] in $filename record");
+            continue;
+        }
+
+        $letters[] = $firstLetter;
     }
 
     return $letters;
@@ -1218,57 +1735,6 @@ function l7p_send_curl($url, $method = "GET", array $data = [])
     curl_close($curl);
 
     return $json;
-}
-
-function l7p_set_success_flash_message($message)
-{
-    add_flash_message('success', $message);
-}
-
-function l7p_set_error_flash_message($message)
-{
-    add_flash_message('error', $message);
-}
-
-function l7p_get_success_flash_message()
-{
-    $messages = l7p_get_flash_messages();
-    if (isset($messages['success'])) {
-        return $messages['success']['message'];
-    }
-    
-    return '';
-}
-
-function l7p_get_error_flash_message()
-{
-    $messages = l7p_get_flash_messages();
-    if (isset($messages['error'])) {
-        return $messages['error']['message'];
-    }
-    
-    return '';
-}
-
-function add_flash_message($key, $message)
-{
-    $messages = l7p_get_session('flash_messages', $messages);;
-    $messages[$key] = array(
-        'lifetime' => 2,
-        'message' => $message
-    );
-    
-    l7p_set_flash_messages($messages);
-}
-
-function l7p_get_flash_messages()
-{
-    return l7p_get_session('flash_messages', array());
-}
-
-function l7p_set_flash_messages($messages)
-{
-    l7p_update_session('flash_messages', $messages);
 }
 
 function l7p_get_level7_domain()

@@ -1,0 +1,52 @@
+{
+    "product_code": "v",
+    "google_tracking_id": "UA-161767357-1",
+    "facebook_tracking_id": "898744793806892",
+    "livechat_tracking_id": "K009-623af35612be4",
+    "social": [
+        "https://www.facebook.com/voipstudioES",
+        "https://x.com/voipstudioES",
+		"https://www.youtube.com/channel/UCScXsbaL0GwGSxX0E5j4V9g",
+		"https://www.linkedin.com/company/voipstudio-espana"
+    ],
+    "email": "comercial@voipstudio.mx",
+    "address": [{
+        "streetAddress": "Nuevo Leon 202 Piso 7, Col. Hipódromo",
+        "addressLocality": "Cuidad de México",
+        "postalCode": "06100",
+        "addressCountry": "MX"
+    },{
+        "streetAddress": "205 N Michigan Avenue, #810",
+        "addressLocality": "Chicago",
+        "postalCode": "60601",
+        "addressRegion": "Illinois",
+        "addressCountry": "US"
+    }],
+    "currencies": {
+        "USD": {
+            "symbol": "$",
+            "default": true
+        },
+        "EUR": {
+            "symbol": "€"
+        },
+        "GBP": {
+            "symbol": "£"
+        }
+    },
+    "tc_checkbox": true,
+	"defaultGeoCountry": "MX",
+    "phoneNumbers": {
+        "US": "+1 619 350 3390",
+        "MX": "+52 55 4166 2992",
+        "CO": "+57 1 508 59 95",
+        "ES": "+34 919 019 100",
+        "AR": "+54 11 5984 1991",
+        "PE": "+51 1 706 83 38",
+        "CL": "+56 2 2938 2020",
+        "DO": "+1 829 956 6555",
+        "SV": "+503 21 36 77 55",
+        "PR": "+1 939 645 97 57",
+        "PA": "+507 838 9292"
+    }
+}

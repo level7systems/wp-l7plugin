@@ -28,15 +28,13 @@ class L7P_Query
 
     public function __construct()
     {
-        add_action('init', array($this, 'add_rewrite_rules'));
-        add_action('init', array($this, 'currency_change'));
-        
-        add_action('shutdown', array($this, 'clear_flash_messages'));
-        
-        add_action('template_redirect', array($this, 'currency_template_redirect'));
+        //add_action('init', array($this, 'add_rewrite_rules'));
+        //add_action('init', array($this, 'currency_change'));
+  
+        // add_action('template_redirect', array($this, 'currency_template_redirect'));
 
         if (!is_admin()) {
-            add_filter('query_vars', array($this, 'add_query_vars'), 0);
+            //add_filter('query_vars', array($this, 'add_query_vars'), 0);
             add_action('pre_get_posts', array($this, 'pre_get_posts'));
         }
     }
@@ -54,27 +52,6 @@ class L7P_Query
             }
         }
     }
-    
-    /**
-     * Clear flash messages
-     */
-    public function clear_flash_messages()
-    {
-        $messages = l7p_get_flash_messages();
-        foreach ($messages as $i => $message) {
-            
-            if ($message['lifetime'] == 0) {
-                unset($messages[$i]);
-                continue;
-            }
-            
-            if ($message['lifetime'] > 0) {
-                $messages[$i]['lifetime'] -= 1;
-            }
-        }
-        
-        l7p_set_flash_messages($messages);
-    }
 
     /**
      * @global type $wp_query
@@ -84,7 +61,7 @@ class L7P_Query
     public function currency_template_redirect()
     {
         global $wp_query;
-        
+
         if (isset($wp_query->query_vars['currency'])) {
             return;
         }
@@ -144,13 +121,111 @@ class L7P_Query
         return $vars;
     }
 
+    /**
+     * 
+     * 107243 - Call Rates [EN] /rates/
+     * 107339 - Call Rates [ES] /es/tarifas/
+     * 
+     * 107222 - Telephone Numbers EN] /telephone-numbers/usd
+     * 107354 - Telephone Numbers Country [EN] /telephone-numbers/COUNTRY/CURRENCY
+     */
     public function pre_get_posts($query)
     {
         // we only want to affect the main query
         if (!$query->is_main_query()) {
             return;
         }
-        
+
+        if (!preg_match('#/$#', $_SERVER['REQUEST_URI'])) {
+            return $this->redirect_to($_SERVER['REQUEST_URI'].'/');
+        }
+
+        if (preg_match('#^/rates/$#', $_SERVER['REQUEST_URI'])) {
+            return $this->redirect_to($_SERVER['REQUEST_URI'].'usd/');
+        }
+
+        if (preg_match('#^/es/tarifas/$#', $_SERVER['REQUEST_URI'])) {
+            return $this->redirect_to($_SERVER['REQUEST_URI'].'eur/');
+        }
+
+        if (preg_match('#^/telephone-numbers/$#', $_SERVER['REQUEST_URI'])) {
+            return $this->redirect_to($_SERVER['REQUEST_URI'].'usd/');
+        }
+
+        if (preg_match('#^/rates/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+
+            $page = get_post(107243);
+
+            $query->is_404 = false;
+            $query->is_page = true;
+            $query->is_home = false;
+            $query->is_singular = true;
+            $query->set('name', $page->post_name);
+        }
+
+        if (preg_match('#^/es/tarifas/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+
+            $page = get_post(107339);
+            
+            $query->is_404 = false;
+            $query->is_page = true;
+            $query->is_home = false;
+            $query->is_singular = true;
+            $query->set('name', $page->post_name);
+        }
+
+        // /telephone-numbers/usd
+        if (preg_match('#^/telephone-numbers/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+
+            $page = get_post(107222);
+
+            $query->is_404 = false;
+            $query->is_page = true;
+            $query->is_home = false;
+            $query->is_singular = true;
+            $query->set('name', $page->post_name);
+        }
+
+        // /telephone-numbers/country/usd
+        if (preg_match('#^/telephone-numbers/[a-zA-Z\-]+/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+
+            $countryCode = l7p_get_ddi_country_code();
+
+            $pageId = ($countryCode == 'US') ? 107377 /* US States */ : 107354 /* Country page */;
+
+            $page = get_post($pageId);
+            
+            $query->is_404 = false;
+            $query->is_page = true;
+            $query->is_home = false;
+            $query->is_singular = true;
+            $query->set('name', $page->post_name);
+        }
+
+        $countries = l7p_countries_i18n(l7p_get_culture());
+
+        if (!isset($countries['US'])) {
+            return;
+        }
+
+        $usa = str_replace(' ','-',$countries['US']);
+
+        // /telephone-numbers/United-States/STATE/usd
+        if (preg_match('#^/telephone-numbers/'.$usa.'/[a-zA-Z\-]+/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+
+            $page = get_post(107354);
+            
+            $query->is_404 = false;
+            $query->is_page = true;
+            $query->is_home = false;
+            $query->is_singular = true;
+            $query->set('name', $page->post_name);
+        }
+    }
+
+    public function fooBar()
+    {
+
         // set locale based on url
         $currencies = l7p_get_currencies();
         foreach ($currencies as $currency) {
@@ -160,19 +235,10 @@ class L7P_Query
             }
         }
 
-        // set locale based on url
-        if (isset($query->query_vars['currency']) && $query->query_vars['currency']) {
-            $currency = strtoupper($query->query_vars['currency']);
-            if (in_array($currency, $currencies)) {
-                l7p_update_session('currency', $currency);
-            }
-        }
-        
         // pagename
         $wp_pagename = $query->query_vars['pagename'];
         $pagename = $query->query_vars['name'];
-        
-        
+l7p_log("wp_pagename: ". $wp_pagename." pagename: ".$pagename);
         // redirect to currency page
         if (in_array($wp_pagename, array('pricing', 'rates', 'telephone-numbers', 'hardware')) && !$query->query_vars['currency']) {
             return $this->redirect_to_currency();
@@ -182,43 +248,8 @@ class L7P_Query
         if (in_array($pagename, array('pricing', 'rates', 'telephone_numbers', 'hardware')) && !$query->query_vars['currency']) {
             return $this->redirect_to_currency();
         }
-        if (in_array($pagename, array('release-notes'))) {
-            return $this->redirect_to_release_note();
-        }
         
-        if ($pagename == "rates") {
-            
-            if (!isset($query->query_vars['country'])) {
-                return $this->error_404();
-            }
-
-            if (!l7p_has_country($query->query_vars['country'])) {
-                return $this->error_404();
-            }
-
-            // call rates country
-            $pagename .= "_country";
-        } else if ($pagename == 'telephone_numbers') {
-
-            if (isset($query->query_vars['city'])) {
-
-                // buying phone number for city
-                if (isset($query->query_vars['buy'])) {
-
-                    $country_code = l7p_get_country_code_from_query();
-                    $city = l7p_get_city_name_from_query();
-
-                    if (isset($query->query_vars['toll_free'])) {
-                        $country_code .= '-Toll-Free';
-                    }
-
-                    l7p_update_session('extini', 'DdiAddWindow("' . $country_code . '","' . ucwords($city) . '");');
-                    
-                    l7p_set_success_flash_message(__("Please login to complete your purchase.", 'level7platform'));
-
-                    return $this->redirect_to_login();
-                }
-            }
+        if ($pagename == 'telephone_numbers') {
 
             if (isset($query->query_vars['state'])) {
                 // phone number state
@@ -249,16 +280,6 @@ class L7P_Query
 
                 if (!l7p_has_phone($query->query_vars['model'])) {
                     return $this->error_404();
-                }
-
-                // buying phone
-                if (isset($query->query_vars['buy'])) {
-                    $phone = l7p_get_phone();
-                    l7p_update_session('extini', 'PhonesGridWindow(); PhoneBuyWindowInit("' . $phone['pricelist_item_id'] . '");');
-                    
-                    l7p_set_success_flash_message(__("Please login to complete your purchase.", 'level7platform'));
-                    
-                    return $this->redirect_to_login();
                 }
 
                 // hardware model
@@ -409,7 +430,7 @@ class L7P_Query
         } else {
             $pagename = null;
         }
-        
+
         if ($pagename) {
 
             $page = get_post(l7p_get_option(sprintf("%s_page_id", $pagename)));
@@ -450,6 +471,16 @@ class L7P_Query
         
         $wp_query->set_404();
         status_header(404);
+    }
+
+    /**
+     * Redirects to given page with currency suffix
+     */
+    public function redirect_to($url)
+    {
+        $uri =  sprintf("https://%s/%s", $_SERVER['HTTP_HOST'], ltrim($url, '/'));
+
+        return l7p_redirect($uri);
     }
 
     /**
@@ -508,23 +539,31 @@ class L7P_Query
      */
     public function add_rewrite_rules()
     {
-        
         $permalink = l7p_get_permalinks();
         $currencies = l7p_get_currencies();
         $currencies_rule = strtolower(implode("|", $currencies));
-
+l7p_log(json_encode($currencies_rule));
         // downloads
         add_rewrite_rule("download-for-(windows|mac-osx)/?$", 'index.php?name=download&os=$matches[1]', 'top');
+        
         // rates
-        // /:permalink/:country/:currency/
-        add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['rates'], $currencies_rule), 'index.php?name=rates&country=$matches[1]&currency=$matches[2]', 'top');
+        // /:permalink/:currency/
+        $regex = sprintf("%s/?(%s)?$", $permalink['rates'], $currencies_rule);
+        add_rewrite_rule($regex, 'index.php?name=rates&currency=$matches[1]', 'top');
+        
+        $regex = sprintf("%s/?(%s)?$", 'tarifas', $currencies_rule);
+        add_rewrite_rule($regex, 'index.php?name=rates&currency=$matches[1]', 'top');
+
         // virtual numbers
         // /:permalink/:phone/:currency/
         add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&currency=$matches[2]', 'top');
+        
         // /:permalink/:phone/:country/:currency/
         add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&state=$matches[2]&currency=$matches[3]', 'top');
+
         // /:permalink/:country/:city/buy/:currency/
         add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([A-Z]{1}[\w\-\+]+)/buy/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1', 'top');
+        
         // /:permalink/:country/toll-free/:city/buy/:currency/
         add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/toll-free/([0-9]{3,4})/buy/?(%s)?$", $permalink['telephone_numbers'], $currencies_rule), 'index.php?name=telephone_numbers&country=$matches[1]&city=$matches[2]&currency=$matches[3]&buy=1&toll_free=1', 'top');
 
@@ -539,8 +578,6 @@ class L7P_Query
             add_rewrite_rule(sprintf("%s/([A-Z]{1}[\w\-\+]+)/([\w\-\+]+)/buy/?(%s)?$", $permalink['hardware'], $currencies_rule), 'index.php?name=hardware&group=$matches[1]&model=$matches[2]&currency=$matches[3]&buy=1', 'top');
         }
 
-        // manual
-        add_rewrite_rule(sprintf("%s/([\w\-\+!]+)/?$", $permalink['manual']), 'index.php?name=manual&chapter=$matches[1]', 'top');
         
         //release-notes
         //:permalink/:year/

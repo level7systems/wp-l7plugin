@@ -267,6 +267,18 @@ class L7P_Content
                 return '<?php if ($fax_letter_changed) :;$fax_letter_changed = false ?>';
 
 // DDIs
+            case 'ddi_has_geographic':
+                return '<?php if (l7p_ddi_has_geographic()) : ?>';
+
+            case 'ddi_has_national':
+                return '<?php if (l7p_ddi_has_national()) : ?>';
+
+            case 'ddi_has_mobile':
+                return '<?php if (l7p_ddi_has_mobile()) : ?>';
+
+            case 'ddi_has_tollfree':
+                return '<?php if (l7p_ddi_has_tollfree()) : ?>';
+
             case 'ddi_free':
                 return '<?php if (isset($free) && $free) : ?>';
 
@@ -300,11 +312,6 @@ class L7P_Content
             case 'ddi_has_area_code':
                 return '<?php if (isset($ddi_data) && $ddi_data["area_code"]) : ?>';
 
-            case 'ddi_states':
-                return '<?php '
-                    . '$states = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'states\');'
-                    . 'if (isset($states) && $states):'
-                    . ' ?>';
 
 // Phones
             case 'phone_has_desk':
@@ -399,7 +406,7 @@ class L7P_Content
             case 'term_letters':
                 return '<?php '
                     . '$letters = l7p_get_pricelist_letters();'
-                    . 'foreach ((isset($letters) ? $letters : array()) as $firstletter => $countries):'
+                    . 'foreach ((isset($letters) ? $letters : array()) as $firstletter):'
                     . ' ?>';
 
             case 'term_countries':
@@ -416,6 +423,17 @@ class L7P_Content
                 return '<?php '
                     . '$country_code = l7p_get_country_code_from_query(); $routes = l7p_get_pricelist_country($country_code);'
                     . 'foreach ((isset($routes) ? $routes : array()) as $term_name => $term_data):'
+                    . ' ?>';
+
+            case 'term_int_data':
+                return '<?php '
+                    . '$termIntData = l7p_get_int_termination();'
+                    . 'foreach ($termIntData as $firstletter => $intTermCountries) :'
+                    . ' ?>';
+
+            case 'term_int_countries':
+                return '<?php '
+                    . 'foreach ($intTermCountries as $termCountryName => $termCountryData):'
                     . ' ?>';
 // Fax
             case 'fax_letters':
@@ -460,9 +478,62 @@ class L7P_Content
 
             case 'ddi_states':
                 return '<?php '
-                    . '$states = l7p_get_ddi_country(l7p_get_country_code_from_query(), \'states\'); '
-                    . 'foreach ((isset($states) ? $states : array()) as $state_data):'
+                    . '$states = l7p_get_us_states(); '
+                    . 'foreach ((isset($states) ? $states : array()) as $stateName):'
                     . ' ?>';
+
+            case 'ddi_int_data':
+                return '<?php '
+                    . '$ddiIntData = l7p_get_int_origination();'
+                    . 'foreach ($ddiIntData as $firstletter => $intOriginationCountries) :'
+                    . ' ?>';
+
+            case 'ddi_int_countries':
+                return '<?php '
+                    . 'foreach ($intOriginationCountries as $ddiCountryLink => $ddiCountryData):'
+                    . ' ?>';
+
+            case 'ddi_country_letters':
+                return '<?php '
+                    . '$ddiCountryLetters = l7p_get_origination_country_letters();'
+                    . 'foreach ($ddiCountryLetters as $ddiCountryLetter):'
+                    . ' ?>';
+
+            case 'ddi_city_letters':
+                return '<?php '
+                    . '$ddiCityLetters = l7p_get_origination_city_letters();'
+                    . 'foreach ($ddiCityLetters as $ddiCityLetter):'
+                    . ' ?>';
+
+            case 'ddi_country_data':
+                return '<?php '
+                    . '$ddiCountryData = l7p_get_ddi_country_data();'
+                    . 'foreach ($ddiCountryData as $cityLetter => $ddiCountryCities):'
+                    . ' ?>';
+
+            case 'ddi_country_cities':
+                return '<?php '
+                    . 'foreach ($ddiCountryCities as $ddiCityData):'
+                    . ' ?>';
+
+            case 'ddi_country_national':
+                return '<?php '
+                    . '$ddiCountryData = l7p_get_ddi_country_national();'
+                    . 'foreach ($ddiCountryData as $ddiCityData):'
+                    . ' ?>';
+
+            case 'ddi_country_mobile':
+                return '<?php '
+                    . '$ddiCountryData = l7p_get_ddi_country_mobile();'
+                    . 'foreach ($ddiCountryData as $ddiCityData):'
+                    . ' ?>';
+
+            case 'ddi_country_tollfree':
+                return '<?php '
+                    . '$ddiCountryData = l7p_get_ddi_country_tollfree();'
+                    . 'foreach ($ddiCountryData as $ddiCityData):'
+                    . ' ?>';
+
 
 // Phones
             case 'phones':

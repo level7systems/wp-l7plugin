@@ -24,7 +24,7 @@ class Level7Platform
     public $query = null;
 
     /**
-     * @var WooCommerce The single instance of the class
+     * @var Level7Platform The single instance of the class
      * @since 2.1
      */
     protected static $_instance = null;
@@ -50,9 +50,6 @@ class Level7Platform
         // constants
         $this->define_constants();
 
-        // session initialization
-        $this->init_session();
-
         // include required files
         $this->includes();
 
@@ -63,6 +60,9 @@ class Level7Platform
 
         // Loaded action
         do_action('level7platform_loaded');
+
+        // flush rules after install
+        flush_rewrite_rules();
     }
 
     public function autoload($class)
@@ -101,10 +101,11 @@ class Level7Platform
         define('L7P_PLUGIN_FILE', __FILE__);
         define('L7P_PLUGIN_BASENAME', plugin_basename(__FILE__));
         define('L7P_VERSION', self::VERSION);
+        define('L7P_DATA_DIR', realpath(dirname(__FILE__) . '/data'));
+        define('L7P_I18N_DIR', realpath(dirname(__FILE__) . '/i18n'));
 
-        if (!defined('L7P_LOG_DIR')) {
-            define('L7P_LOG_DIR', ABSPATH . 'l7p-logs/');
-        }
+        $l7ConfigPath = realpath(dirname(__FILE__) . '/config/en/config.json');
+        define('L7_CONFIG_PATH', $l7ConfigPath);
     }
 
     /**
@@ -158,17 +159,6 @@ class Level7Platform
         return untrailingslashit(plugin_dir_path(__FILE__));
     }
 
-    private function init_session()
-    {
-        // do not start session for level7 theme
-        if (defined('L7_CONFIG_PATH')) {
-            return;
-        }
-
-        if (!session_id()) {
-            session_start();
-        }
-    }
 }
 
 function L7P()

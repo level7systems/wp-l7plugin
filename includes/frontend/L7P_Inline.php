@@ -17,7 +17,7 @@ function l7p_inline_culture()
 // get three letter currency code
 function l7p_inline_currency()
 {
-    return 'l7p_get_currency()';
+    return 'strtolower(l7p_get_currency())';
 }
 
 // get two letter country code for the current user.
@@ -123,22 +123,86 @@ function l7p_inline_term_letter()
     return 'isset($firstletter) ? $firstletter : \'<!-- TERM_LETTER not defined -->\'';
 }
 
+// displays termination route first name (if different from previous one)
+function l7p_inline_ddi_letter()
+{
+    return 'isset($firstletter) ? $firstletter : \'<!-- DDI_LETTER not defined -->\'';
+}
+
+// displays termination route first name (if different from previous one)
+function l7p_inline_ddi_city_letter()
+{
+    return 'isset($ddiCityLetter) ? \'<a href="#\'.$ddiCityLetter.\'">\'.$ddiCityLetter.\'</a>\' : \'<!-- DDI_CITY_LETTER not defined -->\'';
+}
+
+function l7p_inline_ddi_city_table_letter()
+{
+    return 'isset($cityLetter) ? $cityLetter : \'<!-- DDI_CITY_TABLE_LETTER not defined -->\'';
+}
+
+
+function l7p_inline_ddi_city_name()
+{
+    return 'isset($ddiCityData[\'city\']) ? $ddiCityData[\'city\'] : \'<!-- DDI_CITY not defined -->\'';
+}
+
+function l7p_inline_ddi_mobile_link()
+{
+    return '($mobileLink = l7p_get_ddi_mobile_link()) ? $mobileLink : \'<!-- DDI_MOBILE_LINK not found -->\'';
+}
+
+function l7p_inline_ddi_tollfree_link()
+{
+    return '($tollfreeLink = l7p_get_ddi_tollfree_link()) ? $tollfreeLink : \'<!-- DDI_TOLLFREE_LINK not found -->\'';
+}
+
+function l7p_inline_ddi_national_link()
+{
+    return '($nationalLink = l7p_get_ddi_national_link()) ? $nationalLink : \'<!-- DDI_NATIONAL_LINK not found -->\'';
+}
+
+// displays termination route first name (if different from previous one)
+function l7p_inline_ddi_country()
+{
+    return 'isset($ddiCountryData[\'country_name\']) ? $ddiCountryData[\'country_name\'] : \'<!-- DDI_COUNTRY not defined -->\'';
+}
+
+function l7p_inline_ddi_country_url()
+{
+    return 'isset($ddiCountryLink) ? $ddiCountryLink : \'<!-- DDI_COUNTRY not defined -->\'';
+}
+
+function l7p_inline_ddi_bundle()
+{
+    return '$ddiCountryData[\'is_package\'] ? "Included" : "Not included"';
+}
+
+function l7p_inline_ddi_setup()
+{
+    return '$ddiCountryData[\'nrc\']';
+}
+
+function l7p_inline_ddi_monthly()
+{
+    return '$ddiCountryData[\'mrc\']';
+}
+
 // displays mobile termination rate
 function l7p_inline_term_mobile()
 {
-    return '(($term_data[\'mobile\'] * 100) <= 100) ? l7p_currency_symbol($term_data[\'mobile\'],1,true) : l7p_currency_symbol($term_data[\'mobile\'])';
+    return '$termCountryData[\'mobile\']';
 }
 
 // displays fixed termination rate
 function l7p_inline_term_fixed()
 {
-    return '(($term_data[\'fixed\'] * 100) <= 100) ? l7p_currency_symbol($term_data[\'fixed\'],1,true) : l7p_currency_symbol($term_data[\'fixed\'])';
+    return '$termCountryData[\'fixed\']';
 }
 
 // display country name
 function l7p_inline_term_route_country()
 {
-    return 'isset($country_name) ? $country_name : l7p_get_country_name_from_query()';
+    return 'isset($termCountryName) ? $termCountryName : \'<!-- TERM_ROUTE_COUNTRY not defined -->\'';
 }
 
 // display country name as css class name
@@ -181,13 +245,15 @@ function l7p_inline_term_route_url()
 
 function l7p_inline_ddi_country_code()
 {
-    return 'strtolower($ddi_data[\'country_code\'])';
+    return "'".l7p_get_ddi_country_code().'"';
 }
 
 // displays DDI country name
 function l7p_inline_ddi_country_name()
 {
-    return 'isset($ddi_data[\'country_code\']) ? l7p_country_name($ddi_data[\'country_code\']) : l7p_get_country_name_from_query()';
+    $name = l7p_get_ddi_country_name();
+
+    return '"'.$name.'"';
 }
 // display country name as css class name
 function l7p_inline_ddi_country_name_as_classes()
@@ -203,31 +269,24 @@ function l7p_inline_ddi_country_tel_code()
 // displays DDI area code
 function l7p_inline_ddi_area_code()
 {
-    return '$ddi_data[\'area_code\']';
-}
-
-// displays DDI city name
-function l7p_inline_ddi_city_name()
-{
-    return '$ddi_data[\'city\']';
-}
-
-// displays DDI country URL
-function l7p_inline_ddi_country_url()
-{
-    return 'l7p_url_for(\'@numbers\', array(\'country\' => l7p_country_name($ddi_data[\'country_code\'])))';
+    return 'isset($ddiCityData[\'area_code\']) ? "+".$ddiCityData[\'country_tel_code\']." (".$ddiCityData[\'area_code\'].")" : \'<!-- DDI_AREA_CODE not defined -->\'';
 }
 
 // displays DDI setup fee
 function l7p_inline_ddi_setup_fee()
 {
-    return 'l7p_currency_symbol($ddi_data[\'NRC\'])';
+    return 'isset($ddiCityData[\'nrc\']) ? l7p_currency_symbol($ddiCityData[\'nrc\']) : \'<!-- DDI_SETUP_FEE not defined -->\''; 
 }
 
 // displays DDI monthly subscription fee
 function l7p_inline_ddi_monthly_fee()
 {
-    return 'l7p_currency_symbol($ddi_data[\'MRC\'])';
+    return 'isset($ddiCityData[\'mrc\']) ? l7p_currency_symbol($ddiCityData[\'mrc\']) : \'<!-- DDI_MONTHLY_FEE not defined -->\''; 
+}
+
+function l7p_inline_ddi_usage_fee()
+{
+    return 'isset($ddiCityData[\'min_rate\']) ? l7p_currency_symbol($ddiCityData[\'min_rate\'], 0, true) : \'<!-- DDI_MONTHLY_FEE not defined -->\''; 
 }
 
 // displays DDI per minute usage fee
@@ -249,15 +308,27 @@ function l7p_inline_ddi_toll_free_buy_url()
 }
 
 // displays buy DDI in selected U.S. state url
-function l7p_inline_ddi_state_url()
+function l7p_inline_ddi_state_link()
 {
-    return '(isset($state_data) && isset($state_data[\'state_name\'])) ? l7p_url_for(\'@numbers_state\', array(\'state\' => $state_data[\'state_name\'], \'country\' => l7p_get_country_name_from_query())) : \' \'';
+
+    $countries = l7p_countries_i18n(l7p_get_culture());
+
+    if (!isset($countries['US'])) {
+        return '<!-- Country US not found -->';
+    }
+
+
+    $currency = strtolower(l7p_get_currency());
+
+    $countryLink = str_replace(' ', '-', $countries['US']);
+
+    return '(isset($stateName)) ? \'<a href="/telephone-numbers/'.$countryLink.'/\'.str_replace(" ","-",$stateName).\'/'.$currency.'">\'.$stateName.\'</a>\' : \'<!-- DDI_STATE_NAME not defined -->\'';
 }
 
 // displays buy DDI in selected U.S. state url
 function l7p_inline_ddi_state_name()
 {
-    return '(isset($state_data) && isset($state_data[\'state_name\'])) ? $state_data[\'state_name\'] : \' \'';
+    return '(isset($stateName)) ? $stateName : \'<!-- DDI_STATE_NAME not defined -->\'';
 }
 // displays buy DDI in selected U.S. state url
 function l7p_inline_ddi_country_state_name()

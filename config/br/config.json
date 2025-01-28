@@ -1,0 +1,47 @@
+{
+    "product_code": "v",
+    "google_tracking_id": "UA-208100053-1",
+    "livechat_tracking_id": "K004-623af316ea7d5",
+    "social": [
+		"https://www.youtube.com/voipstudio"
+    ],
+    "email": "atendimento@voipstudio.com.br",
+    "address": [{
+        "streetAddress": "Gable House, 18-24 Turnham Green Terrace",
+        "addressLocality": "London",
+        "postalCode": "W4 1QP",
+        "addressCountry": "GB"
+    },{
+        "streetAddress": "205 N Michigan Avenue, #810",
+        "addressLocality": "Chicago",
+        "postalCode": "60601",
+        "addressRegion": "Illinois",
+        "addressCountry": "US"
+    }],
+    "most_read_id": [
+        42,
+        108
+    ],
+    "currencies": {
+        "USD": {
+            "symbol": "$",
+            "default": true
+        }
+    },
+    "tc_checkbox": true,
+	"defaultGeoCountry": "BR",
+    "phoneNumbers": {
+        "US": "+1 619 350 3390",
+        "MX": "+52 55 4166 2992",
+        "CO": "+57 1 508 59 95",
+        "ES": "+34 919 019 100",
+        "AR": "+54 11 5984 1991",
+        "PE": "+51 1 706 83 38",
+        "CL": "+56 2 2938 2020",
+        "DO": "+1 829 956 6555",
+        "SV": "+503 21 36 77 55",
+        "PR": "+1 939 645 97 57",
+        "PA": "+507 838 9292",
+        "BR": "+55 11 3197 8770"
+    }
+}

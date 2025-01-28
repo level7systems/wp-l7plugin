@@ -119,6 +119,23 @@ class L7P_Admin
             )
         );
 
+        // rate page
+        l7p_add_settings_field(
+            'rates', // id
+            __('Country rates page', 'level7platform'), // setting label
+            array('L7P_Form', 'text_input'), // display callback
+            'l7p_general', // settings page
+            'l7p_permalinks_section', // section
+            array(
+            'name' => 'rates',
+            'section' => $section_name,
+            'value' => $permalinks,
+            'placeholder' => $this->get_field_default_value('rates'),
+            'pre' => '/',
+            'post' => '/:country',
+            )
+        );
+
         // virtual numbers page
         l7p_add_settings_field(
             'telephone_numbers', // id

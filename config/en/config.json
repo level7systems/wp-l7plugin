@@ -1,0 +1,64 @@
+{
+    "product_code": "v",
+    "google_tag_manager_id": "GTM-M8LBQLP",
+    "livechat_tracking_id": "K004-6214ab6206719",
+    "social": [
+        "https://www.facebook.com/voipstudio",
+        "https://x.com/voipstudio",
+        "https://www.linkedin.com/company/voipstudio-com",
+        "https://www.youtube.com/voipstudio"
+    ],
+    "email": "sales@voipstudio.com",
+    "address": [{
+        "streetAddress": "Gable House, 18-24 Turnham Green Terrace",
+        "addressLocality": "London",
+        "postalCode": "W4 1QP",
+        "addressCountry": "GB"
+    },{
+        "streetAddress": "205 N Michigan Avenue, #810",
+        "addressLocality": "Chicago",
+        "postalCode": "60601",
+        "addressRegion": "Illinois",
+        "addressCountry": "US"
+    }],
+    "most_read_id": [
+        43012,
+        42842
+    ],
+    "currencies": {
+        "USD": {
+            "symbol": "$",
+            "default": true
+        },
+        "EUR": {
+            "symbol": "€"
+        },
+        "GBP": {
+            "symbol": "£"
+        }
+    },
+	"defaultGeoCountry": "US",
+    "phoneNumbers": {
+        "US": "+1 888-901-3006",
+        "GB": "+44 800 524 4440",
+        "PL": "+48 (81) 884 78 88",
+        "AU": "+61 180 064 7303",
+        "NZ": "+64 8000 013 99",
+        "HK": "+852 580 861 79",
+        "GR": "+30 261 118 0247",
+        "ES": "+34 911 231 208",
+        "SE": "+46 844 685 884",
+        "LT": "+37 052 141 721",
+        "BG": "+359 249 259 42",
+        "IT": "+39 069 480 9005",
+        "SI": "+386 188 883 82",
+        "SK": "+421 233 418 614",
+        "BE": "+32 258 887 23",
+        "CY": "+357 2200 81 66",
+        "CH": "+41 315 281 075",
+        "CZ": "+42 022 888 4607",
+        "LV": "+371 661 640 23",
+        "RO": "+40 316 301 945",
+        "FI": "+358 942 452 027"
+    }
+}

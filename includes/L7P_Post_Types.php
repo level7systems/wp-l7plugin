@@ -114,4 +114,4 @@ class L7P_Post_Types
     }
 }
 
-L7P_Post_Types::init();
+// L7P_Post_Types::init();
