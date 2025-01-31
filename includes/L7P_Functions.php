@@ -567,16 +567,28 @@ function l7p_get_state_name_from_query()
 
 function l7p_get_phone_name_from_query()
 {
-    global $wp_query;
+    $m = [];
+    if (!preg_match('#^/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'], $m)) {
+        return '';
+    }
 
-    return isset($wp_query->query_vars['model']) ? strtr($wp_query->query_vars['model'], array('-' => ' ')) : '';
+    return $m[2];
 }
 
 function l7p_get_phone_group_name_from_query()
 {
-    global $wp_query;
+    $m = [];
+    if (!preg_match('#^/hardware/([a-zA-Z\-]+)/#', $_SERVER['REQUEST_URI'], $m)) {
+        return '';
+    }
 
-    return isset($wp_query->query_vars['group']) ? strtr($wp_query->query_vars['group'], array('-' => ' ')) : '';
+    $groupName = str_replace('-', ' ', $m[1]);
+
+    if (!in_array($groupName, l7p_get_phone_groups())) {
+        return '';
+    }
+
+    return $groupName;
 }
 
 function l7p_get_chapter_name_from_query()
@@ -743,6 +755,8 @@ function l7p_get_origination_city_letters()
     }
 
     $currency = l7p_get_currency();
+
+    $stateCode = l7p_get_ddi_state_code();
     
     $filename = sprintf("ddis_%s.json", $currency);
 
@@ -753,6 +767,10 @@ function l7p_get_origination_city_letters()
     foreach ($json as $data) {
 
         if ($data['country_code'] != $countryCode) {
+            continue;
+        }
+
+        if ($data['country_code'] == 'US' && $data['state_code'] != $stateCode) {
             continue;
         }
 
@@ -1201,40 +1219,6 @@ function l7p_set_ddi_country($country_code, $currency, array $data)
     l7p_update_option(sprintf('ddi_country_%s', $country_code), $country_data);
 }
 
-function l7p_get_phones()
-{
-    $currency = l7p_get_currency();
-    $locale = l7p_get_locale();
-    $group = l7p_get_phone_group_name_from_query();
-    $phones = l7p_get_option('phones', array());
-
-    if ($group) {
-        return isset($phones[$locale][$currency][$group]) ? $phones[$locale][$currency][$group] : array();
-    }
-
-    return isset($phones[$locale][$currency]) ? $phones[$locale][$currency] : array();
-}
-
-function l7p_get_phone($attr = null)
-{
-    $name = l7p_get_phone_name_from_query();
-
-    $searchKey = strtr($name, ['.' => ' ', '-' => ' ']);
-    $filtered = array_filter(l7p_get_phones(), function($phone) use ($searchKey) {
-        return strtr($phone['name'], ['.' => ' ', '-' => ' ']) == $searchKey;
-    });
-    
-    if (count($filtered) === 0) {
-        return null;
-    }
-    $phone = current($filtered);
-    
-    if (is_null($attr)) {
-        return $phone;
-    }
-    return isset($phone[$attr]) ? $phone[$attr] : array();
-}
-
 function l7p_has_phone($phone_name)
 {
     $searchKey = strtr($phone_name, ['.' => ' ', '-' => ' ']);
@@ -1520,6 +1504,11 @@ function l7p_asset($url)
         return strtr($url, ['http://' => 'https://']);
     }
     return strtr($url, ['https://' => 'http://']);
+}
+
+function l7p_image($url, $alt)
+{
+    return sprintf('<img src="%s" alt="%s" />', $url, $alt);
 }
 
 function l7p_url_for($route_name, $params = array(), $absolute = false)
@@ -1975,4 +1964,137 @@ function l7p_get_package_country_codes()
 function l7p_is_eu_country($country_code)
 {
     return in_array(strtoupper($country_code), array("BE", "BG", "CZ", "DK", "DE", "EE", "IE", "GR", "ES", "FR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE", "GB", "RU", "UA", "TR", "EG", "GI", "GE", "BY", "MD", "RS", "HR", "BA", "AL", "AZ", "AM", "MC", "AD", "IS", "KZ", "LI", "MK", "ME", "NO", "SM", "CH", "VA", "MA", "DZ", "IR", "SY", "IL", "JO", "IQ", "SA", "AE", "OM", "YE"));
+}
+
+
+function l7p_get_hardware_group_name()
+{
+    $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+    if (count($temp) < 3) {
+        return false;
+    }
+
+    $latPart = array_pop($temp); // currency
+
+    if (count($temp) === 3){
+        $phoneName = array_pop($temp);
+    }
+
+    $groupName = array_pop($temp);
+    $groupName = str_replace('-', ' ', $groupName);
+
+    return $groupName;
+}
+
+
+function l7p_get_phones()
+{
+    $currency = l7p_get_currency();
+    $culture = l7p_get_culture();
+    $groupName = l7p_get_hardware_group_name();
+
+    $filename = sprintf('hardware_%s_%s.json', $culture, $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $output = [];
+
+    foreach ($json as $data) {
+        if ($data['group'] != $groupName) {
+            continue;
+        }
+
+        $phone = $data['phone'];
+        $phone['stock'] = ($data['stock']) ? $data['stock'].' in stock' : 'Out of stock';
+        $phone['price'] = $data['price'];
+        $phone['read_more_link'] = sprintf('<a href="/hardware/%s/%s/%s/">Read More</a>', 
+            str_replace(' ', '-', $groupName), str_replace(' ', '-', $data['phone']['name']), strtolower($currency));
+
+        $output[$data['phone']['name']] = $phone;
+    }
+
+    ksort($output);
+
+    return array_values($output);
+}
+
+function l7p_get_phone_groups()
+{
+    $currency = l7p_get_currency();
+    $culture = l7p_get_culture();
+
+    $filename = sprintf('hardware_%s_%s.json', $culture, $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $output = [];
+
+    foreach ($json as $data) {
+        $output[] = $data['group'];
+    }
+
+    $output = array_unique($output);
+
+    return $output;
+}
+
+function l7p_get_phone($attr = null)
+{
+    $name = l7p_get_phone_name_from_query();
+
+    $searchKey = strtr($name, ['-' => '']);
+
+    $filtered = array_filter(l7p_get_phones(), function($phone) use ($searchKey) {
+        return strtr($phone['name'], [' ' => '', '-' => '']) == $searchKey;
+    });
+
+    if (count($filtered) === 0) {
+        return null;
+    }
+    $phone = current($filtered);
+    
+    if (is_null($attr)) {
+        return $phone;
+    }
+    return isset($phone[$attr]) ? $phone[$attr] : array();
+}
+
+
+function l7p_get_phone_item()
+{
+    $m = [];
+    if (!preg_match('#^/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'], $m)) {
+        return null;
+    }
+
+    $groupUrlName = $m[1];
+    $phoneUrlName = $m[2];
+
+    $currency = l7p_get_currency();
+    $culture = l7p_get_culture();
+
+    $filename = sprintf('hardware_%s_%s.json', $culture, $currency);
+
+    $groupUrlName = str_replace('-', '', $groupUrlName);
+    $phoneUrlName = str_replace('-', '', $phoneUrlName);
+
+    $json = l7p_get_data($filename, []);
+
+    $phone = null;
+
+    foreach ($json as $data) {
+        if (str_replace(['-',' '],['',''], $data['group']) != $groupUrlName) {
+            continue;
+        }
+
+        if (str_replace(['-',' '],['',''], $data['phone']['name']) != $phoneUrlName) {
+            continue;
+        }
+
+        $phone = $data['phone'];
+        break;
+    }
+
+    return $phone;
 }

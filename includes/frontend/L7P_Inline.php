@@ -328,7 +328,7 @@ function l7p_inline_ddi_state_link()
 // displays buy DDI in selected U.S. state url
 function l7p_inline_ddi_state_name()
 {
-    return '(isset($stateName)) ? $stateName : \'<!-- DDI_STATE_NAME not defined -->\'';
+    return '(isset($stateName)) ? $stateName : l7p_get_state_name_from_query();';
 }
 // displays buy DDI in selected U.S. state url
 function l7p_inline_ddi_country_state_name()
@@ -437,13 +437,20 @@ function l7p_inline_phone_model()
 // Phone - short description
 function l7p_inline_phone_short_description()
 {
-    return 'isset($phone_data) ? $phone_data[\'short_description\'] : l7p_get_phone(\'short_description\')';
+    return 'isset($phone_data) ? $phone_data[\'description_html_short\'] : "n/a"';
 }
 
 // Phone - stock
 function l7p_inline_phone_stock()
 {
     return 'isset($phone_data) ? $phone_data[\'stock\'] : l7p_get_phone(\'stock\')';
+}
+
+// Phone - read more link
+function l7p_inline_phone_read_more_link()
+{
+
+    return 'isset($phone_data) ? $phone_data[\'read_more_link\'] : l7p_get_phone(\'read_more_link\')';
 }
 
 // Phone - price
@@ -455,13 +462,13 @@ function l7p_inline_phone_price()
 // Phone - thumbnail image
 function l7p_inline_phone_thumb_img()
 {
-    return 'isset($phone_data) ? l7p_asset($phone_data[\'thumb_img\']) : l7p_asset(l7p_get_phone(\'thumb_img\'))';
+    return 'isset($phone_data) ? l7p_image($phone_data[\'thumb\'], $phone_data[\'name\']) : l7p_image(l7p_get_phone(\'thumb\'), l7p_get_phone(\'name\'))';
 }
 
 // Phone - image
 function l7p_inline_phone_img()
 {
-    return 'isset($phone_data) ? l7p_asset($phone_data[\'img\']) : l7p_asset(l7p_get_phone(\'img\'))';
+    return 'isset($phone_data) ? l7p_image($phone_data[\'image\'], $phone_data[\'name\']) : l7p_image(l7p_get_phone(\'image\'), l7p_get_phone(\'name\'))';
 }
 
 // Phone - group URL
@@ -493,44 +500,7 @@ function l7p_inline_phone_reviews_url()
 // Phone - description
 function l7p_inline_phone_description()
 {
-    return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',l7p_get_phone(\'description\'))';
-}
-# Manual
-// Manual - name
-
-function l7p_inline_manual_name()
-{
-    return 'l7p_get_chapter(\'name\');';
-}
-
-// Manual - full title
-function l7p_inline_manual_title()
-{
-    return 'l7p_get_chapter(\'chapter\');';
-}
-
-// Manual - chapter short description
-function l7p_inline_manual_description()
-{
-    return 'l7p_get_chapter(\'description\');';
-}
-
-// Manual - Table of Contents
-function l7p_inline_manual_toc()
-{
-    return 'l7p_get_chapter(\'toc\');';
-}
-
-// Manual - chapter title
-function l7p_inline_manual_chapter()
-{
-    return 'l7p_get_chapter(\'chapter\');';
-}
-
-// Manual - content
-function l7p_inline_manual_content()
-{
-    return 'l7p_get_chapter(\'content\');';
+    return 'str_replace(\'.pdf">\',\'.pdf" target="_blank">\',l7p_get_phone(\'description_html\'))';
 }
 
 // API url
@@ -697,4 +667,10 @@ function l7p_inline_product_domain()
 function l7p_inline_app_key()
 {
     return 'l7p_get_web_product_settings(\'app_key\')';
+}
+
+function l7p_inline_hardware_group_name()
+{
+    $hardwareGroupName = l7p_get_hardware_group_name();
+    return '"'.$hardwareGroupName.'"';
 }

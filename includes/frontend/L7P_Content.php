@@ -335,25 +335,6 @@ class L7P_Content
                     . 'if (count($phones) > 0):'
                     . ' ?>';
 
-            case 'phone_in_stock':
-                return '<?php '
-                    . '$phone_data = isset($phone_data) ? $phone_data : l7p_get_phone(); '
-                    . 'if (isset($phone_data["stock"]) && $phone_data["stock"] > 0):'
-                    . ' ?>';
-
-            case 'phone_eol':
-                return '<?php '
-                    . '$phone_data = l7p_get_phone(); '
-                    . 'if (isset($phone_data["active"]) && $phone_data["active"] == 0):'
-                    . ' ?>';
-
-            // TODO: to be removed
-            case 'phone_has_reviews':
-                return '<?php if '
-                    . '$phone_data = l7p_get_phone(); '
-                    . '(isset($phone_data["review_count"]) && $phone_data["review_count"] > 0):'
-                    . ' ?>';
-
             default:
                 return '<!-- unknown condition ' . $m[1] . ' --> <?php if (false) : ?>';
         }
