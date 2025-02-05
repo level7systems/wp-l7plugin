@@ -558,31 +558,129 @@ function l7p_get_state_code_from_query()
     return strtoupper($state_code);
 }
 
+function l7p_currncies_regex()
+{
+    $currencies = l7p_get_currencies(); // [ 'USD', 'EUR', 'GBP' ]
+    $currenciesRegex = sprintf("(%s)", strtolower(implode("|", $currencies)));
+    return $currenciesRegex;
+}
+
+function l7p_cultures_regex()
+{
+    $cultures = [ 'es', 'es-mx', 'pt', 'pt-br', 'pl', 'de' ];
+    $culturesRegex = sprintf("(/%s)?", implode("|", $cultures));
+    return $culturesRegex;
+}
+
+function l7p_pricing_regex()
+{
+    return '(pricing|planes-precios-voip)';
+}
+
+function l7p_rates_regex()
+{
+    return '(rates|tarifas)';
+}
+
+function l7p_numbers_regex()
+{
+    return '(telephone-numbers|numeros)';
+}
+
+function l7p_numbers_url()
+{
+    $culture = l7p_get_culture();
+
+    $links = [
+        "de" => "rufnummern",
+        "pt" => "numeros-de-telefone",
+        "pt-br" => "numeros-de-telefone",
+        "es" => "numeros",
+        "es-mx" => "numeros",
+        "pl" => "numery",
+    ];
+    
+    if (isset($links[$culture])) {
+        return $links[$culture];
+    }
+
+    return 'telephone-numbers';
+}
+
 function l7p_get_state_name_from_query()
 {
-    global $wp_query;
+    $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
-    return isset($wp_query->query_vars['state']) ? strtr($wp_query->query_vars['state'], array('-' => ' ')) : '';
+    if (preg_match('#^'.l7p_cultures_regex().'$#', '/'.$temp[0])) {
+        $culture = array_shift($temp);
+    }
+
+    if (count($temp) < 3) {
+        return [];
+    }
+
+    $latPart = array_pop($temp); // currency
+
+    if (count($temp) === 3) {
+        $state =  array_pop($temp);
+
+        $state = str_replace('-', ' ', $state);
+
+        $states = l7p_get_us_states();
+
+        if (in_array($state, $states)) {
+            return $state;
+        }
+
+        return $stateCode;
+    }
+
+    return null;
 }
 
 function l7p_get_phone_name_from_query()
 {
     $m = [];
-    if (!preg_match('#^/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'], $m)) {
+    if (!preg_match('#^'.l7p_cultures_regex().'/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/'.l7p_currncies_regex().'/$#', $_SERVER['REQUEST_URI'], $m)) {
         return '';
     }
 
-    return $m[2];
+    $urlPhoneName = $m[3];
+
+    $currency = l7p_get_currency();
+    $culture = l7p_get_culture();
+
+    $filename = sprintf('hardware_%s_%s.json', $culture, $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $phoneName = null;
+
+    foreach ($json as $data) {
+
+        if (str_replace(' ','-', $data['phone']['name']) != $urlPhoneName) {
+            continue;
+        }
+
+        $phoneName = $data['phone']['name'];
+        break;
+    }
+
+    return $phoneName;
 }
 
 function l7p_get_phone_group_name_from_query()
 {
     $m = [];
-    if (!preg_match('#^/hardware/([a-zA-Z\-]+)/#', $_SERVER['REQUEST_URI'], $m)) {
+    if (!preg_match('#^'.l7p_cultures_regex().'/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+/)?'.l7p_currncies_regex().'/$#', $_SERVER['REQUEST_URI'], $m)) {
         return '';
     }
 
-    $groupName = str_replace('-', ' ', $m[1]);
+    $search = [ 'Telefonos' ];
+    $replace = [ 'Teléfonos' ];
+
+    $groupName = str_replace('-', ' ', $m[2]);
+    $groupName = str_replace($search, $replace, $groupName);
 
     if (!in_array($groupName, l7p_get_phone_groups())) {
         return '';
@@ -661,6 +759,10 @@ function l7p_get_ddi_country_name()
 {
     $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
+    if (preg_match('#^'.l7p_cultures_regex().'$#', '/'.$temp[0])) {
+        $culture = array_shift($temp);
+    }
+
     if (count($temp) < 3) {
         return false;
     }
@@ -680,6 +782,10 @@ function l7p_get_ddi_country_name()
 function l7p_get_ddi_state_code()
 {
     $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+    if (preg_match('#^'.l7p_cultures_regex().'$#', '/'.$temp[0])) {
+        $culture = array_shift($temp);
+    }
 
     if (count($temp) < 3) {
         return [];
@@ -705,6 +811,10 @@ function l7p_get_ddi_state_code()
 function l7p_get_ddi_country_code()
 {
     $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+    if (preg_match('#^'.l7p_cultures_regex().'$#', '/'.$temp[0])) {
+        $culture = array_shift($temp);
+    }
 
     if (count($temp) < 3) {
         return [];
@@ -790,6 +900,7 @@ function l7p_get_origination_city_letters()
 
 function l7p_get_ddi_data($type)
 {
+
     if (!$countryCode = l7p_get_ddi_country_code()) {
         return [];
     }
@@ -2101,32 +2212,11 @@ function l7p_is_eu_country($country_code)
 }
 
 
-function l7p_get_hardware_group_name()
-{
-    $temp = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-
-    if (count($temp) < 3) {
-        return false;
-    }
-
-    $latPart = array_pop($temp); // currency
-
-    if (count($temp) === 3){
-        $phoneName = array_pop($temp);
-    }
-
-    $groupName = array_pop($temp);
-    $groupName = str_replace('-', ' ', $groupName);
-
-    return $groupName;
-}
-
-
 function l7p_get_phones()
 {
     $currency = l7p_get_currency();
     $culture = l7p_get_culture();
-    $groupName = l7p_get_hardware_group_name();
+    $groupName = l7p_get_phone_group_name_from_query();
 
     $filename = sprintf('hardware_%s_%s.json', $culture, $currency);
 
@@ -2134,16 +2224,27 @@ function l7p_get_phones()
 
     $output = [];
 
+    $urlPrefix = 'hardware';
+
+    if ($culture != 'en') {
+        $urlPrefix = $culture.'/hardware';
+    }
+
     foreach ($json as $data) {
         if ($data['group'] != $groupName) {
             continue;
         }
 
+        $search = [ ' ', 'Teléfonos' ];
+        $replace = [ '-', 'Telefonos'];
+
+        $_groupName = str_replace($search, $replace, $groupName);
+
         $phone = $data['phone'];
         $phone['stock'] = ($data['stock']) ? $data['stock'].' in stock' : 'Out of stock';
         $phone['price'] = $data['price'];
-        $phone['read_more_link'] = sprintf('<a href="/hardware/%s/%s/%s/">Read More</a>', 
-            str_replace(' ', '-', $groupName), str_replace(' ', '-', $data['phone']['name']), strtolower($currency));
+        $phone['read_more_link'] = sprintf('<a href="/%s/%s/%s/%s/">Read More</a>', 
+            $urlPrefix, $_groupName, str_replace(' ', '-', $data['phone']['name']), strtolower($currency));
 
         $output[$data['phone']['name']] = $phone;
     }
@@ -2177,10 +2278,8 @@ function l7p_get_phone($attr = null)
 {
     $name = l7p_get_phone_name_from_query();
 
-    $searchKey = strtr($name, ['-' => '']);
-
-    $filtered = array_filter(l7p_get_phones(), function($phone) use ($searchKey) {
-        return strtr($phone['name'], [' ' => '', '-' => '']) == $searchKey;
+    $filtered = array_filter(l7p_get_phones(), function($phone) use ($name) {
+        return $phone['name'] == $name;
     });
 
     if (count($filtered) === 0) {
@@ -2197,32 +2296,30 @@ function l7p_get_phone($attr = null)
 
 function l7p_get_phone_item()
 {
+    $currencyRegex =  l7p_currncies_regex();
     $m = [];
-    if (!preg_match('#^/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'], $m)) {
+    if (!preg_match('#^'.l7p_cultures_regex().'/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/'.$currencyRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
         return null;
     }
 
-    $groupUrlName = $m[1];
-    $phoneUrlName = $m[2];
+    $phoneName = l7p_get_phone_name_from_query();
+    $groupName = l7p_get_phone_group_name_from_query();
 
     $currency = l7p_get_currency();
     $culture = l7p_get_culture();
 
     $filename = sprintf('hardware_%s_%s.json', $culture, $currency);
 
-    $groupUrlName = str_replace('-', '', $groupUrlName);
-    $phoneUrlName = str_replace('-', '', $phoneUrlName);
-
     $json = l7p_get_data($filename, []);
 
     $phone = null;
 
     foreach ($json as $data) {
-        if (str_replace(['-',' '],['',''], $data['group']) != $groupUrlName) {
+        if ($data['group'] != $groupName) {
             continue;
         }
 
-        if (str_replace(['-',' '],['',''], $data['phone']['name']) != $phoneUrlName) {
+        if ($data['phone']['name'] != $phoneName) {
             continue;
         }
 
@@ -2259,4 +2356,26 @@ function l7p_get_ddi_min_price()
     }
 
     return $minPrice;
+}
+
+function l7p_get_user_payg_price()
+{
+    $currency = l7p_get_currency();
+
+    $filename = sprintf('price_%s.json', $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    return $json['user']['P'];
+}
+
+function l7p_get_user_2kbundle_price()
+{
+    $currency = l7p_get_currency();
+
+    $filename = sprintf('price_%s.json', $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    return $json['user']['A'];
 }

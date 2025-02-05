@@ -346,7 +346,15 @@ function l7p_inline_ddi_state_link()
 
     $countryLink = str_replace(' ', '-', $countries['US']);
 
-    return '(isset($stateName)) ? \'<a href="/telephone-numbers/'.$countryLink.'/\'.str_replace(" ","-",$stateName).\'/'.$currency.'">\'.$stateName.\'</a>\' : \'<!-- DDI_STATE_NAME not defined -->\'';
+    $numbersLink = l7p_numbers_url();
+
+    $culture = l7p_get_culture();
+
+    if ($culture != 'en') {
+        $numbersLink = $culture.'/'.$numbersLink;
+    }
+
+    return '(isset($stateName)) ? \'<a href="/'.$numbersLink.'/'.$countryLink.'/\'.str_replace(" ","-",$stateName).\'/'.$currency.'">\'.$stateName.\'</a>\' : \'<!-- DDI_STATE_NAME not defined -->\'';
 }
 
 // displays buy DDI in selected U.S. state url
@@ -695,7 +703,7 @@ function l7p_inline_app_key()
 
 function l7p_inline_hardware_group_name()
 {
-    $hardwareGroupName = l7p_get_hardware_group_name();
+    $hardwareGroupName = l7p_get_phone_group_name_from_query();
     return '"'.$hardwareGroupName.'"';
 }
 
@@ -710,12 +718,14 @@ function l7p_inline_ddi_price_from()
 // get minimum price for a ddi
 function l7p_inline_user_payg()
 {
-    return '"user payg"';
+    $price = l7p_currency_symbol(l7p_get_user_payg_price());
+    return '"'.$price.'"';
 }
 
 
 // get minimum price for a ddi
 function l7p_inline_user_2kbundle()
 {
-    return '"user 2k"';
+    $price = l7p_currency_symbol(l7p_get_user_2kbundle_price());
+    return '"'.$price.'"';
 }

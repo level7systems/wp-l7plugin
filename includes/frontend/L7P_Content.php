@@ -262,6 +262,9 @@ class L7P_Content
             case 'term_next_letter':
                 return '<?php if ($letter_changed) :;$letter_changed = false ?>';
 
+            case 'is_ddi_country_usa':
+                return '<?php if (l7p_get_ddi_country_code() == "US") : ?>';
+
 // Bundle
             case 'ddi_is_included':
                 return '<?php if (isset($bundleCountryData) && $bundleCountryData["ddi-package"]) : ?>';

@@ -16,12 +16,8 @@ class L7P_Query
     }
 
     /**
+     * Main URL rewriting logic
      * 
-     * 107243 - Call Rates [EN] /rates/
-     * 107339 - Call Rates [ES] /es/tarifas/
-     * 
-     * 107222 - Telephone Numbers EN] /telephone-numbers/usd
-     * 107354 - Telephone Numbers Country [EN] /telephone-numbers/COUNTRY/CURRENCY
      */
     public function pre_get_posts($query)
     {
@@ -36,31 +32,30 @@ class L7P_Query
 
         $currencyUrl = false;
 
-        if (preg_match('#^/hardware/#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/hardware/#', $_SERVER['REQUEST_URI'])) {
             $currencyUrl = true;
         }
 
-        if (preg_match('#^/es/hardware/#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_pricing_regex().'/$#', $_SERVER['REQUEST_URI'])) {
             $currencyUrl = true;
         }
 
-        if (preg_match('#^/rates/$#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_rates_regex().'/$#', $_SERVER['REQUEST_URI'])) {
             $currencyUrl = true;
         }
 
-        if (preg_match('#^/es/tarifas/$#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_numbers_regex().'/$#', $_SERVER['REQUEST_URI'])) {
             $currencyUrl = true;
         }
 
-        if (preg_match('#^/telephone-numbers/$#', $_SERVER['REQUEST_URI'])) {
-            $currencyUrl = true;
-        }
+        $currencies = l7p_get_currencies(); // [ 'USD', 'EUR', 'GBP' ]
+        $currenciesRegex = l7p_currncies_regex();
 
         if ($currencyUrl) {
             $temp = explode("/", trim($_SERVER['REQUEST_URI'],'/'));
             $lastPart = array_pop($temp);
             $lastPart = strtoupper($lastPart);
-            $currencies = l7p_get_currencies();
+            
             if (!in_array($lastPart, $currencies)) {
                 $defaultCurrency = strtolower(l7p_get_currency());
 
@@ -71,70 +66,78 @@ class L7P_Query
         $m = [];
 
         // hardware
-        if (preg_match('#^/hardware/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/hardware/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
 
-            $page = get_post(107224);
+            $path = 'hardware';
 
-            $query->is_404 = false;
-            $query->is_page = true;
-            $query->is_home = false;
-            $query->is_singular = true;
-            $query->set('name', $page->post_name);
-        }
+            if ($m[1]) { // ie. /es
+                $path.= str_replace('/', '-', $m[1]);
+            }
 
-        if (preg_match('#^/es/hardware/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
-
-            $page = get_post(107388);
-
-            $query->is_404 = false;
-            $query->is_page = true;
-            $query->is_home = false;
-            $query->is_singular = true;
-            $query->set('name', $page->post_name);
+            $page = $this->getPage($path, $query);
         }
 
         // /hardware/GROUP/usd
-        if (preg_match('#^/hardware/([a-zA-Z\-]+)/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'], $m)) {
+        if (preg_match('#^'.l7p_cultures_regex().'/hardware/([a-zA-Z\-]+)/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
 
             if (!l7p_get_phone_group_name_from_query()) {
                 return $this->error_404();
             }
 
-            $page = $this->getPage(107395, $query);
+            $path = 'hardware-group';
+
+            if ($m[1]) { // ie. /es
+                $path.= str_replace('/', '-', $m[1]);
+            }
+
+            $page = $this->getPage($path, $query);
         }
 
         // /hardware/GROUP/PHONE/usd
-        if (preg_match('#^/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
 
             if (!l7p_get_phone_item()) {
                 return $this->error_404();
             }
 
-            $page = $this->getPage(107401, $query);
+            $path = 'hardware-item';
+
+            if ($m[1]) { // ie. /es
+                $path.= str_replace('/', '-', $m[1]);
+            }
+
+            $page = $this->getPage($path, $query);
         }
 
         // rates
-        if (preg_match('#^/rates/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
-            $page = $this->getPage(107243, $query);
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_rates_regex().'/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
+            $page = $this->getPage($m[2], $query);
         }
 
-        if (preg_match('#^/es/tarifas/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
-            $page = $this->getPage(107339, $query);
+        // pricing
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_pricing_regex().'/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
+            $page = $this->getPage($m[2], $query);
         }
 
         // /telephone-numbers/usd
-        if (preg_match('#^/telephone-numbers/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
-            $page = $this->getPage(107222, $query);
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_numbers_regex().'/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
+            $page = $this->getPage($m[2], $query);
         }
 
         // /telephone-numbers/country/usd
-        if (preg_match('#^/telephone-numbers/[a-zA-Z\-]+/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_numbers_regex().'/[a-zA-Z\-]+/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
 
-            $countryCode = l7p_get_ddi_country_code();
+            $path = "telephone-numbers-country";
 
-            $pageId = ($countryCode == 'US') ? 107377 /* US States */ : 107354 /* Country page */;
+            if (l7p_get_ddi_country_code() == 'US') {
+                $path = "telephone-numbers-us-states";
+            }
 
-            $page = $this->getPage($pageId, $query);
+            if ($m[1]) { // ie. /es
+                $path.= str_replace('/', '-', $m[1]);
+            }
+            
+            $page = $this->getPage($path, $query);
         }
 
         $countries = l7p_countries_i18n(l7p_get_culture());
@@ -146,21 +149,23 @@ class L7P_Query
         $usa = str_replace(' ','-',$countries['US']);
 
         // /telephone-numbers/United-States/STATE/usd
-        if (preg_match('#^/telephone-numbers/'.$usa.'/[a-zA-Z\-]+/(usd|eur|gbp|pln)/#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^'.l7p_cultures_regex().'/'.l7p_numbers_regex().'/'.$usa.'/[a-zA-Z\-]+/'.$currenciesRegex.'/$#', $_SERVER['REQUEST_URI'], $m)) {
 
-            $page = get_post(107354);
-            
-            $query->is_404 = false;
-            $query->is_page = true;
-            $query->is_home = false;
-            $query->is_singular = true;
-            $query->set('name', $page->post_name);
+            $path = "telephone-numbers-country";
+
+            if ($m[1]) { // ie. /es
+                $path.= str_replace('/', '-', $m[1]);
+            }
+
+            $page = $this->getPage($path, $query);
         }
     }
 
-    private function getPage($id, &$query)
+    private function getPage($path, &$query)
     {
-        $page = get_post($id);
+        if (!$page = get_page_by_path($path, OBJECT, 'page')) {
+            die("Error: page [$path] not found\n");
+        }
 
         $query->is_404 = false;
         $query->is_page = true;
