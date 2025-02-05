@@ -124,6 +124,30 @@ function l7p_inline_term_letter()
 }
 
 // displays termination route first name (if different from previous one)
+function l7p_inline_bundle_letter()
+{
+    return 'isset($firstletter) ? $firstletter : \'<!-- BUNDLE_LETTER not defined -->\'';
+}
+
+
+// displays termination route first name (if different from previous one)
+function l7p_inline_bundle_country()
+{
+    return 'isset($bundleCountry) ? $bundleCountry : \'<!-- BUNDLE_COUNTRY not defined -->\'';
+}
+
+function l7p_inline_bundle_route_name()
+{
+    return 'isset($bundleRouteName) ? $bundleRouteName : \'<!-- BUNDLE_ROUTE_NAME not defined -->\'';
+}
+
+function l7p_inline_bundle_route_prefixes()
+{
+    return 'isset($bundleRouteData["patterns"]) ? $bundleRouteData["patterns"] : \'<!-- BUNDLE_ROUTE_PREFIXES not defined -->\'';
+}
+
+
+// displays termination route first name (if different from previous one)
 function l7p_inline_ddi_letter()
 {
     return 'isset($firstletter) ? $firstletter : \'<!-- DDI_LETTER not defined -->\'';
@@ -673,4 +697,25 @@ function l7p_inline_hardware_group_name()
 {
     $hardwareGroupName = l7p_get_hardware_group_name();
     return '"'.$hardwareGroupName.'"';
+}
+
+// get minimum price for a ddi
+function l7p_inline_ddi_price_from()
+{
+    $price = l7p_currency_symbol(l7p_get_ddi_min_price());
+    return '"'.$price.'"';
+}
+
+
+// get minimum price for a ddi
+function l7p_inline_user_payg()
+{
+    return '"user payg"';
+}
+
+
+// get minimum price for a ddi
+function l7p_inline_user_2kbundle()
+{
+    return '"user 2k"';
 }

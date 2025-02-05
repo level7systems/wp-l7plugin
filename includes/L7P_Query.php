@@ -34,28 +34,38 @@ class L7P_Query
             return $this->redirect_to($_SERVER['REQUEST_URI'].'/');
         }
 
-        if (preg_match('#^/hardware/$#', $_SERVER['REQUEST_URI'])) {
-            return $this->redirect_to($_SERVER['REQUEST_URI'].'usd/');
+        $currencyUrl = false;
+
+        if (preg_match('#^/hardware/#', $_SERVER['REQUEST_URI'])) {
+            $currencyUrl = true;
         }
 
-        if (preg_match('#^/es/hardware/$#', $_SERVER['REQUEST_URI'])) {
-            return $this->redirect_to($_SERVER['REQUEST_URI'].'eur/');
-        }
-
-        if (preg_match('#^/hardware/([a-zA-Z\-]+)/([0-9a-zA-Z\-]+)/$#', $_SERVER['REQUEST_URI'])) {
-            return $this->redirect_to($_SERVER['REQUEST_URI'].'eur/');
+        if (preg_match('#^/es/hardware/#', $_SERVER['REQUEST_URI'])) {
+            $currencyUrl = true;
         }
 
         if (preg_match('#^/rates/$#', $_SERVER['REQUEST_URI'])) {
-            return $this->redirect_to($_SERVER['REQUEST_URI'].'usd/');
+            $currencyUrl = true;
         }
 
         if (preg_match('#^/es/tarifas/$#', $_SERVER['REQUEST_URI'])) {
-            return $this->redirect_to($_SERVER['REQUEST_URI'].'eur/');
+            $currencyUrl = true;
         }
 
         if (preg_match('#^/telephone-numbers/$#', $_SERVER['REQUEST_URI'])) {
-            return $this->redirect_to($_SERVER['REQUEST_URI'].'usd/');
+            $currencyUrl = true;
+        }
+
+        if ($currencyUrl) {
+            $temp = explode("/", trim($_SERVER['REQUEST_URI'],'/'));
+            $lastPart = array_pop($temp);
+            $lastPart = strtoupper($lastPart);
+            $currencies = l7p_get_currencies();
+            if (!in_array($lastPart, $currencies)) {
+                $defaultCurrency = strtolower(l7p_get_currency());
+
+                return $this->redirect_to(rtrim($_SERVER['REQUEST_URI'],'/').'/'.$defaultCurrency.'/');
+            }
         }
 
         $m = [];

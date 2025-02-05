@@ -1078,6 +1078,79 @@ function l7p_get_int_termination()
     return $output;
 }
 
+function l7p_get_bundle_data()
+{
+    $bundleData = [];
+
+    $ddiTypeData = [];
+
+
+    $currency = l7p_get_currency();
+    
+    $filename = sprintf("ddis_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    foreach ($json as $ddi) {
+        $ddiTypeData[$ddi['country_code']][$ddi['ddi_type']] = $ddi['is_package'];
+    }
+
+    $ddiData = [];
+    foreach ($ddiTypeData as $countryCode => $ddiTypes) {
+        if (array_key_exists('G', $ddiTypes)) {
+            $ddiData[$countryCode] = $ddiTypes['G'];
+        } else if (array_key_exists('N', $ddiTypes)) {
+            $ddiData[$countryCode] = $ddiTypes['N'];
+        } else if (array_key_exists('T', $ddiTypes)) {
+            $ddiData[$countryCode] = $ddiTypes['T'];
+        } else {
+            $ddiData[$countryCode] = null;
+        }
+    }
+
+    $termData = l7p_get_int_termination();
+
+    foreach ($termData as $letter => $data) {
+
+        foreach ($data as $country_name => $term) {
+            if (!$term['fixed-package'] && !$term['mobile-package']) {
+                continue;
+            }
+
+            if (array_key_exists($term['country_code'], $ddiData)) {
+                $term['ddi-package'] = $ddiData[$term['country_code']];
+            } else {
+                $term['ddi-package'] = null;
+            }
+
+            $routes = l7p_get_term_routes($term['country_code']);
+
+            foreach ($routes as $routeName => $routeData) {
+                $routes[$routeName]['patterns'] = implode(', ', $routeData['patterns']);
+                unset($routes[$routeName]['src_prefixes']);
+            }
+
+            $term['routes'] = $routes;
+
+            $bundleData[$letter][$country_name] = $term;
+        }
+    }
+    /*
+    echo "<pre>";
+    print_r($bundleData);
+    die("here");
+*/
+    return $bundleData;
+}
+
+function l7p_get_bundle_letters()
+{
+    $bundleData = l7p_get_bundle_data();
+
+    return array_keys($bundleData);
+
+}
+
 function l7p_get_pricelist_letters()
 {
     $allowed_letters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Y", "Z");
@@ -1131,6 +1204,67 @@ function l7p_get_pricelist_min_charge()
     }
 
     return 0;
+}
+
+function l7p_get_term_routes($countryCode)
+{
+    $currency = l7p_get_currency();
+
+    $filename = sprintf("term_%s.json", $currency);
+
+    $pricelist = l7p_get_data($filename, []);
+
+    $termRoutes = [];
+
+    foreach ($pricelist as $data) {
+        if ($data['country'] != $countryCode) {
+            continue;
+        }
+
+        if ($data['parent_id']) {
+            continue;
+        }
+
+        $data['child'] = [];
+
+        $termRoutes[$data['id']] = $data;
+    }
+
+    foreach ($pricelist as $data) {
+        if ($data['country'] != $countryCode) {
+            continue;
+        }
+
+        if (!$data['parent_id']) {
+            continue;
+        }
+
+        $termRoutes[$data['parent_id']]['child'][] = $data;
+    }
+
+    $output = [];
+
+    foreach ($termRoutes as $data) {
+
+        foreach ($data['child'] as $child) {
+            $output[$child['name']] = [
+                'rate' => (($child['rate'] * 100) < 100) ? l7p_currency_symbol($child['rate'], 1, true) : l7p_currency_symbol($child['rate']),
+                'patterns' => explode(',', $data['prefix']),
+                'src_prefixes' => $child['src_prefixes'],
+                'package' => $child['is_package']
+            ];
+        }
+        
+
+        $output[$data['name']] = [
+            'rate' => (($data['rate'] * 100) < 100) ? l7p_currency_symbol($data['rate'], 1, true) : l7p_currency_symbol($data['rate']),
+            'patterns' => explode(',', $data['prefix']),
+            'src_prefixes' => $data['src_prefixes'],
+            'package' => $data['is_package']
+        ];
+    }
+
+    return $output;
 }
 
 function l7p_get_pricelist_routes()
@@ -2097,4 +2231,32 @@ function l7p_get_phone_item()
     }
 
     return $phone;
+}
+
+function l7p_get_ddi_min_price()
+{
+    $currency = l7p_get_currency();
+    $filename = sprintf("ddis_%s.json", $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    $minPrice = null;
+
+    foreach ($json as $data) {
+
+        if ($minPrice === null) {
+            if ($data['mrc']) {
+                $minPrice = (float) $data['mrc'];
+                continue;
+            }
+        }
+
+        if ($minPrice !== null) {
+            if ($minPrice > (float) $data['mrc']) {
+                $minPrice = (float) $data['mrc'];
+            }
+        }
+    }
+
+    return $minPrice;
 }

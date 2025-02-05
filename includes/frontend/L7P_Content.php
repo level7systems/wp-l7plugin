@@ -63,7 +63,7 @@ class L7P_Content
 // blocks
         $content = preg_replace_callback('/\[block (.*)\]/imU', array('L7P_Content', 'block'), $content);
 // inlines
-        $content = preg_replace_callback('/\[([A-Z,_]+)\]/imU', array('L7P_Content', 'inline'), $content);
+        $content = preg_replace_callback('/\[([0-9A-Z,_]+)\]/imU', array('L7P_Content', 'inline'), $content);
 
         return $content;
     }
@@ -262,6 +262,13 @@ class L7P_Content
             case 'term_next_letter':
                 return '<?php if ($letter_changed) :;$letter_changed = false ?>';
 
+// Bundle
+            case 'ddi_is_included':
+                return '<?php if (isset($bundleCountryData) && $bundleCountryData["ddi-package"]) : ?>';
+
+            case 'boudle_route_is_included':
+                return '<?php if (isset($bundleRouteData) && $bundleRouteData["package"]) : ?>';
+
 // Fax
             case 'fax_next_letter':
                 return '<?php if ($fax_letter_changed) :;$fax_letter_changed = false ?>';
@@ -383,7 +390,30 @@ class L7P_Content
                     . '$package_types = isset($register_settings[\'package_types\'][$currency]) ? $register_settings[\'package_types\'][$currency] : array();'
                     . 'foreach ($package_types as $package_type_value => $package_type_label):'
                     . ' ?>';
-// Termination
+            
+            // Bundle
+            case 'bundle_letters':
+                return '<?php '
+                    . '$letters = l7p_get_bundle_letters();'
+                    . 'foreach ((isset($letters) ? $letters : array()) as $firstletter):'
+                    . ' ?>';
+            case 'bundle_data':
+                return '<?php '
+                    . '$bundleData = l7p_get_bundle_data();'
+                    . 'foreach ($bundleData as $firstletter => $bundleCountries) :'
+                    . ' ?>';
+
+            case 'bundle_countries':
+                return '<?php '
+                    . 'foreach ($bundleCountries as $bundleCountry => $bundleCountryData) :'
+                    . ' ?>';
+
+            case 'bundle_country_routes':
+                return '<?php '
+                    . 'foreach ($bundleCountryData["routes"] as $bundleRouteName => $bundleRouteData) :'
+                    . ' ?>';
+
+            // Termination
             case 'term_letters':
                 return '<?php '
                     . '$letters = l7p_get_pricelist_letters();'
