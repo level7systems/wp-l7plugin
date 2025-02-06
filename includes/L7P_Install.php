@@ -34,17 +34,7 @@ class L7P_Install
     
     public function install()
     {
-        // enable XmlRpc
-        update_option('enable_xmlrpc', '1');
 
-        // create roles and capabilities
-        $this->create_roles();
-        
-        // rewrite rules
-        L7P()->query->add_rewrite_rules();
-        
-        // flush rules after install
-        flush_rewrite_rules();
     }
     
     public function uninstall()
@@ -65,20 +55,4 @@ class L7P_Install
         $wpdb->query( "DELETE FROM {$wpdb->postmeta} meta LEFT JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE wp.ID IS NULL;" );
     }
     
-    // add roles and capabilities
-    private function create_roles()
-    {
-        global $wp_roles;
-        
-        // TODO: add capabilities: 
-    }
-
-
-    
-    private function get_pages_contents()
-    {
-
-
-
-    }
 }
