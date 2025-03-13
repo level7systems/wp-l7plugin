@@ -173,6 +173,8 @@ class L7P_Query
         $query->is_singular = true;
         $query->set('name', $page->post_name);
 
+        header('X-L7page: 1');
+
         return $page;
     }
 

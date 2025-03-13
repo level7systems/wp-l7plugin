@@ -130,10 +130,20 @@ function l7p_inline_bundle_letter()
 }
 
 
+function l7p_inline_bundle_letter_link()
+{
+    return 'isset($firstletter) ? \'<a href="#\'.$firstletter.\'">\'.$firstletter.\'</a>\' : \'<!-- BUNDLE_LETTER not defined -->\'';
+}
+
 // displays termination route first name (if different from previous one)
 function l7p_inline_bundle_country()
 {
     return 'isset($bundleCountry) ? $bundleCountry : \'<!-- BUNDLE_COUNTRY not defined -->\'';
+}
+
+function l7p_inline_bundle_country_code()
+{
+    return 'isset($bundleCountryData) ? $bundleCountryData["country_code"] : \'<!-- BUNDLE_COUNTRY_CODE not defined -->\'';
 }
 
 function l7p_inline_bundle_route_name()

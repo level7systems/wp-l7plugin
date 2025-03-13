@@ -309,7 +309,7 @@ function l7p_get_culture()
     $validCultures = l7p_get_cultures();
     $default = 'en';
 
-    $temp = explode("/", trim($_SERVER['REDIRECT_URL'], "/"));
+    $temp = explode("/", trim($_SERVER['REQUEST_URI'], "/"));
     $firstPart = $temp[0];
 
     if (in_array($firstPart, $validCultures)) {
@@ -362,7 +362,7 @@ function l7p_get_currency()
 {
     $currencies = l7p_get_currencies();
 
-    $temp = explode("/", trim($_SERVER['REDIRECT_URL'], "/"));
+    $temp = explode("/", trim($_SERVER['REQUEST_URI'], "/"));
     $lastPart = strtoupper(array_pop($temp));
 
     if (in_array($lastPart, $currencies)) {
@@ -1307,14 +1307,19 @@ function l7p_get_pricelist_country($country_code)
 
 function l7p_get_pricelist_min_charge()
 {
-    $pricelist = l7p_get_pricelist();
     $currency = l7p_get_currency();
+    $minCharges = [
+        "USD" => 0.015,
+        "EUR" => 0.015,
+        "GBP" => 0.015,
+        "PLN" => 0.05,
+    ];
 
-    if (isset($pricelist['min_charges'][$currency])) {
-        return $pricelist['min_charges'][$currency];
+    if (isset($minCharges[$currency])) {
+        return $minCharges[$currency];
     }
 
-    return 0;
+    return 0.015;
 }
 
 function l7p_get_term_routes($countryCode)
