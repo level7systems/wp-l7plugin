@@ -16,10 +16,10 @@ function l7p_block_currency_form()
     ob_start();
 
     ?>
-    <form id="l7p-currency-form" method="post" action="" class="l7p l7p-currency-form">
-        <select name="currency" id="currency" onchange="this.form.submit()">
+    <form method="post" class="l7p l7p-currency-form">
+        <select name="currency">
             <?php foreach ($currencies as $currency_iso): ?>
-                <option value="<?php echo $currency_iso ?>"<?php if ($selected_currency == $currency_iso): ?>selected="selected"<?php endif; ?>><?php echo l7p_currency_name($currency_iso) ?></option>
+                <option value="<?php echo $currency_iso ?>"<?php if ($selected_currency == $currency_iso): ?> selected="selected"<?php endif; ?>><?php echo $currency_iso ?></option>
             <?php endforeach; ?>
         </select>
     </form>
