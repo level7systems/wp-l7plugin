@@ -103,8 +103,17 @@ class Level7Platform
         define('L7P_VERSION', self::VERSION);
         define('L7P_DATA_DIR', realpath(dirname(__FILE__) . '/data'));
         define('L7P_I18N_DIR', realpath(dirname(__FILE__) . '/i18n'));
+        $languages = ['es'];
+        $language = 'en';
 
-        $l7ConfigPath = realpath(dirname(__FILE__) . '/config/en/config.json');
+        $m = [];
+        if (preg_match('/\/([a-z]{2})\//', $_SERVER['REQUEST_URI'], $m)) {
+            if (in_array($m[1], $languages)) {
+                $language = $m[1];
+            }
+        }
+
+        $l7ConfigPath = realpath(dirname(__FILE__) . '/config/' . $language . '/config.json');
         define('L7_CONFIG_PATH', $l7ConfigPath);
     }
 
