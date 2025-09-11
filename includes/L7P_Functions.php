@@ -2384,3 +2384,14 @@ function l7p_get_user_2kbundle_price()
 
     return $json['user']['A'];
 }
+
+function l7p_get_cx_addon_price()
+{
+    $currency = l7p_get_currency();
+
+    $filename = sprintf('price_%s.json', $currency);
+
+    $json = l7p_get_data($filename, []);
+
+    return $json['other']['C'];
+}

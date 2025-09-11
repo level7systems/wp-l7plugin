@@ -725,7 +725,7 @@ function l7p_inline_ddi_price_from()
 }
 
 
-// get minimum price for a ddi
+// get User PAYG price
 function l7p_inline_user_payg()
 {
     $price = l7p_currency_symbol(l7p_get_user_payg_price());
@@ -733,9 +733,17 @@ function l7p_inline_user_payg()
 }
 
 
-// get minimum price for a ddi
+// get User 2K Bubdle price
 function l7p_inline_user_2kbundle()
 {
     $price = l7p_currency_symbol(l7p_get_user_2kbundle_price());
+    return '"'.$price.'"';
+}
+
+
+// get CX Addon price
+function l7p_inline_cx_addon_price()
+{
+    $price = l7p_currency_symbol(l7p_get_cx_addon_price());
     return '"'.$price.'"';
 }
